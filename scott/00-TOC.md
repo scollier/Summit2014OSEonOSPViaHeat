@@ -1,14 +1,15 @@
 #**Contents**#
 
-1. **Overview of OpenShift Enterprise 2.0**
-2. **Overview of Red Hat OpenStack 4.0**
-3. **Explore the Lab Environment**
-4. **Configure Red Hat OpenStack 4.0**
+1. **Overview**
+2. **Lab Environment**
+3. **Configure Host Networking**
+4. **Configure Neutron Networking**
 5. **Explore the Red Hat OpenStack 4.0 Environment**
-5. **Deploy Stack**
-6. **Using *rhc setup***
-7. **Creating a PHP Application**
-8. **Managing an Application**
-9. **Deploy an Extra OpenShift Node**
+6. **Deploy Heat Stack**
+7. **Configure Red Hat OpenStack 4.0**
+8. **Installing RHC Tools**
+9. **Using *rhc setup***
+10. **Creating a PHP Application**
+11. **Deploy an Extra OpenShift Node**
 
 <!--BREAK-->
