@@ -34,7 +34,8 @@ Show more details about the private network.
       
 Create the *public* subnet. This command also creates a pool of IP addresses that will be *floating* IP addresses.  In addition, set up the gateway here.
   
-    neutron subnet-create public --allocation-pool start=x.x.x.x,end=x.x.x.x --gateway x.x.x.x --enable_dhcp=False x.x.x.0/x --name pub-sub
+    neutron subnet-create public --allocation-pool start=x.x.x.x,end=x.x.x.x \
+    --gateway x.x.x.x --enable_dhcp=False x.x.x.0/x --name pub-sub
         
 List the *public* subnet.
 
