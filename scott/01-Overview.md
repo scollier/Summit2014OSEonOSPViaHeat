@@ -2,7 +2,7 @@
 
 ##**1.1 Assumptions**
 
-This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.  
+This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.
 
 This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises on.
 
@@ -22,23 +22,23 @@ OpenShift Enterprise provides developers and IT organizations an auto-scaling cl
 
 ##**1.4 Overview of IaaS**
 
-One great thing about OpenShift Enterprise is that we are infrastructure agnostic. You can run OpenShift on bare metal, virtualized instances, or on public/private cloud instances. The only thing that is required is Red Hat Enterprise Linux running on x86_64 architecture. We require Red Hat Enterprise Linux in order to take advantage of SELinux and other enterprise features so that you can ensure your installation is stable and secure.
+OpenShift Enterprise is infrastructure agnostic. OpenShift Enterprise can be installed on bare metal, virtualized instances or on public/private cloud instances. At a basic level it requires Red Hat Enterprise Linux running on x86_64 architecture. Red Hat Enterprise Linux provides the advantage of SELinux and other enterprise features to ensure the installation is stable and secure.
 
-What does this mean? This means that in order to take advantage of OpenShift Enterprise, you can use any existing resources that you have in your hardware pool today. It doesn’t matter if your infrastructure is based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack, or even bare metal as we run on top of any Red Hat Enterprise Linux operating system running on x86_64.
+This means that in order to take advantage of OpenShift Enterprise any existing resources from your hardware pool may be used. Infrastructure may be based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack or even bare metal: essentially any Red Hat Enterprise Linux operating system running on x86_64.
 
-For this training class, we will be using Red Hat OpenStack 4.0 as our Infrastructure as a Service layer.  The OpenStack environment has been set up on a single node with all the necessary components required to complete the lab.
+For this training class, Red Hat Linux OpenStack Platform 4.0 is the Infrastructure as a Service layer. The OpenStack environment has been installed on a single node with all the necessary components required to complete the lab.
 
 ##**1.5 Using the *openshift.sh* installation script**
 
-In this training class, we are going to take advantage of the deployment mechanisms that Heat provides.  Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the *openshift.sh* installation script.  *openshift.sh* automates the deployment and initial configuration of OpenShift Enterprise platform.  However, for a deeper understanding of the internals of the platform, it is suggested that you read through the official [Deployment Guide](https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html) for OpenShift Enterprise.
+This training session will demonstrate the deployment mechanisms that Heat provides. Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the `openshift.sh` installation script.  `openshift.sh` automates the deployment and initial configuration of OpenShift Enterprise platform.  For a deeper understanding of the internals of the platform refer to the official [OpenShift Enterprise Deployment Guide](https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html).
 
 ##**1.6 Electronic version of this document**
 
-This lab manual contains many configuration items that will need to be performed on your broker and node hosts.  Manually typing in all of these values would be a tedious and error-prone effort.  To alleviate the risk of errors, and to let you concentrate on learning the material instead of typing tedious configuration items, an electronic version of the document is available at the following URL:
+This lab manual contains many configuration items that will need to be performed on the broker and node hosts.  Manually typing in all of these values would be a tedious and error-prone effort.  To alleviate the risk of errors and allow the student to concentrate on learning the material, an electronic version of the document is available at the following URL:
 
     http://PUT IN IP ADDRESS OF WEB SERVER HERE.
-    
-    
+
+
 **Lab 1 Complete!**
 
 <!--BREAK-->
