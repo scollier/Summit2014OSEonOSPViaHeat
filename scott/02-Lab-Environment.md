@@ -1,6 +1,6 @@
 #**Lab 2: Lab Environment**
 
-##**1.1 Server Configuration**
+##**2 Server Configuration**
 
 Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured.
 

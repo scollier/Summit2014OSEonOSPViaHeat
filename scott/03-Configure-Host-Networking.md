@@ -1,6 +1,6 @@
 #**Lab 3: Configure Host Networking**
 
-##**1.1 Configure Interfaces**
+##**3.1 Configure Interfaces**
 
 The server has a single network card. bla bla here....
 Configure both of the interface files at one time and then restart networking.

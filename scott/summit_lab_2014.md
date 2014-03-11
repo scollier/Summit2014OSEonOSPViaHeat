@@ -11,9 +11,9 @@
 8. **Managing an Application**
 9. **Deploy an Extra OpenShift Node**
 
-<!--BREAK-->
+<!--BREAK-->#
 
-#**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
+**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
 
 ##**1.1 Assumptions**
 
@@ -56,11 +56,11 @@ This lab manual contains many configuration items that will need to be performed
     
 **Lab 1 Complete!**
 
-<!--BREAK-->
+<!--BREAK-->#
 
-#**Lab 2: Lab Environment**
+**Lab 2: Lab Environment**
 
-##**1.1 Server Configuration**
+##**2 Server Configuration**
 
 Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured.
 
@@ -99,7 +99,7 @@ These two images were pre-built using disk image builder(DIB) for the purpose of
 
 #**Lab 3: Configure Host Networking**
 
-##**1.1 Configure Interfaces**
+##**3.1 Configure Interfaces**
 
 The server has a single network card. bla bla here....
 Configure both of the interface files at one time and then restart networking.
@@ -149,7 +149,7 @@ Now the IP address should be on the *br-em1* interface.
 
 #**Lab 4: Configure Neutron Networking**
 
-##**1.1 Set up Neutron Networking**
+##**4.1 Set up Neutron Networking**
 
 **Set up the neutron networking.**
 
@@ -228,5 +228,62 @@ Add an interface for the private subnet to the router.
 
 
 **Lab 4 Complete!**
+
+<!--BREAK-->
+
+#**Lab 5: Explore the Openstack Environment**
+
+##**5 Server Configuration**
+
+FILL OUT THIS
+
+**FILL OUT THIS**
+
+FILL OUT THIS
+
+
+**Lab 5 Complete!**
+
+<!--BREAK-->
+
+#**Lab 6: Deploy Heat Stack**
+
+##**6.1 Deploy Heat Stack**
+
+FILL OUT THIS
+
+**FILL OUT THIS**
+
+FILL OUT THIS
+
+**Lab 6 Complete!**
+
+<!--BREAK-->
+
+#**Lab 7: Deploy Heat Stack**
+
+##**7.1 Deploy Heat Stack**
+
+FILL OUT THIS
+
+**FILL OUT THIS**
+
+FILL OUT THIS
+
+**Lab 7 Complete!**
+
+<!--BREAK-->
+
+#**Lab 8: Deploy Heat Stack**
+
+##**8.1 Deploy Heat Stack**
+
+FILL OUT THIS
+
+**FILL OUT THIS**
+
+FILL OUT THIS
+
+**Lab 8 Complete!**
 
 <!--BREAK-->

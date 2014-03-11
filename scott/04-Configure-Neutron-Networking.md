@@ -1,6 +1,6 @@
 #**Lab 4: Configure Neutron Networking**
 
-##**1.1 Set up Neutron Networking**
+##**4.1 Set up Neutron Networking**
 
 **Set up the neutron networking.**
 
