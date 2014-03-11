@@ -11,7 +11,9 @@
 8. **Managing an Application**
 9. **Deploy an Extra OpenShift Node**
 
-<!--BREAK-->#**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
+<!--BREAK-->
+
+#**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
 
 ##**1.1 Assumptions**
 
@@ -54,7 +56,9 @@ This lab manual contains many configuration items that will need to be performed
     
 **Lab 1 Complete!**
 
-<!--BREAK-->#**Lab 2: Lab Environment**
+<!--BREAK-->
+
+#**Lab 2: Lab Environment**
 
 ##**1.1 Server Configuration**
 
@@ -91,7 +95,9 @@ These two images were pre-built using disk image builder(DIB) for the purpose of
 
 **Lab 2 Complete!**
 
-<!--BREAK-->#**Lab 3: Configure Host Networking**
+<!--BREAK-->
+
+#**Lab 3: Configure Host Networking**
 
 ##**1.1 Configure Interfaces**
 
@@ -139,7 +145,9 @@ Now the IP address should be on the *br-em1* interface.
 
 **Lab 3 Complete!**
 
-<!--BREAK-->#**Lab 4: Configure Neutron Networking**
+<!--BREAK-->
+
+#**Lab 4: Configure Neutron Networking**
 
 ##**1.1 Set up Neutron Networking**
 
