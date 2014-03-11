@@ -1,78 +1,81 @@
 #**Lab 4: Configure Neutron Networking**
 
-##**1.1 Configure Interfaces**
+##**1.1 Set up Neutron Networking**
 
 **Set up the neutron networking.**
 
-
-
+All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
         source keystonerc_admin
         
-        neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
-        
-        neutron net-list
-        
-        neutron net-show public
-        
-        neutron net-create private --provider:network_type local
-        
-        neutron net-list
-        
-        neutron net-show private
-        
-        neutron subnet-create public --allocation-pool start=10.16.138.219,end=10.16.138.234 --gateway  10.16.143.254 --enable_dhcp=False 10.16.136.0/21 --name pub-sub
-        
-        neutron subnet-list
-        
-        neutron subnet-show pub-sub
-        
-        neutron subnet-create private --gateway 192.168.0.1 192.168.0.0/24 --name priv-sub
-        
-        neutron subnet-list
-        
-        neutron subnet-show pub-sub
-        
-        neutron router-create router1
-        
-        neutron router-gateway-set router1 public
-        
-        neutron router-list
-        
-        neutron subnet-update pub-sub --dns_nameservers list=true 10.16.143.247
-        
-        neutron subnet-update priv-sub --dns_nameservers list=true 10.16.143.247
-        
-        neutron router-interface-add router1 priv-sub
+Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE.
 
-
-
-
-
-
-
-
-**Explore the current network card interface setup:**
-
-
-and
-
-        /etc/sysconfig/network-scripts/ifcfg-em1
-        DEVICE="em1"
-        ONBOOT="yes"
-        TYPE="OVSPort"
-        OVS_BRIDGE="br-em1"
-        PROMISC="yes"
-        DEVICETYPE=ovs
+neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
         
-**Restart Networking and review the interface configuration:**
+List the network after creation.
 
-        service network restart
-        ovs-vsctl show
-        ip a
+    neutron net-list
+
+Show the public network.  If you have networks that are named the same thing, you can specify the UUID for the network instead of the name.
         
-Now the IP address should be on the *br-em1* interface.
-              
+    neutron net-show public
+        
+Create the *private* network that the virtual machines will be deployed to.
+
+    neutron net-create private --provider:network_type local
+        
+List the network after creation.
+
+    neutron net-list
+        
+Show more details about the private network.
+
+neutron net-show private
+      
+Create the *public* subnet. This command also creates a pool of IP addresses that will be *floating* IP addresses.  In addition, set up the gateway here.
+  
+neutron subnet-create public --allocation-pool start=x.x.x.x,end=x.x.x.x --gateway x.x.x.x --enable_dhcp=False x.x.x.0/x --name pub-sub
+        
+List the *public* subnet.
+
+    neutron subnet-list
+        
+Show more details about the *public* subnet.
+
+    neutron subnet-show pub-sub
+
+Create the private subnet.       
+
+    neutron subnet-create private --gateway 192.168.0.1 192.168.0.0/24 --name priv-sub
+        
+List the *private* subnet.
+
+    neutron subnet-list
+
+Show more details about the *pivate* subnet.
+
+    neutron subnet-show priv-sub
+
+Create the router.
+        
+    neutron router-create router1
+
+Set the gateway for the router to reside on the *public* subnet.
+        
+    neutron router-gateway-set router1 public
+
+List the router.
+        
+    neutron router-list
+
+Update the *public* subnet with a valid DNS entry.
+        
+    neutron subnet-update pub-sub --dns_nameservers list=true 10.16.143.247
+
+Add an interface for the private subnet to the router.
+        
+    neutron router-interface-add router1 priv-sub
+
 
 **Lab 4 Complete!**
 
