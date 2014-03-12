@@ -58,6 +58,7 @@ This lab manual contains many configuration items that will need to be performed
 **Lab 1 Complete!**
 
 <!--BREAK-->
+
 #**Lab 2: Lab Environment**
 
 #**2 Server Configuration**
@@ -113,7 +114,7 @@ Here you will notice that out of the box, packstack does not configure the inter
 
 **Set up the interfaces on the server:**
 
-Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.
+Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created.
 
         
         /etc/sysconfig/network-scripts/ifcfg-br-em1
@@ -137,6 +138,9 @@ and
 **Restart Networking and review the interface configuration:**
 
         service network restart
+
+Confirm the IP address moved to the bridge interface.
+
         ovs-vsctl show
         ip a
         
@@ -149,17 +153,26 @@ Now the IP address should be on the *br-em1* interface.
 
 #**Lab 4: Configure Neutron Networking**
 
-##**4.1 Set up Neutron Networking**
+##**4.1 Create Keypair**
+
+Create a keypair and then list the key.
+
+    nova keypair-add rootkp > /root/rootkp.pem && chmod 400 /root/rootkp.pem
+    nova keypair-list
+
+
+
+##**4.2 Set up Neutron Networking**
 
 **Set up the neutron networking.**
 
 All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
-        source keystonerc_admin
+    source /root/keystonerc_admin
         
 Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE.
 
-neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
+    neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
         
 List the network after creation.
 
@@ -173,7 +186,7 @@ Create the *private* network that the virtual machines will be deployed to.
 
     neutron net-create private --provider:network_type local
         
-List the network after creation.
+List the network after creation.  This time you should see both **public** and **private**
 
     neutron net-list
         
@@ -226,6 +239,9 @@ Add an interface for the private subnet to the router.
         
     neutron router-interface-add router1 priv-sub
 
+Display router1 configuration.
+
+    neutron router-show router1
 
 **Lab 4 Complete!**
 
@@ -248,9 +264,34 @@ FILL OUT THIS
 
 #**Lab 6: Deploy Heat Stack**
 
-##**6.1 Deploy Heat Stack**
+##**6.1 Import the Images into Glance**
+
+
+The names of these images are hard coded in the heat template.  Do not change the name here.
+
+    glance add name=RHEL65-x86_64-broker is_public=true disk_format=qcow2 \
+    container_format=bare < /home/images/RHEL65-x86_64-broker-v2.qcow2
+    
+    glance add name=RHEL65-x86_64-node is_public=true disk_format=qcow2 \
+    container_format=bare < /home/images/RHEL65-x86_64-node-v2.qcow2
+    
+    glance index
+    
+
+##**6.2 Create the openshift-environment file**
+
 
 **Create the openshift-environment.yaml file:**
+
+Get the private and public network IDs as well as the private subnet ID.  Place those parameters in the following file in the following fields: private_net_id: public_net_id: private_subnet_id: to replace FIXME.
+
+
+
+
+
+
+
+Create the */root/openshift-environment.yaml* file and copy the following contents into it.
 
         parameters:
           key_name: rootkp
@@ -268,15 +309,38 @@ FILL OUT THIS
           yum_validator_version: "2.0"
           ose_version: "2.0"
 
-**Launch the stack:**
+##**6.3 Launch the stack**
 
-    heat create openshift -f /usr/share/openshift-heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml -e /root/openshift-environment.yaml
-
-
+Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
 
+    heat create openshift \
+    -f /usr/share/openshift-heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
+    -e /root/openshift-environment.yaml
 
 
+##**6.4 Monitor the stack**
+
+List the *heat* stack
+
+    heat stack-list
+
+Watch the heat events.
+
+    heat event-list openshift
+
+    heat resource-list openshift
+
+    nova list
+
+##**6.5 Confirm Connectivity**
+
+Ping the public IP
+
+    ping x.x.x.x 
+
+    ssh -i ~/rootkp.pem ec2-user@x.x.x.x
+    ssh -i ~/rootkp.pem ec2-user@x.x.x.x
 
 
 **FILL OUT THIS**
