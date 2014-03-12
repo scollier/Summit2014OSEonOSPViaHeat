@@ -6,10 +6,10 @@
 The names of these images are hard coded in the heat template.  Do not change the name here.
 
     glance add name=RHEL65-x86_64-broker is_public=true disk_format=qcow2 \
-container_format=bare < /home/images/RHEL65-x86_64-broker-v2.qcow2
+    container_format=bare < /home/images/RHEL65-x86_64-broker-v2.qcow2
     
     glance add name=RHEL65-x86_64-node is_public=true disk_format=qcow2 \
-container_format=bare < /home/images/RHEL65-x86_64-node-v2.qcow2
+    container_format=bare < /home/images/RHEL65-x86_64-node-v2.qcow2
     
     glance index
     
