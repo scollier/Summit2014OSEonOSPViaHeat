@@ -1,16 +1,25 @@
 #**Lab 4: Configure Neutron Networking**
 
-##**4.1 Set up Neutron Networking**
+##**4.1 Create Keypair**
+
+Create a keypair and then list the key.
+
+    nova keypair-add rootkp > /root/rootkp.pem && chmod 400 /root/rootkp.pem
+    nova keypair-list
+
+
+
+##**4.2 Set up Neutron Networking**
 
 **Set up the neutron networking.**
 
 All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
-        source keystonerc_admin
+    source /root/keystonerc_admin
         
 Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE.
 
-neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
+    neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
         
 List the network after creation.
 
@@ -24,7 +33,7 @@ Create the *private* network that the virtual machines will be deployed to.
 
     neutron net-create private --provider:network_type local
         
-List the network after creation.
+List the network after creation.  This time you should see both **public** and **private**
 
     neutron net-list
         
@@ -77,6 +86,9 @@ Add an interface for the private subnet to the router.
         
     neutron router-interface-add router1 priv-sub
 
+Display router1 configuration.
+
+    neutron router-show router1
 
 **Lab 4 Complete!**
 

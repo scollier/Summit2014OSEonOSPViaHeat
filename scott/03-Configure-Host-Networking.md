@@ -14,7 +14,7 @@ Here you will notice that out of the box, packstack does not configure the inter
 
 **Set up the interfaces on the server:**
 
-Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.
+Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created.
 
         
         /etc/sysconfig/network-scripts/ifcfg-br-em1
@@ -38,6 +38,9 @@ and
 **Restart Networking and review the interface configuration:**
 
         service network restart
+
+Confirm the IP address moved to the bridge interface.
+
         ovs-vsctl show
         ip a
         
