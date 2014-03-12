@@ -1,23 +1,24 @@
 #**Contents**#
 
-1. **Overview of OpenShift Enterprise 2.0**
-2. **Overview of Red Hat OpenStack 4.0**
-3. **Explore the Lab Environment**
-4. **Configure Red Hat OpenStack 4.0**
+1. **Overview**
+2. **Lab Environment**
+3. **Configure Host Networking**
+4. **Configure Neutron Networking**
 5. **Explore the Red Hat OpenStack 4.0 Environment**
-5. **Deploy Stack**
-6. **Using *rhc setup***
-7. **Creating a PHP Application**
-8. **Managing an Application**
-9. **Deploy an Extra OpenShift Node**
+6. **Deploy Heat Stack**
+7. **Configure Red Hat OpenStack 4.0**
+8. **Installing RHC Tools**
+9. **Using *rhc setup***
+10. **Creating a PHP Application**
+11. **Deploy an Extra OpenShift Node**
 
-<!--BREAK-->#
+<!--BREAK-->
 
-**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
+#**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
 
 ##**1.1 Assumptions**
 
-This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.  
+This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.
 
 This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises on.
 
@@ -37,30 +38,29 @@ OpenShift Enterprise provides developers and IT organizations an auto-scaling cl
 
 ##**1.4 Overview of IaaS**
 
-One great thing about OpenShift Enterprise is that we are infrastructure agnostic. You can run OpenShift on bare metal, virtualized instances, or on public/private cloud instances. The only thing that is required is Red Hat Enterprise Linux running on x86_64 architecture. We require Red Hat Enterprise Linux in order to take advantage of SELinux and other enterprise features so that you can ensure your installation is stable and secure.
+OpenShift Enterprise is infrastructure agnostic. OpenShift Enterprise can be installed on bare metal, virtualized instances or on public/private cloud instances. At a basic level it requires Red Hat Enterprise Linux running on x86_64 architecture. Red Hat Enterprise Linux provides the advantage of SELinux and other enterprise features to ensure the installation is stable and secure.
 
-What does this mean? This means that in order to take advantage of OpenShift Enterprise, you can use any existing resources that you have in your hardware pool today. It doesn’t matter if your infrastructure is based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack, or even bare metal as we run on top of any Red Hat Enterprise Linux operating system running on x86_64.
+This means that in order to take advantage of OpenShift Enterprise any existing resources from your hardware pool may be used. Infrastructure may be based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack or even bare metal: essentially any Red Hat Enterprise Linux operating system running on x86_64.
 
-For this training class, we will be using Red Hat OpenStack 4.0 as our Infrastructure as a Service layer.  The OpenStack environment has been set up on a single node with all the necessary components required to complete the lab.
+For this training class, Red Hat Linux OpenStack Platform 4.0 is the Infrastructure as a Service layer. The OpenStack environment has been installed on a single node with all the necessary components required to complete the lab.
 
 ##**1.5 Using the *openshift.sh* installation script**
 
-In this training class, we are going to take advantage of the deployment mechanisms that Heat provides.  Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the *openshift.sh* installation script.  *openshift.sh* automates the deployment and initial configuration of OpenShift Enterprise platform.  However, for a deeper understanding of the internals of the platform, it is suggested that you read through the official [Deployment Guide](https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html) for OpenShift Enterprise.
+This training session will demonstrate the deployment mechanisms that Heat provides. Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the `openshift.sh` installation script.  `openshift.sh` automates the deployment and initial configuration of OpenShift Enterprise platform.  For a deeper understanding of the internals of the platform refer to the official [OpenShift Enterprise Deployment Guide](https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html).
 
 ##**1.6 Electronic version of this document**
 
-This lab manual contains many configuration items that will need to be performed on your broker and node hosts.  Manually typing in all of these values would be a tedious and error-prone effort.  To alleviate the risk of errors, and to let you concentrate on learning the material instead of typing tedious configuration items, an electronic version of the document is available at the following URL:
+This lab manual contains many configuration items that will need to be performed on the broker and node hosts.  Manually typing in all of these values would be a tedious and error-prone effort.  To alleviate the risk of errors and allow the student to concentrate on learning the material, an electronic version of the document is available at the following URL:
 
     http://PUT IN IP ADDRESS OF WEB SERVER HERE.
-    
-    
+
+
 **Lab 1 Complete!**
 
-<!--BREAK-->#
+<!--BREAK-->
+#**Lab 2: Lab Environment**
 
-**Lab 2: Lab Environment**
-
-##**2 Server Configuration**
+#**2 Server Configuration**
 
 Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured.
 
@@ -250,7 +250,34 @@ FILL OUT THIS
 
 ##**6.1 Deploy Heat Stack**
 
-FILL OUT THIS
+**Create the openshift-environment.yaml file:**
+
+        parameters:
+          key_name: rootkp
+          prefix: novalocal
+          broker_hostname: openshift.brokerinstance.novalocal
+          node_hostname: openshift.nodeinstance.novalocal
+          conf_install_method: yum
+          conf_rhel_repo_base: http://10.16.138.52/rhel6.5
+          conf_jboss_repo_base: http://10.16.138.52
+          conf_ose_repo_base: http://10.16.138.52/ose-latest
+          conf_rhscl_repo_base: http://10.16.138.52
+          private_net_id: FIXME
+          public_net_id: FIXME
+          private_subnet_id: FIXME
+          yum_validator_version: "2.0"
+          ose_version: "2.0"
+
+**Launch the stack:**
+
+    heat create openshift -f /usr/share/openshift-heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml -e /root/openshift-environment.yaml
+
+
+
+
+
+
+
 
 **FILL OUT THIS**
 
@@ -260,23 +287,191 @@ FILL OUT THIS
 
 <!--BREAK-->
 
-#**Lab 7: Deploy Heat Stack**
+#**Lab 7: Installing the RHC client tools**
 
-##**7.1 Deploy Heat Stack**
+**Server used:**
 
-FILL OUT THIS
+* localhost
 
-**FILL OUT THIS**
+**Tools used:**
 
-FILL OUT THIS
+* ruby
+* sudo
+* git
+* yum
+* gem
+* rhc
+
+The OpenShift Client tools, known as **rhc**, are built and packaged using the Ruby programming language.  OpenShift Enterprise integrates with the Git version control system to provide powerful, decentralized version control for your application source code.
+
+OpenShift Enterprise client tools can be installed on any operating system with Ruby 1.8.7 or higher.  Instructions for specific operating systems are provided below. It is assumed that you are running the commands from a command line window, such as Command Prompt, or Terminal. If you are using Ruby Version Manager (rvm) see the instructions below.
+
+##**Microsoft Windows**
+
+###**Installing Ruby for Windows**
+
+[RubyInstaller 1.9](http://rubyinstaller.org/) provides the best experience for installing Ruby on Windows XP, Vista, and Windows 7. Download the latest 1.9 version from the [download page](http://rubyinstaller.org/downloads/) and launch the installer.
+
+**Important**: During the installation, you should accept all of the defaults.  It is mandatory that you select the "Add Ruby executables to your PATH" check box in order to run Ruby from the command line.
+
+After the installation is complete, to verify that the installation is working, run:
+	
+	C:\Program Files\> ruby -e 'puts "Welcome to Ruby"'
+	Welcome to Ruby
+
+If the 'Welcome to Ruby' message does not display, the Ruby executable may not have been added to the path. Restart the installation process and ensure the "Add Ruby executables to your PATH" check box is selected.
+
+###**Installing Git for Windows**
+
+The next step is to install [Git for Windows](http://msysgit.github.com/) so that you can synchronize your local application source and your OpenShift application. Git for Windows offers the easiest Git experience on the Windows operating system and is the recommended default - if you use another version of Git, please ensure it can be executed from the command line, and continue to the next section.
+
+Download and install the [latest version of Git for Windows](http://code.google.com/p/msysgit/downloads/list?q=full+installer+official+git). Ensure that Git is added to your PATH so that it can be run from the command line. After the installation has completed, verify that Git is correctly configured by runing:
+
+	C:\Program Files\> git --version
+	git version 1.7.11.msysgit.1
+
+###**Installing RHC for Windows**
+
+After Ruby and Git are correctly installed, use the RubyGems package manager (included in Ruby) to install the OpenShift Enterprise client tools. Run:
+
+	C:\Program Files\> gem install rhc
+
+RubyGems downloads and installs the rhc gem from www.rubygems.org/gems/rhc. The installation typically proceeds without errors. After the installation has completed, run:
+
+	C:\Program Files\> rhc
+
+##**Mac OS X**
+
+###**Installing Ruby for OS X**
+
+From OS X Lion onwards, Ruby 1.8.7 is installed by default. On older Mac systems, Ruby is shipped as part of the [Xcode development suite](https://developer.apple.com/xcode/) and can be installed from your installation CD. If you are familiar with Mac development, you can also use [MacRuby](http://macruby.org/) or see the Ruby installation page for [help installing with homebrew](http://www.ruby-lang.org/en/downloads/).
+
+To verify that Ruby is correctly installed run:
+
+	$ ruby -e 'puts "Welcome to Ruby"'
+	Welcome to Ruby
+	
+###**Installing Git for OS X**
+
+There are a number of options on Mac OS X for Git. We recommend the Git for OS X installer - download and run the latest version of the dmg file on your system. To verify the [Git for OS X installation](http://code.google.com/p/git-osx-installer/), run:
+
+	$ git --version
+	git version 1.7.11.1
+
+###**Installing RHC for OS X**
+
+With Ruby and Git installed, use the RubyGems library system to install and run the OpenShift Enterprise gem. Run:
+
+	$ sudo gem install rhc
+
+After the installation has completed, run:
+
+	$ rhc -v
+
+##**Fedora 16 or later**
+
+To install from yum on Fedora, run:
+
+	$ sudo yum install rubygem-rhc
+
+This installs Ruby, Git, and the other dependencies required to run the OpenShift Enterprise client tools.
+
+After the OpenShift Enterprise client tools have been installed, run:
+
+	$ rhc -v
+
+##**Red Hat Enterprise Linux 6 with OpenShift entitlement**
+
+The most recent version of the OpenShift Enterprise client tools are available as a RPM from the OpenShift Enterprise hosted Yum repository. We recommend this version to remain up to date, although a version of the OpenShift Enterprise client tools RPM is also available through EPEL.
+
+With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:
+
+	$ sudo yum install rubygem-rhc
+	
+If you do not have an OpenShift Enterprise on the system you want to install the client tools on, you can install ruby and rubygems and then issue the following command:
+
+	$ sudo gem install rhc
+
+##**Ubuntu**
+
+Use the apt-get command line package manager to install Ruby and Git before you install the OpenShift Enterprise command line tools. Run:
+
+	$ sudo apt-get install ruby-full rubygems git-core
+
+After you install both Ruby and Git, verify they can be accessed via the command line:
+
+	$ ruby -e 'puts "Welcome to Ruby"'
+	$ git --version
+
+If either program is not available from the command line, please add them to your PATH environment variable.
+
+With Ruby and Git correctly installed, you can now use the RubyGems package manager to install the OpenShift Enterprise client tools. From a command line, run:
+
+	$ sudo gem install rhc
+
 
 **Lab 7 Complete!**
 
 <!--BREAK-->
 
-#**Lab 8: Deploy Heat Stack**
+#**Lab 08: Using *rhc setup***
 
-##**8.1 Deploy Heat Stack**
+**Server used:**
+
+* localhost
+
+**Tools used:**
+
+* rhc
+
+##**Configuring RHC setup**
+
+By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our broker.hosts.example.com server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
+
+	$ rhc setup --server broker.hosts.example.com
+	
+Once you enter in that command, you will be prompted for the username that you would like to authenticate with.  For this training class, use the *demo* user account.  
+
+The first thing that you will be prompted with will look like the following:
+
+	The server's certificate is self-signed, which means that a secure connection can't be established to
+	'broker.hosts.example.com'.
+	
+	You may bypass this check, but any data you send to the server could be intercepted by others.
+	Connect without checking the certificate? (yes|no):
+	
+Since we are using a self signed certificate, go ahead and select *yes* here and press the enter key. 
+
+At this point, you will be prompted for the username.  Enter in demo and specify the password for the demo user.
+
+After authenticating, OpenShift Enterprise will prompt if you want to create a authentication token for your system.  This will allow you to execute command on the PaaS as a developer without having to authenticate.  It is suggested that you generate a token to speed up the other labs in this training class.
+
+The next step in the setup process is to create and upload our SSH key to the broker server.  This is required for pushing your source code, via Git, up to the OpenShift Enterprise server.
+
+Finally, you will be asked to create a namespace for the provided user account.  The namespace is a unique name which becomes part of your application URL. It is also commonly referred to as the user's domain. The namespace can be at most 16 characters long and can only contain alphanumeric characters. There is currently a 1:1 relationship between usernames and namespaces.  For this lab, create the following namespace:
+
+	ose
+
+##**Under the covers**
+
+The *rhc setup* tool is a convenient command line utility to ensure that the user's operating system is configured properly to create and manage applications from the command line.  After this command has been executed, a *.openshift* directory will have been created in the user's home directory with some basic configuration items specified in the *express.conf* file.  The contents of that file are as follows:
+
+	# Default user login
+	default_rhlogin=‘demo’
+
+	# Server API
+	libra_server = 'broker.hosts.example.com'
+	
+This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
+
+
+**Lab 8 Complete!**
+
+<!--BREAK-->
+
+#**Lab 9: Create a PHP Application**
+
+##**9.1 Create a PHP Application**
 
 FILL OUT THIS
 
@@ -284,6 +479,22 @@ FILL OUT THIS
 
 FILL OUT THIS
 
-**Lab 8 Complete!**
+**Lab 9 Complete!**
+
+<!--BREAK-->
+
+#**Lab 10: Extending the OpenShift Environment**
+
+##**9.1 Extend the OpenShift Environment**
+
+Explain how to add a node with heat here.
+
+FILL OUT THIS
+
+**FILL OUT THIS**
+
+FILL OUT THIS
+
+**Lab 10 Complete!**
 
 <!--BREAK-->
