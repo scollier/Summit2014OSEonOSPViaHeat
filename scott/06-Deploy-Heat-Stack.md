@@ -5,9 +5,11 @@
 
 The names of these images are hard coded in the heat template.  Do not change the name here.
 
-    glance add name=RHEL65-x86_64-broker is_public=true disk_format=qcow2 container_format=bare < /home/images/RHEL65-x86_64-broker-v2.qcow2
+    glance add name=RHEL65-x86_64-broker is_public=true disk_format=qcow2 \
+container_format=bare < /home/images/RHEL65-x86_64-broker-v2.qcow2
     
-    glance add name=RHEL65-x86_64-node is_public=true disk_format=qcow2 container_format=bare < /home/images/RHEL65-x86_64-node-v2.qcow2
+    glance add name=RHEL65-x86_64-node is_public=true disk_format=qcow2 \
+container_format=bare < /home/images/RHEL65-x86_64-node-v2.qcow2
     
     glance index
     
@@ -48,7 +50,8 @@ Create the */root/openshift-environment.yaml* file and copy the following conten
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
 
-    heat create openshift -f /usr/share/openshift-heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml -e /root/openshift-environment.yaml
+    heat create openshift -f /usr/share/openshift-heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
+-e /root/openshift-environment.yaml
 
 
 ##**6.4 Monitor the stack**
