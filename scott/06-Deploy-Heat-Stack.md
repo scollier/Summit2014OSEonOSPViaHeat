@@ -50,8 +50,9 @@ Create the */root/openshift-environment.yaml* file and copy the following conten
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
 
-    heat create openshift -f /usr/share/openshift-heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
--e /root/openshift-environment.yaml
+    heat create openshift \
+    -f /usr/share/openshift-heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
+    -e /root/openshift-environment.yaml
 
 
 ##**6.4 Monitor the stack**
