@@ -58,12 +58,16 @@ This lab manual contains many configuration items that will need to be performed
 **Lab 1 Complete!**
 
 <!--BREAK-->
-
 #**Lab 2: Lab Environment**
 
 #**2 Server Configuration**
 
 Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured.
+
+**System Partitions**
+
+If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.
+
 
 **Look at the configuration options for Heat and Neutron:**
 
@@ -278,7 +282,6 @@ FILL OUT THIS
 **Lab 5 Complete!**
 
 <!--BREAK-->
-
 #**Lab 6: Deploy Heat Stack**
 
 ##**6.1 Import the Images into Glance**
@@ -375,7 +378,6 @@ FILL OUT THIS
 **Lab 6 Complete!**
 
 <!--BREAK-->
-
 #**Lab 7: Installing the RHC client tools**
 
 **Server used:**
