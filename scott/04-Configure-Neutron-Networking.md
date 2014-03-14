@@ -89,6 +89,23 @@ Add an interface for the private subnet to the router.
 Display router1 configuration.
 
     neutron router-show router1
+    
+##**4.3 Configure the Neutron plugin.ini**
+
+Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
+
+    # vxlan_udp_port=4789
+    # network_vlan_ranges=physnet1:1113:1114
+    tenant_network_type=local
+    enable_tunneling=False
+    integration_bridge=br-int
+    bridge_mappings=physnet1:br-em1
+
+
+    
+Reboot the server.
+
+    reboot
 
 **Lab 4 Complete!**
 

@@ -45,6 +45,14 @@ Create the */root/openshift-environment.yaml* file and copy the following conten
           yum_validator_version: "2.0"
           ose_version: "2.0"
 
+##**6.3 Open the port for Return Signals**
+
+The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
+
+    iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
+    service iptables save
+
+
 ##**6.3 Launch the stack**
 
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
