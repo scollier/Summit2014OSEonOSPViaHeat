@@ -1,6 +1,5 @@
 #**Lab Configuration - INSTRUCTOR ONLY**
 
-**Explore the current network card interface setup:**
 
 # Get images and templates:
 
