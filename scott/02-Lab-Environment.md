@@ -8,6 +8,9 @@ Each student will either recieve his / her own server or will share with another
 ![Summit Lab](https://github.com/scollier/summit2014/blob/master/scott/images/summit_lab.png "Summit Lab")
 
 
+[id]:https://github.com/scollier/summit2014/blob/master/scott/images/summit_lab.png "Optional title attribute"
+
+
 **System Partitions**
 
 If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.
