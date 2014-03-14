@@ -58,6 +58,7 @@ This lab manual contains many configuration items that will need to be performed
 **Lab 1 Complete!**
 
 <!--BREAK-->
+
 #**Lab 2: Lab Environment**
 
 #**2 Server Configuration**
@@ -159,6 +160,10 @@ Now the IP address should be on the *br-em1* interface.
 
 ##**4.1 Create Keypair**
 
+All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
+
+    source /root/keystonerc_admin
+
 Create a keypair and then list the key.
 
     nova keypair-add rootkp > /root/rootkp.pem && chmod 400 /root/rootkp.pem
@@ -170,9 +175,6 @@ Create a keypair and then list the key.
 
 **Set up the neutron networking.**
 
-All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
-
-    source /root/keystonerc_admin
         
 Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE.
 
@@ -378,6 +380,7 @@ FILL OUT THIS
 **Lab 6 Complete!**
 
 <!--BREAK-->
+
 #**Lab 7: Installing the RHC client tools**
 
 **Server used:**
