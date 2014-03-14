@@ -12,8 +12,8 @@
 
 #Subscribe to the appropriate channels:
 
-    rhn-channel -u admin -p 100yard- -a -c rhel-x86_64-server-6-ost-4
-    rhn-channel -u admin -p 100yard- -a -c rhel-x86_64-server-rh-common-6
+    rhn-channel -u admin -p PASSWORD -a -c rhel-x86_64-server-6-ost-4
+    rhn-channel -u admin -p PASSWORD -a -c rhel-x86_64-server-rh-common-6
     yum -y install rhel-guest-image-6.noarch
     yum -y install openstack-packstack
     yum -y install git
