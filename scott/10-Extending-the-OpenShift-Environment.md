@@ -8,6 +8,7 @@ A separate heat template to launch a single node host is provided. A heat enviro
 Create the _/root/node-environment.yaml_ file and copy the following contents into it.
 
 
+
     parameters:
       key_name: rootkp
       domain: novalocal
@@ -15,6 +16,8 @@ Create the _/root/node-environment.yaml_ file and copy the following contents in
       load_bal_hostname: openshift.brokerinstance.novalocal
       node_hostname: openshift.nodeinstance2.novalocal
       node_image: RHEL65-x86_64-node
+      hosts_domain: novalocal
+      replicants: ""
       install_method: yum
       rhel_repo_base: http://10.16.138.52/rhel6.5
       jboss_repo_base: http://10.16.138.52
@@ -26,6 +29,9 @@ Create the _/root/node-environment.yaml_ file and copy the following contents in
       private_net_id: FIXME
       public_net_id: FIXME
       private_subnet_id: FIXME
+
+
+
 
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
