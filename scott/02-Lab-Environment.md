@@ -5,14 +5,6 @@
 Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured.
 
 
-![Summit Lab](https://github.com/scollier/summit2014/blob/master/scott/images/summit_lab.png "Summit Lab")
-
-
-[id]:https://github.com/scollier/summit2014/blob/master/scott/images/summit_lab.png "Optional title attribute"
-
-<img src="https://github.com/scollier/summit2014/blob/master/scott/images/summit_lab.png" alt="Summit">
-
-
 **System Partitions**
 
 If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.
