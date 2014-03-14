@@ -4,8 +4,6 @@
 
 Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured.
 
-![](https://github.com/scollier/summit2014/blob/master/scott/images/summit_lab.png "test")
-
 **System Partitions**
 
 If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.
