@@ -20,6 +20,9 @@ Create the _/root/node-environment.yaml_ file and copy the following contents in
       jboss_repo_base: http://10.16.138.52
       openshift_repo_base: http://10.16.138.52/ose-latest
       rhscl_repo_base: http://10.16.138.52
+      activemq_admin_pass: FIXME
+      activemq_user_pass: FIXME
+      mcollective_pass: FIXME
       private_net_id: FIXME
       public_net_id: FIXME
       private_subnet_id: FIXME
