@@ -2,6 +2,10 @@
 
 ##**4.1 Create Keypair**
 
+All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
+
+    source /root/keystonerc_admin
+
 Create a keypair and then list the key.
 
     nova keypair-add rootkp > /root/rootkp.pem && chmod 400 /root/rootkp.pem
@@ -13,9 +17,6 @@ Create a keypair and then list the key.
 
 **Set up the neutron networking.**
 
-All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
-
-    source /root/keystonerc_admin
         
 Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE.
 
