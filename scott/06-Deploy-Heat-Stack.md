@@ -3,6 +3,11 @@
 ##**6.1 Import the Images into Glance**
 
 
+All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
+
+    source /root/keystonerc_admin
+
+
 The names of these images are hard coded in the heat template.  Do not change the name here.
 
     glance add name=RHEL65-x86_64-broker is_public=true disk_format=qcow2 \
@@ -19,31 +24,28 @@ The names of these images are hard coded in the heat template.  Do not change th
 
 **Create the openshift-environment.yaml file:**
 
-Get the private and public network IDs as well as the private subnet ID.  Place those parameters in the following file in the following fields: private_net_id: public_net_id: private_subnet_id: to replace FIXME.
+Get the private and public network IDs as well as the private subnet ID out of the first column of the output of the below commands.  Place those parameters in the following file in the following fields: private_net_id: public_net_id: private_subnet_id: to replace FIXME.
 
-
-
-
-
-
+    neutron net-list
+    neutron subnet-list
 
 Create the */root/openshift-environment.yaml* file and copy the following contents into it.
 
-        parameters:
-          key_name: rootkp
-          prefix: novalocal
-          broker_hostname: openshift.brokerinstance.novalocal
-          node_hostname: openshift.nodeinstance.novalocal
-          conf_install_method: yum
-          conf_rhel_repo_base: http://10.16.138.52/rhel6.5
-          conf_jboss_repo_base: http://10.16.138.52
-          conf_ose_repo_base: http://10.16.138.52/ose-latest
-          conf_rhscl_repo_base: http://10.16.138.52
-          private_net_id: FIXME
-          public_net_id: FIXME
-          private_subnet_id: FIXME
-          yum_validator_version: "2.0"
-          ose_version: "2.0"
+    parameters:
+      key_name: rootkp
+      prefix: novalocal
+      broker_hostname: openshift.brokerinstance.novalocal
+      node_hostname: openshift.nodeinstance.novalocal
+      conf_install_method: yum
+      conf_rhel_repo_base: http://10.16.138.52/rhel6.5
+      conf_jboss_repo_base: http://10.16.138.52
+      conf_ose_repo_base: http://10.16.138.52/ose-latest
+      conf_rhscl_repo_base: http://10.16.138.52
+      private_net_id: FIXME
+      public_net_id: FIXME
+      private_subnet_id: FIXME
+      yum_validator_version: "2.0"
+      ose_version: "2.0"
 
 ##**6.3 Open the port for Return Signals**
 
@@ -57,9 +59,10 @@ The *broker* and *node* VMs need to be able to deliver a completed signal to the
 
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
+    cd /root/
 
     heat create openshift \
-    -f /usr/share/openshift-heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
+    -f heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
     -e /root/openshift-environment.yaml
 
 
@@ -77,15 +80,55 @@ Watch the heat events.
 
     nova list
 
+Get a VNC console address and open it in the browser.  There is no local login on these nodes.  They can be accessed via SSH.  See below.
+
+    nova get-vnc-console broker_instance novnc
+    
+    nova get-vnc-console node_instance novnc
+
 ##**6.5 Confirm Connectivity**
 
 Ping the public IP
 
     ping x.x.x.x 
+    
+SSH into the broker instance.  This may take a minute or two while they are spawning.  This will use the key that was created with *nova keypair* earlier.
 
-    ssh -i ~/rootkp.pem ec2-user@x.x.x.x
-    ssh -i ~/rootkp.pem ec2-user@x.x.x.x
+Confirm which IP address belongs to the broker and to the node.
 
+    nova list
+
+SSH into the broker
+
+    ssh -i ~/rootkp.pem ec2-user@IP.OF.BROKER
+
+Once logged in, gain root access and explore the environment.
+
+    sudo su -
+
+Check the OpenShift install output.
+
+    cat /tmp/openshift.out
+
+Check mcollective traffic.  You should get a response from the node that was deployed as part of the stack.
+
+    oo-mco ping
+    
+    oo-diagnostics -v
+    
+    oo-accept-broker -v
+
+SSH into the node, using the IP that was obtained above.
+
+    ssh -i ~/rootkp.pem ec2-user@IP.OF.NODE
+    
+Check node configuration
+
+    oo-accept-node
+
+Confirm Console Access by opening a browser and putting in the IP address of the broker.
+
+http://IP.OF.BROKER/console
 
 **FILL OUT THIS**
 
