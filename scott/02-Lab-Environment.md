@@ -10,6 +10,8 @@ Each student will either recieve his / her own server or will share with another
 
 [id]:https://github.com/scollier/summit2014/blob/master/scott/images/summit_lab.png "Optional title attribute"
 
+<img src="https://github.com/scollier/summit2014/blob/master/scott/images/summit_lab.png" alt="Summit">
+
 
 **System Partitions**
 
