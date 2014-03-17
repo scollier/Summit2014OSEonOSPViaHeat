@@ -14,7 +14,7 @@ Here you will notice that out of the box, packstack does not configure the inter
 
 **Set up the interfaces on the server:**
 
-Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created.
+Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created - it does not exist out of box.  The two files on the host should look exactly the same as what is listed below.
 
         
         /etc/sysconfig/network-scripts/ifcfg-br-em1
@@ -25,7 +25,7 @@ Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-e
         OVSBOOTPROTO="dhcp"
         OVSDHCPINTERFACES="em1"
 
-and
+and configure em1, it exists already, just modify to make it look like:
 
         /etc/sysconfig/network-scripts/ifcfg-em1
         DEVICE="em1"

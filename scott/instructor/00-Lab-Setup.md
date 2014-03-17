@@ -20,11 +20,11 @@
 
 # Copy answerfile local so it can be inspected by the students
 
-    cp /pub/projects/rhos/scollier/summit2014/answer_new.txt.localhost /root/.
+    cp /pub/projects/rhos/scollier/summit2014/answer_new.txt.localhost /root/answer.txt
 
 # Run packstack
 
-    packstack --answer-file=/root/answer_new.txt.localhost
+    packstack --answer-file=/root/answer.txt
 
 
 # Set up the repos
