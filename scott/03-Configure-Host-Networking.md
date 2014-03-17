@@ -33,7 +33,7 @@ and configure em1, it exists already, just modify to make it look like:
         TYPE="OVSPort"
         OVS_BRIDGE="br-em1"
         PROMISC="yes"
-        DEVICETYPE=ovs
+        DEVICETYPE="ovs"
         
 **Restart Networking and review the interface configuration:**
 

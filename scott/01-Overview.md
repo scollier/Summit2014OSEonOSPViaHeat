@@ -4,7 +4,7 @@
 
 This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.
 
-This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises on.
+This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.
 
 A working knowledge of SSH, git, and yum, and familiarity with a Linux-based text editor are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.
 

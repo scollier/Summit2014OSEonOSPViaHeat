@@ -2,7 +2,7 @@
 
 ##**4.1 Create Keypair**
 
-All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
+All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
     source /root/keystonerc_admin
 

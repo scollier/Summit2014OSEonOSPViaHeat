@@ -20,7 +20,7 @@
 
 This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.
 
-This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises on.
+This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.
 
 A working knowledge of SSH, git, and yum, and familiarity with a Linux-based text editor are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.
 
@@ -138,7 +138,7 @@ and configure em1, it exists already, just modify to make it look like:
         TYPE="OVSPort"
         OVS_BRIDGE="br-em1"
         PROMISC="yes"
-        DEVICETYPE=ovs
+        DEVICETYPE="ovs"
         
 **Restart Networking and review the interface configuration:**
 
@@ -160,7 +160,7 @@ Now the IP address should be on the *br-em1* interface.
 
 ##**4.1 Create Keypair**
 
-All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
+All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
     source /root/keystonerc_admin
 
@@ -290,7 +290,7 @@ FILL OUT THIS
 ##**6.1 Import the Images into Glance**
 
 
-All actions in this lab will performed by the *root* tenant in this lab.  In a production enviroinment there will likely be many tenants.
+All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
     source /root/keystonerc_admin
 
@@ -303,10 +303,23 @@ The names of these images are hard coded in the heat template.  Do not change th
     glance add name=RHEL65-x86_64-node is_public=true disk_format=qcow2 \
     container_format=bare < /home/images/RHEL65-x86_64-node-v2.qcow2
     
-    glance index
-    
+    glance image-list
 
-##**6.2 Create the openshift-environment file**
+
+##**6.2 Ensure the heat.conf file is confirgured correctly**
+
+Ensure the following variables are set in the /etc/heat/heat.conf file:
+
+    heat_metadata_server_url=http://IP of Controller:8000
+    
+    heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
+    
+    heat_watch_server_url=http://IP of Controller:8003
+
+
+
+
+##**6.3 Create the openshift-environment file**
 
 
 **Create the openshift-environment.yaml file:**
@@ -316,7 +329,7 @@ Get the private and public network IDs as well as the private subnet ID out of t
     neutron net-list
     neutron subnet-list
 
-Create the */root/openshift-environment.yaml* file and copy the following contents into it.
+Create the */root/openshift-environment.yaml* file and copy the following contents into it. For the IP address of the repo locations, please replace with the IP address of the host you are on.
 
     parameters:
       key_name: rootkp
@@ -324,17 +337,17 @@ Create the */root/openshift-environment.yaml* file and copy the following conten
       broker_hostname: openshift.brokerinstance.novalocal
       node_hostname: openshift.nodeinstance.novalocal
       conf_install_method: yum
-      conf_rhel_repo_base: http://10.16.138.52/rhel6.5
-      conf_jboss_repo_base: http://10.16.138.52
-      conf_ose_repo_base: http://10.16.138.52/ose-latest
-      conf_rhscl_repo_base: http://10.16.138.52
+      conf_rhel_repo_base: http://IP_OF_HOST/rhel6.5
+      conf_jboss_repo_base: http://IP_OF_HOST
+      conf_ose_repo_base: http://IP_OF_HOST/ose-latest
+      conf_rhscl_repo_base: http://IP_OF_HOST
       private_net_id: FIXME
       public_net_id: FIXME
       private_subnet_id: FIXME
       yum_validator_version: "2.0"
       ose_version: "2.0"
 
-##**6.3 Open the port for Return Signals**
+##**6.4 Open the port for Return Signals**
 
 The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
 
@@ -342,9 +355,13 @@ The *broker* and *node* VMs need to be able to deliver a completed signal to the
     service iptables save
 
 
-##**6.3 Launch the stack**
+##**6.5 Launch the stack**
 
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
+
+**Note: it can take up to 10 minutes for this to complete**
+
+    source /root/keystonerc_admin    
 
     cd /root/
 
@@ -353,7 +370,7 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
     -e /root/openshift-environment.yaml
 
 
-##**6.4 Monitor the stack**
+##**6.6 Monitor the stack**
 
 List the *heat* stack
 
@@ -367,15 +384,15 @@ Watch the heat events.
 
     nova list
 
-Get a VNC console address and open it in the browser.  There is no local login on these nodes.  They can be accessed via SSH.  See below.
+Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
 
     nova get-vnc-console broker_instance novnc
     
     nova get-vnc-console node_instance novnc
 
-##**6.5 Confirm Connectivity**
+##**6.7 Confirm Connectivity**
 
-Ping the public IP
+Ping the public IP.  Get the public IP by running *nova list* on the controller.
 
     ping x.x.x.x 
     
@@ -387,7 +404,7 @@ Confirm which IP address belongs to the broker and to the node.
 
 SSH into the broker
 
-    ssh -i ~/rootkp.pem ec2-user@IP.OF.BROKER
+    ssh -i ~/adminkp.pem ec2-user@IP.OF.BROKER
 
 Once logged in, gain root access and explore the environment.
 
