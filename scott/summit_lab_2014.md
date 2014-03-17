@@ -176,7 +176,7 @@ Create a keypair and then list the key.
 **Set up the neutron networking.**
 
         
-Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE.
+Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE - ack - vvaldez
 
     neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
         
@@ -237,7 +237,7 @@ List the router.
         
     neutron router-list
 
-Update the *public* subnet with a valid DNS entry.
+Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED**
         
     neutron subnet-update pub-sub --dns_nameservers list=true 10.16.143.247
 

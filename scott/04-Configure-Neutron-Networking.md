@@ -79,7 +79,7 @@ List the router.
         
     neutron router-list
 
-Update the *public* subnet with a valid DNS entry.
+Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED**
         
     neutron subnet-update pub-sub --dns_nameservers list=true 10.16.143.247
 
