@@ -85,6 +85,13 @@
 
     reboot
 
+# Validate Setup
+
+    yum -y install links
+    links http://localhost
+    wget http://localhost -O -
+    # more steps here
+
 # END HOST SETUP
              
 
