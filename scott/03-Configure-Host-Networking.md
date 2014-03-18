@@ -16,7 +16,7 @@ Here you will notice that out of the box, packstack does not configure the inter
 
 For this lab, we will need 3 interfaces.  *ifcfg-em1* will be associated with the *ifcfg-br-em1* bridge. Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created - it does not exist out of box.  The three files on the host should look exactly the same as what is listed below.
 
-* Create the file **/etc/sysconfig/network-scripts/ifcfg-br-em1** with the following contents:
+Create the file **/etc/sysconfig/network-scripts/ifcfg-br-em1** with the following contents:
 
     DEVICE="br-em1"
     ONBOOT="yes"
@@ -27,7 +27,7 @@ For this lab, we will need 3 interfaces.  *ifcfg-em1* will be associated with th
     NETMASK="255.255.0.0"
     OVSDHCPINTERFACES="em1"
 
-* The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents:
+The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents:
 
     DEVICE="em1"
     ONBOOT="yes"
@@ -36,7 +36,7 @@ For this lab, we will need 3 interfaces.  *ifcfg-em1* will be associated with th
     PROMISC="yes"
     DEVICETYPE="ovs"
     
-* Configure a subinterface em1:1 to provide external access. Create the file **/etc/sysconfig/network/ifcfg-em1:1** with the contents:
+Configure a subinterface em1:1 to provide external access. Create the file **/etc/sysconfig/network/ifcfg-em1:1** with the contents:
 
     DEVICE="em1:1"
     ONBOOT="yes"
