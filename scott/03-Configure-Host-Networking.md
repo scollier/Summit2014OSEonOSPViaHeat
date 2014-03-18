@@ -2,8 +2,7 @@
 
 ##**3.1 Configure Interfaces**
 
-The server has a single network card. bla bla here....
-Configure both of the interface files at one time and then restart networking.
+The server has a single network card. Configure both of the interface files at one time and then restart networking.
 
 **Explore the current network card interface setup:**
 
@@ -50,3 +49,4 @@ Now the IP address should be on the *br-em1* interface.
 **Lab 3 Complete!**
 
 <!--BREAK-->
+

@@ -32,13 +32,8 @@ For this training class, Red Hat Linux OpenStack Platform 4.0 is the Infrastruct
 
 This training session will demonstrate the deployment mechanisms that Heat provides. Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the `openshift.sh` installation script.  `openshift.sh` automates the deployment and initial configuration of OpenShift Enterprise platform.  For a deeper understanding of the internals of the platform refer to the official [OpenShift Enterprise Deployment Guide](https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html).
 
-##**1.6 Electronic version of this document**
-
-This lab manual contains many configuration items that will need to be performed on the broker and node hosts.  Manually typing in all of these values would be a tedious and error-prone effort.  To alleviate the risk of errors and allow the student to concentrate on learning the material, an electronic version of the document is available at the following URL:
-
-    http://PUT IN IP ADDRESS OF WEB SERVER HERE.
-
 
 **Lab 1 Complete!**
 
 <!--BREAK-->
+

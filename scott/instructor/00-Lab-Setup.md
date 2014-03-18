@@ -8,6 +8,7 @@
     wget http://file.rdu.redhat.com/~calfonso/images/RHEL65-x86_64-broker-v2.qcow2 -O /home/images/RHEL65-x86_64-broker-v2.qcow2
     cp -v /pub/projects/rhos/scollier/summit2014/heat-templates.tgz /root/.
     tar xvf /root/heat-templates.tgz -C /root/
+    cp -v /pub/projects/rhos/scollier/summit2014/RHOSE-CLIENT-2.0.repo /etc/yum.repos.d/
 
 #Subscribe to the appropriate channels:
 
@@ -20,7 +21,7 @@
 
 # Copy answerfile local so it can be inspected by the students
 
-    cp /pub/projects/rhos/scollier/summit2014/answer_new.txt.localhost /root/answer.txt
+    cp -v /pub/projects/rhos/scollier/summit2014/answer_new.txt.localhost /root/answer.txt
 
 # Run packstack
 

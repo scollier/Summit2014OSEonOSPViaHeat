@@ -14,6 +14,8 @@
 
 <!--BREAK-->
 
+
+
 #**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
 
 ##**1.1 Assumptions**
@@ -48,12 +50,6 @@ For this training class, Red Hat Linux OpenStack Platform 4.0 is the Infrastruct
 
 This training session will demonstrate the deployment mechanisms that Heat provides. Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the `openshift.sh` installation script.  `openshift.sh` automates the deployment and initial configuration of OpenShift Enterprise platform.  For a deeper understanding of the internals of the platform refer to the official [OpenShift Enterprise Deployment Guide](https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html).
 
-##**1.6 Electronic version of this document**
-
-This lab manual contains many configuration items that will need to be performed on the broker and node hosts.  Manually typing in all of these values would be a tedious and error-prone effort.  To alleviate the risk of errors and allow the student to concentrate on learning the material, an electronic version of the document is available at the following URL:
-
-    http://PUT IN IP ADDRESS OF WEB SERVER HERE.
-
 
 **Lab 1 Complete!**
 
@@ -63,7 +59,9 @@ This lab manual contains many configuration items that will need to be performed
 
 #**2 Server Configuration**
 
-Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured.
+Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.
+
+![Lab Configuration](http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/summit_lab.png)
 
 **System Partitions**
 
@@ -103,12 +101,12 @@ These two images were pre-built using disk image builder(DIB) for the purpose of
 
 <!--BREAK-->
 
+
 #**Lab 3: Configure Host Networking**
 
 ##**3.1 Configure Interfaces**
 
-The server has a single network card. bla bla here....
-Configure both of the interface files at one time and then restart networking.
+The server has a single network card. Configure both of the interface files at one time and then restart networking.
 
 **Explore the current network card interface setup:**
 
@@ -166,7 +164,7 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
 
 Create a keypair and then list the key.
 
-    nova keypair-add rootkp > /root/rootkp.pem && chmod 400 /root/rootkp.pem
+    nova keypair-add adminkp > /root/adminkp.pem && chmod 400 /root/adminkp.pem
     nova keypair-list
 
 
@@ -569,6 +567,7 @@ With Ruby and Git correctly installed, you can now use the RubyGems package mana
 
 <!--BREAK-->
 
+
 #**Lab 08: Using *rhc setup***
 
 **Server used:**
@@ -740,3 +739,4 @@ Check mcollective traffic.  You should get a response from node 2 that was deplo
 **Lab 10 Complete!**
 
 <!--BREAK-->
+

@@ -2,7 +2,9 @@
 
 #**2 Server Configuration**
 
-Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured.
+Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.
+
+![Lab Configuration](http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/summit_lab.png)
 
 **System Partitions**
 
@@ -41,3 +43,5 @@ These two images were pre-built using disk image builder(DIB) for the purpose of
 **Lab 2 Complete!**
 
 <!--BREAK-->
+
+

@@ -8,7 +8,7 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
 
 Create a keypair and then list the key.
 
-    nova keypair-add rootkp > /root/rootkp.pem && chmod 400 /root/rootkp.pem
+    nova keypair-add adminkp > /root/adminkp.pem && chmod 400 /root/adminkp.pem
     nova keypair-list
 
 
@@ -111,3 +111,4 @@ Reboot the server.
 **Lab 4 Complete!**
 
 <!--BREAK-->
+
