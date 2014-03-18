@@ -1,0 +1,815 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+   <style type="text/css">
+   /*CSS stylesheet is based on killwing's flavored markdown style:https://gist.github.com/2937864*/body{    margin: 0 auto;    font: 13px/1.231 Helvetica, Arial, sans-serif;    color: #444444;    line-height: 1;    max-width: 960px;    padding: 5px;}h1, h2, h3, h4 {    color: #111111;    font-weight: 400;}h1, h2, h3, h4, h5, p {    margin-bottom: 16px;    padding: 0;}h1 {    font-size: 28px;}h2 {    font-size: 22px;    margin: 20px 0 6px;}h3 {    font-size: 21px;}h4 {    font-size: 18px;}h5 {    font-size: 16px;}a {    color: #0099ff;    margin: 0;    padding: 0;    vertical-align: baseline;}a:link,a:visited{ text-decoration:none;}a:hover{ text-decoration:underline;}ul, ol {    padding: 0;    margin: 0;}li {    line-height: 24px;    margin-left: 44px;}li ul, li ul {    margin-left: 24px;}ul, ol {    font-size: 14px;    line-height: 20px;    max-width: 540px;}p {    font-size: 14px;    line-height: 20px;    max-width: 540px;    margin-top: 3px;}pre {    padding: 0px 4px;    max-width: 800px;    white-space: pre-wrap;    font-family: Consolas, Monaco, Andale Mono, monospace;    line-height: 1.5;    font-size: 13px;    border: 1px solid #ddd;    background-color: #f7f7f7;    border-radius: 3px;}code {    font-family: Consolas, Monaco, Andale Mono, monospace;    line-height: 1.5;    font-size: 13px;    border: 1px solid #ddd;    background-color: #f7f7f7;    border-radius: 3px;}pre code {    border: 0px;}aside {    display: block;    float: right;    width: 390px;}blockquote {    border-left:.5em solid #40AA53;    padding: 0 2em;    margin-left:0;    max-width: 476px;}blockquote  cite {    font-size:14px;    line-height:20px;    color:#bfbfbf;}blockquote cite:before {    content: '\2014 \00A0';}blockquote p {      color: #666;    max-width: 460px;}hr {    height: 1px;    border: none;    border-top: 1px dashed #0066CC}button,input,select,textarea {  font-size: 100%;  margin: 0;  vertical-align: baseline;  *vertical-align: middle;}button, input {  line-height: normal;  *overflow: visible;}button::-moz-focus-inner, input::-moz-focus-inner {  border: 0;  padding: 0;}button,input[type="button"],input[type="reset"],input[type="submit"] {  cursor: pointer;  -webkit-appearance: button;}input[type=checkbox], input[type=radio] {  cursor: pointer;}/* override default chrome & firefox settings */input:not([type="image"]), textarea {  -webkit-box-sizing: content-box;  -moz-box-sizing: content-box;  box-sizing: content-box;}input[type="search"] {  -webkit-appearance: textfield;  -webkit-box-sizing: content-box;  -moz-box-sizing: content-box;  box-sizing: content-box;}input[type="search"]::-webkit-search-decoration {  -webkit-appearance: none;}label,input,select,textarea {  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  font-size: 13px;  font-weight: normal;  line-height: normal;  margin-bottom: 18px;}input[type=checkbox], input[type=radio] {  cursor: pointer;  margin-bottom: 0;}input[type=text],input[type=password],textarea,select {  display: inline-block;  width: 210px;  padding: 4px;  font-size: 13px;  font-weight: normal;  line-height: 18px;  height: 18px;  color: #808080;  border: 1px solid #ccc;  -webkit-border-radius: 3px;  -moz-border-radius: 3px;  border-radius: 3px;}select, input[type=file] {  height: 27px;  line-height: 27px;}textarea {  height: auto;}/* grey out placeholders */:-moz-placeholder {  color: #bfbfbf;}::-webkit-input-placeholder {  color: #bfbfbf;}input[type=text],input[type=password],select,textarea {  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;  transition: border linear 0.2s, box-shadow linear 0.2s;  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);}input[type=text]:focus, input[type=password]:focus, textarea:focus {  outline: none;  border-color: rgba(82, 168, 236, 0.8);  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);}/* buttons */button {  display: inline-block;  padding: 4px 14px;  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  font-size: 13px;  line-height: 18px;  -webkit-border-radius: 4px;  -moz-border-radius: 4px;  border-radius: 4px;  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  background-color: #0064cd;  background-repeat: repeat-x;  background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));  background-image: -moz-linear-gradient(top, #049cdb, #0064cd);  background-image: -ms-linear-gradient(top, #049cdb, #0064cd);  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));  background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);  background-image: -o-linear-gradient(top, #049cdb, #0064cd);  background-image: linear-gradient(top, #049cdb, #0064cd);  color: #fff;  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);  border: 1px solid #004b9a;  border-bottom-color: #003f81;  -webkit-transition: 0.1s linear all;  -moz-transition: 0.1s linear all;  transition: 0.1s linear all;  border-color: #0064cd #0064cd #003f81;  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);}button:hover {  color: #fff;  background-position: 0 -15px;  text-decoration: none;}button:active {  -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);  -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);  box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);}button::-moz-focus-inner {  padding: 0;  border: 0;}/* table  */table {    border-spacing: 0;    border: 1px solid #ccc;}td, th{    border: 1px solid #ccc;    padding: 5px;}/* code syntax highlight.Documentation: http://www.mdcharm.com/documentation/code_syntax_highlighting.html#custom_your_own */pre .literal,pre .comment,pre .template_comment,pre .diff .header,pre .javadoc {    color: #008000;}pre .keyword,pre .css .rule .keyword,pre .winutils,pre .javascript .title,pre .nginx .title,pre .subst,pre .request,pre .status {    color: #0000FF;    font-weight: bold}pre .number,pre .hexcolor,pre .python .decorator,pre .ruby .constant {    color: #0000FF;}pre .string,pre .tag .value,pre .phpdoc,pre .tex .formula {    color: #D14}pre .title,pre .id {    color: #900;    font-weight: bold}pre .javascript .title,pre .lisp .title,pre .clojure .title,pre .subst {    font-weight: normal}pre .class .title,pre .haskell .type,pre .vhdl .literal,pre .tex .command {    color: #458;    font-weight: bold}pre .tag,pre .tag .title,pre .rules .property,pre .django .tag .keyword {    color: #000080;    font-weight: normal}pre .attribute,pre .variable,pre .lisp .body {    color: #008080}pre .regexp {    color: #009926}pre .class {    color: #458;    font-weight: bold}pre .symbol,pre .ruby .symbol .string,pre .lisp .keyword,pre .tex .special,pre .prompt {    color: #990073}pre .built_in,pre .lisp .title,pre .clojure .built_in {    color: #0086b3}pre .preprocessor,pre .pi,pre .doctype,pre .shebang,pre .cdata {    color: #999;    font-weight: bold}pre .deletion {    background: #fdd}pre .addition {    background: #dfd}pre .diff .change {    background: #0086b3}pre .chunk {    color: #aaa}pre .markdown .header {    color: #800;    font-weight: bold;}pre .markdown .blockquote {    color: #888;}pre .markdown .link_label {    color: #88F;}pre .markdown .strong {    font-weight: bold;}pre .markdown .emphasis {    font-style: italic;}
+   </style>
+   
+   
+</head>
+<body>
+    <h1><strong>Contents</strong></h1>
+
+<ol>
+<li><strong>Overview</strong></li>
+<li><strong>Lab Environment</strong></li>
+<li><strong>Configure Host Networking</strong></li>
+<li><strong>Configure Neutron Networking</strong></li>
+<li><strong>Explore the Red Hat OpenStack 4.0 Environment</strong></li>
+<li><strong>Deploy Heat Stack</strong></li>
+<li><strong>Configure Red Hat OpenStack 4.0</strong></li>
+<li><strong>Installing RHC Tools</strong></li>
+<li><strong>Using *rhc setup</strong>*</li>
+<li><strong>Creating a PHP Application</strong></li>
+<li><strong>Deploy an Extra OpenShift Node</strong></li>
+</ol>
+
+<!--BREAK-->
+
+<h1><strong>Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates</strong></h1>
+
+<h2><strong>1.1 Assumptions</strong></h2>
+
+<p>This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.</p>
+
+<p>This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.</p>
+
+<p>A working knowledge of SSH, git, and yum, and familiarity with a Linux-based text editor are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.</p>
+
+<h2><strong>1.2 What you can expect to learn from this training class</strong></h2>
+
+<p>At the conclusion of this training class, you should have a solid understanding of how to configure Heat to deploy an OpenShift Enterprise 2.0 broker and node.  In addition, you will learn how to expand the OpenShift node environment.  You should also feel comfortable creating and deploying applications using the OpenShift Enterprise management console, using the OpenShift Enterprise administration console, as well as using the command line tools.</p>
+
+<h2><strong>1.3 Overview of OpenShift Enterprise PaaS</strong></h2>
+
+<p>Platform as a Service is changing the way developers approach developing software. Developers typically use a local sandbox with their preferred application server and only deploy locally on that instance. Developers typically start JBoss locally using the startup.sh command and drop their .war or .ear file in the deployment directory and they are done.  Developers have a hard time understanding why deploying to the production infrastructure is such a time consuming process.</p>
+
+<p>System Administrators understand the complexity of not only deploying the code, but procuring, provisioning, and maintaining a production level system. They need to stay up to date on the latest security patches and errata, ensure the firewall is properly configured, maintain a consistent and reliable backup and restore plan, monitor the application and servers for CPU load, disk IO, HTTP requests, etc.</p>
+
+<p>OpenShift Enterprise provides developers and IT organizations an auto-scaling cloud application platform for quickly deploying new applications on secure and scalable resources with minimal configuration and management headaches. This means increased developer productivity and a faster pace with which IT can support innovation.</p>
+
+<h2><strong>1.4 Overview of IaaS</strong></h2>
+
+<p>OpenShift Enterprise is infrastructure agnostic. OpenShift Enterprise can be installed on bare metal, virtualized instances or on public/private cloud instances. At a basic level it requires Red Hat Enterprise Linux running on x86_64 architecture. Red Hat Enterprise Linux provides the advantage of SELinux and other enterprise features to ensure the installation is stable and secure.</p>
+
+<p>This means that in order to take advantage of OpenShift Enterprise any existing resources from your hardware pool may be used. Infrastructure may be based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack or even bare metal: essentially any Red Hat Enterprise Linux operating system running on x86_64.</p>
+
+<p>For this training class, Red Hat Linux OpenStack Platform 4.0 is the Infrastructure as a Service layer. The OpenStack environment has been installed on a single node with all the necessary components required to complete the lab.</p>
+
+<h2><strong>1.5 Using the <em>openshift.sh</em> installation script</strong></h2>
+
+<p>This training session will demonstrate the deployment mechanisms that Heat provides. Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the <code>openshift.sh</code> installation script.  <code>openshift.sh</code> automates the deployment and initial configuration of OpenShift Enterprise platform.  For a deeper understanding of the internals of the platform refer to the official <a href="https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html">OpenShift Enterprise Deployment Guide</a>.</p>
+
+<p><strong>Lab 1 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 2: Lab Environment</strong></h1>
+
+<h1><strong>2 Server Configuration</strong></h1>
+
+<p>Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.</p>
+
+<p><img src="http://summitimage-scollier1.rhcloud.com/summit_lab.png" alt="Lab Configuration"></p>
+
+<p><strong>System Partitions</strong></p>
+
+<p>If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.</p>
+
+<p><strong>Look at the configuration options for Heat and Neutron:</strong></p>
+
+<pre><code>    vim /root/answer.txt
+</code></pre>
+
+<p><strong>Each system has software repositories that are shared out via the local Apache web server:</strong></p>
+
+<pre><code>    ll /var/www/html
+</code></pre>
+
+<p>These will be utilized by the <em>openshift.sh</em> file when it is called by heat.</p>
+
+<p><strong>Explore the Heat template:</strong></p>
+
+<pre><code>    egrep -i &#39;curl|wget&#39; /root/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml
+</code></pre>
+
+<p>Here you can see that the Heat template was originally making calls to github for the <em>enterprise-2.0</em> and <em>openshift.sh</em> files. These lines were modified to point to local repositories for the purposes of this lab.</p>
+
+<p><strong>Look a the images that were pre-built for this lab:</strong></p>
+
+<pre><code>    ls /home/images/RHEL*
+</code></pre>
+
+<p>These two images were pre-built using disk image builder(DIB) for the purpose of saving time in the lab. The commands used to </p>
+
+<p><strong>Check out the software repositories:</strong></p>
+
+<pre><code>    yum repolist
+</code></pre>
+
+<p><strong>Lab 2 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 3: Configure Host Networking</strong></h1>
+
+<h2><strong>3.1 Configure Interfaces</strong></h2>
+
+<p>The server has a single network card. Configure both of the interface files at one time and then restart networking.</p>
+
+<p><strong>Explore the current network card interface setup:</strong></p>
+
+<pre><code>    ovs-vsctl show
+    ip a
+</code></pre>
+
+<p>Here you will notice that out of the box, packstack does not configure the interfaces.  In it&#39;s current state, <em>em1</em> has the IP address.  We need to migrate that IP address to the <em>br-em1</em> interface.</p>
+
+<p><strong>Set up the interfaces on the server:</strong></p>
+
+<p>Ensure the <em>ifcfg-em1</em> and <em>ifcfg-br-em1</em> files look as follows.  The ifcfg-br-em1 file will have to be created - it does not exist out of box.  The two files on the host should look exactly the same as what is listed below.</p>
+
+<pre><code>    /etc/sysconfig/network-scripts/ifcfg-br-em1
+    DEVICE=&quot;br-em1&quot;
+    ONBOOT=&quot;yes&quot;
+    DEVICETYPE=ovs
+    TYPE=&quot;OVSBridge&quot;
+    OVSBOOTPROTO=&quot;dhcp&quot;
+    OVSDHCPINTERFACES=&quot;em1&quot;
+</code></pre>
+
+<p>and configure em1, it exists already, just modify to make it look like:</p>
+
+<pre><code>    /etc/sysconfig/network-scripts/ifcfg-em1
+    DEVICE=&quot;em1&quot;
+    ONBOOT=&quot;yes&quot;
+    TYPE=&quot;OVSPort&quot;
+    OVS_BRIDGE=&quot;br-em1&quot;
+    PROMISC=&quot;yes&quot;
+    DEVICETYPE=&quot;ovs&quot;
+</code></pre>
+
+<p><strong>Restart Networking and review the interface configuration:</strong></p>
+
+<pre><code>    service network restart
+</code></pre>
+
+<p>Confirm the IP address moved to the bridge interface.</p>
+
+<pre><code>    ovs-vsctl show
+    ip a
+</code></pre>
+
+<p>Now the IP address should be on the <em>br-em1</em> interface.</p>
+
+<p><strong>Lab 3 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 4: Configure Neutron Networking</strong></h1>
+
+<h2><strong>4.1 Create Keypair</strong></h2>
+
+<p>All actions in this lab will performed by the <em>admin</em> tenant in this lab.  In a production enviroinment there will likely be many tenants.</p>
+
+<pre><code>source /root/keystonerc_admin
+</code></pre>
+
+<p>Create a keypair and then list the key.</p>
+
+<pre><code>nova keypair-add adminkp &gt; /root/adminkp.pem &amp;&amp; chmod 400 /root/adminkp.pem
+nova keypair-list
+</code></pre>
+
+<h2><strong>4.2 Set up Neutron Networking</strong></h2>
+
+<p><strong>Set up the neutron networking.</strong></p>
+
+<p>Create the <em>public</em> network. In the packstack answer file we specified the name <em>physnet1</em> for the physical external network.  INSERT VINNY HERE - ack - vvaldez</p>
+
+<pre><code>neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
+</code></pre>
+
+<p>List the network after creation.</p>
+
+<pre><code>neutron net-list
+</code></pre>
+
+<p>Show the public network.  If you have networks that are named the same thing, you can specify the UUID for the network instead of the name.</p>
+
+<pre><code>neutron net-show public
+</code></pre>
+
+<p>Create the <em>private</em> network that the virtual machines will be deployed to.</p>
+
+<pre><code>neutron net-create private --provider:network_type local
+</code></pre>
+
+<p>List the network after creation.  This time you should see both <strong>public</strong> and <strong>private</strong></p>
+
+<pre><code>neutron net-list
+</code></pre>
+
+<p>Show more details about the private network.</p>
+
+<pre><code>neutron net-show private
+</code></pre>
+
+<p>Create the <em>public</em> subnet. This command also creates a pool of IP addresses that will be <em>floating</em> IP addresses.  In addition, set up the gateway here.</p>
+
+<pre><code>neutron subnet-create public --allocation-pool start=x.x.x.x,end=x.x.x.x \
+--gateway x.x.x.x --enable_dhcp=False x.x.x.0/x --name pub-sub
+</code></pre>
+
+<p>List the <em>public</em> subnet.</p>
+
+<pre><code>neutron subnet-list
+</code></pre>
+
+<p>Show more details about the <em>public</em> subnet.</p>
+
+<pre><code>neutron subnet-show pub-sub
+</code></pre>
+
+<p>Create the private subnet.       </p>
+
+<pre><code>neutron subnet-create private --gateway 192.168.0.1 192.168.0.0/24 --name priv-sub
+</code></pre>
+
+<p>List the <em>private</em> subnet.</p>
+
+<pre><code>neutron subnet-list
+</code></pre>
+
+<p>Show more details about the <em>pivate</em> subnet.</p>
+
+<pre><code>neutron subnet-show priv-sub
+</code></pre>
+
+<p>Create the router.</p>
+
+<pre><code>neutron router-create router1
+</code></pre>
+
+<p>Set the gateway for the router to reside on the <em>public</em> subnet.</p>
+
+<pre><code>neutron router-gateway-set router1 public
+</code></pre>
+
+<p>List the router.</p>
+
+<pre><code>neutron router-list
+</code></pre>
+
+<p>Update the <em>public</em> subnet with a valid DNS entry. <strong>THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED</strong></p>
+
+<pre><code>neutron subnet-update pub-sub --dns_nameservers list=true 10.16.143.247
+</code></pre>
+
+<p>Add an interface for the private subnet to the router.</p>
+
+<pre><code>neutron router-interface-add router1 priv-sub
+</code></pre>
+
+<p>Display router1 configuration.</p>
+
+<pre><code>neutron router-show router1
+</code></pre>
+
+<h2><strong>4.3 Configure the Neutron plugin.ini</strong></h2>
+
+<p>Ensure the <em>/etc/neutron/plugin.ini</em> has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the <em>vxlan_udp_port</em> and <em>network_vlan_ranges</em> are commented out.</p>
+
+<pre><code># vxlan_udp_port=4789
+# network_vlan_ranges=physnet1:1113:1114
+tenant_network_type=local
+enable_tunneling=False
+integration_bridge=br-int
+bridge_mappings=physnet1:br-em1
+</code></pre>
+
+<p>Reboot the server.</p>
+
+<pre><code>reboot
+</code></pre>
+
+<p><strong>Lab 4 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 5: Explore the Openstack Environment</strong></h1>
+
+<h2><strong>5 Server Configuration</strong></h2>
+
+<p>FILL OUT THIS</p>
+
+<p><strong>FILL OUT THIS</strong></p>
+
+<p>FILL OUT THIS</p>
+
+<p><strong>Lab 5 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 6: Deploy Heat Stack</strong></h1>
+
+<h2><strong>6.1 Import the Images into Glance</strong></h2>
+
+<p>All actions in this lab will performed by the <em>admin</em> tenant in this lab.  In a production enviroinment there will likely be many tenants.</p>
+
+<pre><code>source /root/keystonerc_admin
+</code></pre>
+
+<p>The names of these images are hard coded in the heat template.  Do not change the name here.</p>
+
+<pre><code>glance add name=RHEL65-x86_64-broker is_public=true disk_format=qcow2 \
+container_format=bare &lt; /home/images/RHEL65-x86_64-broker-v2.qcow2
+
+glance add name=RHEL65-x86_64-node is_public=true disk_format=qcow2 \
+container_format=bare &lt; /home/images/RHEL65-x86_64-node-v2.qcow2
+
+glance image-list
+</code></pre>
+
+<h2><strong>6.2 Ensure the heat.conf file is confirgured correctly</strong></h2>
+
+<p>Ensure the following variables are set in the /etc/heat/heat.conf file:</p>
+
+<pre><code>heat_metadata_server_url=http://IP of Controller:8000
+
+heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
+
+heat_watch_server_url=http://IP of Controller:8003
+</code></pre>
+
+<h2><strong>6.3 Create the openshift-environment file</strong></h2>
+
+<p><strong>Create the openshift-environment.yaml file:</strong></p>
+
+<p>Get the private and public network IDs as well as the private subnet ID out of the first column of the output of the below commands.  Place those parameters in the following file in the following fields: private_net_id: public_net_id: private_subnet_id: to replace FIXME.</p>
+
+<pre><code>neutron net-list
+neutron subnet-list
+</code></pre>
+
+<p>Create the <em>/root/openshift-environment.yaml</em> file and copy the following contents into it. For the IP address of the repo locations, please replace with the IP address of the host you are on.</p>
+
+<pre><code>parameters:
+  key_name: rootkp
+  prefix: novalocal
+  broker_hostname: openshift.brokerinstance.novalocal
+  node_hostname: openshift.nodeinstance.novalocal
+  conf_install_method: yum
+  conf_rhel_repo_base: http://IP_OF_HOST/rhel6.5
+  conf_jboss_repo_base: http://IP_OF_HOST
+  conf_ose_repo_base: http://IP_OF_HOST/ose-latest
+  conf_rhscl_repo_base: http://IP_OF_HOST
+  private_net_id: FIXME
+  public_net_id: FIXME
+  private_subnet_id: FIXME
+  yum_validator_version: &quot;2.0&quot;
+  ose_version: &quot;2.0&quot;
+</code></pre>
+
+<h2><strong>6.4 Open the port for Return Signals</strong></h2>
+
+<p>The <em>broker</em> and <em>node</em> VMs need to be able to deliver a completed signal to the metadata service.</p>
+
+<pre><code>iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
+service iptables save
+</code></pre>
+
+<h2><strong>6.5 Launch the stack</strong></h2>
+
+<p>Now run the <em>heat</em> command and launch the stack. The -f option tells <em>heat</em> where the template file resides.  The -e option points <em>heat</em> to the environment file that was created in the previous section.</p>
+
+<p><strong>Note: it can take up to 10 minutes for this to complete</strong></p>
+
+<pre><code>source /root/keystonerc_admin    
+
+cd /root/
+
+heat create openshift \
+-f heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
+-e /root/openshift-environment.yaml
+</code></pre>
+
+<h2><strong>6.6 Monitor the stack</strong></h2>
+
+<p>List the <em>heat</em> stack</p>
+
+<pre><code>heat stack-list
+</code></pre>
+
+<p>Watch the heat events.</p>
+
+<pre><code>heat event-list openshift
+
+heat resource-list openshift
+
+nova list
+</code></pre>
+
+<p>Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM&#39;s.</p>
+
+<pre><code>nova get-vnc-console broker_instance novnc
+
+nova get-vnc-console node_instance novnc
+</code></pre>
+
+<h2><strong>6.7 Confirm Connectivity</strong></h2>
+
+<p>Ping the public IP.  Get the public IP by running <em>nova list</em> on the controller.</p>
+
+<pre><code>ping x.x.x.x 
+</code></pre>
+
+<p>SSH into the broker instance.  This may take a minute or two while they are spawning.  This will use the key that was created with <em>nova keypair</em> earlier.</p>
+
+<p>Confirm which IP address belongs to the broker and to the node.</p>
+
+<pre><code>nova list
+</code></pre>
+
+<p>SSH into the broker</p>
+
+<pre><code>ssh -i ~/adminkp.pem ec2-user@IP.OF.BROKER
+</code></pre>
+
+<p>Once logged in, gain root access and explore the environment.</p>
+
+<pre><code>sudo su -
+</code></pre>
+
+<p>Check the OpenShift install output.</p>
+
+<pre><code>cat /tmp/openshift.out
+</code></pre>
+
+<p>Check mcollective traffic.  You should get a response from the node that was deployed as part of the stack.</p>
+
+<pre><code>oo-mco ping
+
+oo-diagnostics -v
+
+oo-accept-broker -v
+</code></pre>
+
+<p>SSH into the node, using the IP that was obtained above.</p>
+
+<pre><code>ssh -i ~/rootkp.pem ec2-user@IP.OF.NODE
+</code></pre>
+
+<p>Check node configuration</p>
+
+<pre><code>oo-accept-node
+</code></pre>
+
+<p>Confirm Console Access by opening a browser and putting in the IP address of the broker.</p>
+
+<p><a href="http://IP.OF.BROKER/console">http://IP.OF.BROKER/console</a></p>
+
+<p><strong>FILL OUT THIS</strong></p>
+
+<p>FILL OUT THIS</p>
+
+<p><strong>Lab 6 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 7: Installing the RHC client tools</strong></h1>
+
+<p><strong>Server used:</strong></p>
+
+<ul>
+<li>localhost</li>
+</ul>
+
+<p><strong>Tools used:</strong></p>
+
+<ul>
+<li>ruby</li>
+<li>sudo</li>
+<li>git</li>
+<li>yum</li>
+<li>gem</li>
+<li>rhc</li>
+</ul>
+
+<p>The OpenShift Client tools, known as <strong>rhc</strong>, are built and packaged using the Ruby programming language.  OpenShift Enterprise integrates with the Git version control system to provide powerful, decentralized version control for your application source code.</p>
+
+<p>OpenShift Enterprise client tools can be installed on any operating system with Ruby 1.8.7 or higher.  Instructions for specific operating systems are provided below. It is assumed that you are running the commands from a command line window, such as Command Prompt, or Terminal. If you are using Ruby Version Manager (rvm) see the instructions below.</p>
+
+<h2><strong>Microsoft Windows</strong></h2>
+
+<h3><strong>Installing Ruby for Windows</strong></h3>
+
+<p><a href="http://rubyinstaller.org/">RubyInstaller 1.9</a> provides the best experience for installing Ruby on Windows XP, Vista, and Windows 7. Download the latest 1.9 version from the <a href="http://rubyinstaller.org/downloads/">download page</a> and launch the installer.</p>
+
+<p><strong>Important</strong>: During the installation, you should accept all of the defaults.  It is mandatory that you select the &quot;Add Ruby executables to your PATH&quot; check box in order to run Ruby from the command line.</p>
+
+<p>After the installation is complete, to verify that the installation is working, run:</p>
+
+<pre><code>C:\Program Files\&gt; ruby -e &#39;puts &quot;Welcome to Ruby&quot;&#39;
+Welcome to Ruby
+</code></pre>
+
+<p>If the &#39;Welcome to Ruby&#39; message does not display, the Ruby executable may not have been added to the path. Restart the installation process and ensure the &quot;Add Ruby executables to your PATH&quot; check box is selected.</p>
+
+<h3><strong>Installing Git for Windows</strong></h3>
+
+<p>The next step is to install <a href="http://msysgit.github.com/">Git for Windows</a> so that you can synchronize your local application source and your OpenShift application. Git for Windows offers the easiest Git experience on the Windows operating system and is the recommended default - if you use another version of Git, please ensure it can be executed from the command line, and continue to the next section.</p>
+
+<p>Download and install the <a href="http://code.google.com/p/msysgit/downloads/list?q=full+installer+official+git">latest version of Git for Windows</a>. Ensure that Git is added to your PATH so that it can be run from the command line. After the installation has completed, verify that Git is correctly configured by runing:</p>
+
+<pre><code>C:\Program Files\&gt; git --version
+git version 1.7.11.msysgit.1
+</code></pre>
+
+<h3><strong>Installing RHC for Windows</strong></h3>
+
+<p>After Ruby and Git are correctly installed, use the RubyGems package manager (included in Ruby) to install the OpenShift Enterprise client tools. Run:</p>
+
+<pre><code>C:\Program Files\&gt; gem install rhc
+</code></pre>
+
+<p>RubyGems downloads and installs the rhc gem from <a href="http://www.rubygems.org/gems/rhc">www.rubygems.org/gems/rhc</a>. The installation typically proceeds without errors. After the installation has completed, run:</p>
+
+<pre><code>C:\Program Files\&gt; rhc
+</code></pre>
+
+<h2><strong>Mac OS X</strong></h2>
+
+<h3><strong>Installing Ruby for OS X</strong></h3>
+
+<p>From OS X Lion onwards, Ruby 1.8.7 is installed by default. On older Mac systems, Ruby is shipped as part of the <a href="https://developer.apple.com/xcode/">Xcode development suite</a> and can be installed from your installation CD. If you are familiar with Mac development, you can also use <a href="http://macruby.org/">MacRuby</a> or see the Ruby installation page for <a href="http://www.ruby-lang.org/en/downloads/">help installing with homebrew</a>.</p>
+
+<p>To verify that Ruby is correctly installed run:</p>
+
+<pre><code>$ ruby -e &#39;puts &quot;Welcome to Ruby&quot;&#39;
+Welcome to Ruby
+</code></pre>
+
+<h3><strong>Installing Git for OS X</strong></h3>
+
+<p>There are a number of options on Mac OS X for Git. We recommend the Git for OS X installer - download and run the latest version of the dmg file on your system. To verify the <a href="http://code.google.com/p/git-osx-installer/">Git for OS X installation</a>, run:</p>
+
+<pre><code>$ git --version
+git version 1.7.11.1
+</code></pre>
+
+<h3><strong>Installing RHC for OS X</strong></h3>
+
+<p>With Ruby and Git installed, use the RubyGems library system to install and run the OpenShift Enterprise gem. Run:</p>
+
+<pre><code>$ sudo gem install rhc
+</code></pre>
+
+<p>After the installation has completed, run:</p>
+
+<pre><code>$ rhc -v
+</code></pre>
+
+<h2><strong>Fedora 16 or later</strong></h2>
+
+<p>To install from yum on Fedora, run:</p>
+
+<pre><code>$ sudo yum install rubygem-rhc
+</code></pre>
+
+<p>This installs Ruby, Git, and the other dependencies required to run the OpenShift Enterprise client tools.</p>
+
+<p>After the OpenShift Enterprise client tools have been installed, run:</p>
+
+<pre><code>$ rhc -v
+</code></pre>
+
+<h2><strong>Red Hat Enterprise Linux 6 with OpenShift entitlement</strong></h2>
+
+<p>The most recent version of the OpenShift Enterprise client tools are available as a RPM from the OpenShift Enterprise hosted Yum repository. We recommend this version to remain up to date, although a version of the OpenShift Enterprise client tools RPM is also available through EPEL.</p>
+
+<p>With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:</p>
+
+<pre><code>$ sudo yum install rubygem-rhc
+</code></pre>
+
+<p>If you do not have an OpenShift Enterprise on the system you want to install the client tools on, you can install ruby and rubygems and then issue the following command:</p>
+
+<pre><code>$ sudo gem install rhc
+</code></pre>
+
+<h2><strong>Ubuntu</strong></h2>
+
+<p>Use the apt-get command line package manager to install Ruby and Git before you install the OpenShift Enterprise command line tools. Run:</p>
+
+<pre><code>$ sudo apt-get install ruby-full rubygems git-core
+</code></pre>
+
+<p>After you install both Ruby and Git, verify they can be accessed via the command line:</p>
+
+<pre><code>$ ruby -e &#39;puts &quot;Welcome to Ruby&quot;&#39;
+$ git --version
+</code></pre>
+
+<p>If either program is not available from the command line, please add them to your PATH environment variable.</p>
+
+<p>With Ruby and Git correctly installed, you can now use the RubyGems package manager to install the OpenShift Enterprise client tools. From a command line, run:</p>
+
+<pre><code>$ sudo gem install rhc
+</code></pre>
+
+<p><strong>Lab 7 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 08: Using *rhc setup</strong>*</h1>
+
+<p><strong>Server used:</strong></p>
+
+<ul>
+<li>localhost</li>
+</ul>
+
+<p><strong>Tools used:</strong></p>
+
+<ul>
+<li>rhc</li>
+</ul>
+
+<h2><strong>Configuring RHC setup</strong></h2>
+
+<p>By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell <em>rhc</em> to use our broker.hosts.example.com server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the <em>rhc setup</em> command using the optional <em>--server</em> parameter.</p>
+
+<pre><code>$ rhc setup --server broker.hosts.example.com
+</code></pre>
+
+<p>Once you enter in that command, you will be prompted for the username that you would like to authenticate with.  For this training class, use the <em>demo</em> user account.  </p>
+
+<p>The first thing that you will be prompted with will look like the following:</p>
+
+<pre><code>The server&#39;s certificate is self-signed, which means that a secure connection can&#39;t be established to
+&#39;broker.hosts.example.com&#39;.
+
+You may bypass this check, but any data you send to the server could be intercepted by others.
+Connect without checking the certificate? (yes|no):
+</code></pre>
+
+<p>Since we are using a self signed certificate, go ahead and select <em>yes</em> here and press the enter key. </p>
+
+<p>At this point, you will be prompted for the username.  Enter in demo and specify the password for the demo user.</p>
+
+<p>After authenticating, OpenShift Enterprise will prompt if you want to create a authentication token for your system.  This will allow you to execute command on the PaaS as a developer without having to authenticate.  It is suggested that you generate a token to speed up the other labs in this training class.</p>
+
+<p>The next step in the setup process is to create and upload our SSH key to the broker server.  This is required for pushing your source code, via Git, up to the OpenShift Enterprise server.</p>
+
+<p>Finally, you will be asked to create a namespace for the provided user account.  The namespace is a unique name which becomes part of your application URL. It is also commonly referred to as the user&#39;s domain. The namespace can be at most 16 characters long and can only contain alphanumeric characters. There is currently a 1:1 relationship between usernames and namespaces.  For this lab, create the following namespace:</p>
+
+<pre><code>ose
+</code></pre>
+
+<h2><strong>Under the covers</strong></h2>
+
+<p>The <em>rhc setup</em> tool is a convenient command line utility to ensure that the user&#39;s operating system is configured properly to create and manage applications from the command line.  After this command has been executed, a <em>.openshift</em> directory will have been created in the user&#39;s home directory with some basic configuration items specified in the <em>express.conf</em> file.  The contents of that file are as follows:</p>
+
+<pre><code># Default user login
+default_rhlogin=‘demo’
+
+# Server API
+libra_server = &#39;broker.hosts.example.com&#39;
+</code></pre>
+
+<p>This information will be read by the <em>rhc</em> command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the <em>-l</em> switch to the <em>rhc</em> command.</p>
+
+<p><strong>Lab 8 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 9: Create a PHP Application</strong></h1>
+
+<h2><strong>9.1 Create a PHP Application</strong></h2>
+
+<p>FILL OUT THIS</p>
+
+<p><strong>FILL OUT THIS</strong></p>
+
+<p>FILL OUT THIS</p>
+
+<p><strong>Lab 9 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 10: Extending the OpenShift Environment</strong></h1>
+
+<p>As applications are added additional node hosts may be added to extend the capacity of the OpenShift Enterprise environment.</p>
+
+<h2>10.1 Create the node environment file</h2>
+
+<p>A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.</p>
+
+<p>Create the <em>/root/node-environment.yaml</em> file and copy the following contents into it.</p>
+
+<pre><code>parameters:
+  key_name: rootkp
+  domain: novalocal
+  broker1_floating_ip: 10.16.138.100
+  load_bal_hostname: openshift.brokerinstance.novalocal
+  node_hostname: openshift.nodeinstance2.novalocal
+  node_image: RHEL65-x86_64-node
+  hosts_domain: novalocal
+  replicants: &quot;&quot;
+  install_method: yum
+  rhel_repo_base: http://10.16.138.52/rhel6.5
+  jboss_repo_base: http://10.16.138.52
+  openshift_repo_base: http://10.16.138.52/ose-latest
+  rhscl_repo_base: http://10.16.138.52
+  activemq_admin_pass: FIXME
+  activemq_user_pass: FIXME
+  mcollective_pass: FIXME
+  private_net_id: FIXME
+  public_net_id: FIXME
+  private_subnet_id: FIXME
+</code></pre>
+
+<h2>10.2 Launch the node heat stack</h2>
+
+<p>Now run the <em>heat</em> command and launch the stack. The -f option tells <em>heat</em> where the template file resides. The -e option points <em>heat</em> to the environment file that was created in the previous section.</p>
+
+<pre><code>cd /root/
+
+heat stack-create ose_node \
+-f  heat-templates/openshift-enterprise/heat/neutron/highly-available/ose_node_stack.yaml \
+-e /root/node-environment.yaml
+</code></pre>
+
+<h2><strong>10.3 Monitor the stack</strong></h2>
+
+<p>List the <em>heat</em> stack</p>
+
+<pre><code>heat stack-list
+</code></pre>
+
+<p>Watch the heat events.</p>
+
+<pre><code>heat event-list openshift
+
+heat resource-list openshift
+
+nova list
+</code></pre>
+
+<h2><strong>10.4 Confirm Connectivity</strong></h2>
+
+<p>Ping the public IP of node 2</p>
+
+<pre><code>ping x.x.x.x 
+</code></pre>
+
+<p>SSH into the node2 instance.  This may take a minute or two while they are spawning.  This will use the key that was created with <em>nova keypair</em> earlier.</p>
+
+<p>SSH into the node</p>
+
+<pre><code>ssh -i ~/rootkp.pem ec2-user@IP.OF.NODE2
+</code></pre>
+
+<p>Once logged in, gain root access and explore the environment.</p>
+
+<pre><code>sudo su -
+</code></pre>
+
+<p>Check the OpenShift install output.</p>
+
+<pre><code>cat /tmp/openshift.out
+</code></pre>
+
+<p>Check node configuration</p>
+
+<pre><code>oo-accept-node
+</code></pre>
+
+<p>SSH into the broker instance to update the DNS zone file.</p>
+
+<pre><code>ssh -i ~/rootkp.pem ec2-user@IP.OF.BROKER
+</code></pre>
+
+<p>Once logged in, gain root access.</p>
+
+<pre><code>sudo su -
+</code></pre>
+
+<p>Append the node 2 instance <em>A</em> record to the zone file so node 2 hostname resolves.</p>
+
+<pre><code>echo &quot;openshift.nodeinstance2    A   IP.OF.NODE2&quot; &gt;&gt; /var/named/dynamic/novalocal.db
+</code></pre>
+
+<p>Check mcollective traffic.  You should get a response from node 2 that was deployed as part of the stack.</p>
+
+<pre><code>oo-mco ping
+</code></pre>
+
+<p><strong>Lab 10 Complete!</strong></p>
+
+<!--BREAK-->
+
+</body>
+</html>

@@ -23,13 +23,12 @@ The names of these images are hard coded in the heat template.  Do not change th
 
 Ensure the following variables are set in the /etc/heat/heat.conf file:
 
-    heat_metadata_server_url=http://IP of Controller:8000
-    
-    heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
-    
-    heat_watch_server_url=http://IP of Controller:8003
-
-
+    # heat_metadata_server_url=http://IP of Controller:8000
+    heat_metadata_server_url=http://172.10.0.1:8000
+    # heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
+    heat_waitcondition_server_url=http://172.10.0.1:8000/v1/waitcondition
+    # heat_watch_server_url=http://IP of Controller:8003
+    heat_watch_server_url=http://172.10.0.1:8003
 
 
 ##**6.3 Create the openshift-environment file**
@@ -50,10 +49,14 @@ Create the */root/openshift-environment.yaml* file and copy the following conten
       broker_hostname: openshift.brokerinstance.novalocal
       node_hostname: openshift.nodeinstance.novalocal
       conf_install_method: yum
-      conf_rhel_repo_base: http://IP_OF_HOST/rhel6.5
-      conf_jboss_repo_base: http://IP_OF_HOST
-      conf_ose_repo_base: http://IP_OF_HOST/ose-latest
-      conf_rhscl_repo_base: http://IP_OF_HOST
+      # conf_rhel_repo_base: http://IP_OF_HOST/rhel6.5
+      conf_rhel_repo_base: http://172.10.0.1/rhel6.5
+      # conf_jboss_repo_base: http://IP_OF_HOST
+      conf_jboss_repo_base: http://172.10.0.1
+      # conf_ose_repo_base: http://IP_OF_HOST/ose-latest
+      conf_ose_repo_base: http://172.10.0.1/ose-latest
+      # conf_rhscl_repo_base: http://IP_OF_HOST
+      conf_rhscl_repo_base: http://172.10.0.1
       private_net_id: FIXME
       public_net_id: FIXME
       private_subnet_id: FIXME
@@ -105,7 +108,7 @@ Get a VNC console address and open it in the browser.  Firefox must be launched 
 
 ##**6.7 Confirm Connectivity**
 
-Ping the public IP.  Get the public IP by running *nova list* on the controller.
+Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.
 
     ping x.x.x.x 
     

@@ -44,8 +44,11 @@ Show more details about the private network.
       
 Create the *public* subnet. This command also creates a pool of IP addresses that will be *floating* IP addresses.  In addition, set up the gateway here.
   
-    neutron subnet-create public --allocation-pool start=x.x.x.x,end=x.x.x.x \
+    # neutron subnet-create public --allocation-pool start=x.x.x.x,end=x.x.x.x \
     --gateway x.x.x.x --enable_dhcp=False x.x.x.0/x --name pub-sub
+    
+    neutron subnet-create public --allocation-pool start=172.10.1.1,end=172.10.1.20 \
+    --gateway 172.10.0.1 --enable_dhcp=False 172.10.0.0/16 --name pub-sub    
         
 List the *public* subnet.
 
@@ -79,9 +82,9 @@ List the router.
         
     neutron router-list
 
-Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED**
+Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED, FOR OUR PURPOSES - VINNY, use 10.16.143.247**
         
-    neutron subnet-update pub-sub --dns_nameservers list=true 10.16.143.247
+    neutron subnet-update pub-sub --dns_nameservers list=true x.x.x.x
 
 Add an interface for the private subnet to the router.
         
@@ -101,7 +104,6 @@ Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the
     enable_tunneling=False
     integration_bridge=br-int
     bridge_mappings=physnet1:br-em1
-
 
     
 Reboot the server.

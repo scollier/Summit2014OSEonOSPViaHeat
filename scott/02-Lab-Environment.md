@@ -6,6 +6,15 @@ Each student will either recieve his / her own server or will share with another
 
 ![Lab Configuration](http://summitimage-scollier1.rhcloud.com/summit_lab.png)
 
+
+**Local User**
+Everything in the lab will be performed with the following user and password:
+
+    user: user
+    Password: password
+
+Sudo access will be provided for certain commands.
+
 **System Partitions**
 
 If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.

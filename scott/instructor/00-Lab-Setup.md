@@ -18,6 +18,10 @@
     yum -y install openstack-packstack
     yum -y install git
 
+# Create user on the system
+
+    useradd user
+    echo password | passwd user --stdin
 
 # Copy answerfile local so it can be inspected by the students
 

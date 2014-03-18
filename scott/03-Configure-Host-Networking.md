@@ -13,7 +13,7 @@ Here you will notice that out of the box, packstack does not configure the inter
 
 **Set up the interfaces on the server:**
 
-Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created - it does not exist out of box.  The two files on the host should look exactly the same as what is listed below.
+For this lab, we will need 3 interfaces.  *ifcfg-em1* will be associated with the *ifcfg-br-em1* bridge. Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created - it does not exist out of box.  The three files on the host should look exactly the same as what is listed below.
 
         
         /etc/sysconfig/network-scripts/ifcfg-br-em1
@@ -21,7 +21,9 @@ Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-e
         ONBOOT="yes"
         DEVICETYPE=ovs
         TYPE="OVSBridge"
-        OVSBOOTPROTO="dhcp"
+        OVSBOOTPROTO="static"
+        IPADDR="172.10.0.1"
+        NETMASK="255.255.0.0"
         OVSDHCPINTERFACES="em1"
 
 and configure em1, it exists already, just modify to make it look like:
@@ -34,6 +36,13 @@ and configure em1, it exists already, just modify to make it look like:
         PROMISC="yes"
         DEVICETYPE="ovs"
         
+and configure em1:1 to provide external access.  This file needs to be created and look like:
+
+        DEVICE="em1:1"
+        ONBOOT="yes"
+        BOOTPROTO="dhcp"
+        TYPE="Ethernet"
+
 **Restart Networking and review the interface configuration:**
 
         service network restart
@@ -43,7 +52,7 @@ Confirm the IP address moved to the bridge interface.
         ovs-vsctl show
         ip a
         
-Now the IP address should be on the *br-em1* interface.
+Now the IP address should be on the *br-em1* interface and *em1:1* virtual interface should be functional.
               
 
 **Lab 3 Complete!**
