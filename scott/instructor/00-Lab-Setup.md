@@ -52,6 +52,9 @@
     tar xvf /root/heat-templates.tgz -C /root/
     wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/RHOSE-CLIENT-2.0.repo -O /etc/yum.repos.d/RHOSE-CLIENT-2.0.repo
 
+# Add NFS mount if needed
+
+    mount -t nfs -o vers=3 refarch.cloud.lab.eng.bos.redhat.com:/pub /pub
 
 # Set up the remaining repos
 
