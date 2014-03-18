@@ -2,7 +2,7 @@
 
 #**2 Server Configuration**
 
-Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.
+Each student will recieve their own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 installed as the base operating system.  The server was configured with OpenStack using packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.
 
 ![Lab Configuration](http://summitimage-scollier1.rhcloud.com/summit_lab.png)
 
@@ -17,11 +17,12 @@ Sudo access will be provided for certain commands.
 
 **System Partitions**
 
-If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.
+**WARNING!!!** There are multiple partitions on this system. It is VITAL that you only ever boot into or modify partition <X NEED TO FILL THIS OUT>. Do not mount the other partition or make any changes to the boot loader. Doing so will violate the spirit of Summit and make the panda very sad.
+
+If you have to reboot the system, select partition X NEED TO FILL THIS OUT.
 
 
 **Look at the configuration options for Heat and Neutron:**
-
 
         vim /root/answer.txt
 
@@ -30,6 +31,10 @@ If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.
         ll /var/www/html
 
 These will be utilized by the *openshift.sh* file when it is called by heat.
+
+**There are also local repositories for RHEL and RHEL OSP:**
+
+    ll /var/www/html/repos/
 
 **Explore the Heat template:**
 
@@ -41,13 +46,11 @@ Here you can see that the Heat template was originally making calls to github fo
 
         ls /home/images/RHEL*
         
-These two images were pre-built using disk image builder(DIB) for the purpose of saving time in the lab. The commands used to 
+These two images were pre-built using disk image builder(DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT>
 
 **Check out the software repositories:**
 
         yum repolist
-        
-
 
 **Lab 2 Complete!**
 
