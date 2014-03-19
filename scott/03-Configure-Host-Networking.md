@@ -10,20 +10,20 @@ The server has a single network card. Configure both of the interface files at o
     ovs-vsctl show
     ip a
     
-Here you will notice that out of the box, packstack does not configure the interfaces.  In it's current state, *em1* has the IP address.  We need to migrate that IP address to the *br-em1* interface.
+Here you will notice that out of the box, packstack does not configure the interfaces.  In it's current state, the single Ethernet interface has an IP address from the classroom DHCP server.  We need to migrate that IP address to the *br-public* interface.
 
 **Set up the interfaces on the server:**
 
-For this lab, we will need 3 interfaces.  *ifcfg-em1* will be associated with the *ifcfg-br-em1* bridge. Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created - it does not exist out of box.  The three files on the host should look exactly the same as what is listed below.
+For this lab we will need 3 interfaces. The DHCP interface will likely be *em1* or *eth0* or somethign similar. These instructions will assume *em1*. The configuration file *ifcfg-em1* will be associated with the *ifcfg-br-public* bridge. Ensure the *ifcfg-em1* and *ifcfg-br-public* files look as follows.  The *ifcfg-br-public* file will have to be created - it does not exist out of box.  The three files on the host should look exactly the same as what is listed below.
 
-Create the file **/etc/sysconfig/network-scripts/ifcfg-br-em1** with the following contents:
+Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents:
 
-    DEVICE="br-em1"
+    DEVICE="br-public"
     ONBOOT="yes"
     DEVICETYPE=ovs
     TYPE="OVSBridge"
     OVSBOOTPROTO="static"
-    IPADDR="172.10.0.1"
+    IPADDR="172.16.0.1"
     NETMASK="255.255.0.0"
     OVSDHCPINTERFACES="em1"
 
@@ -32,37 +32,41 @@ The configuration file for em1 exists already, edit **/etc/sysconfig/network-scr
     DEVICE="em1"
     ONBOOT="yes"
     TYPE="OVSPort"
-    OVS_BRIDGE="br-em1"
+    OVS_BRIDGE="br-public"
     PROMISC="yes"
     DEVICETYPE="ovs"
     
-Configure a subinterface em1:1 to provide external access. Create the file **/etc/sysconfig/network/ifcfg-em1:1** with the contents:
+Configure a new interface called *classroom* to provide external access. Create the file **/etc/sysconfig/network/ifcfg-classroom** with the contents:
 
-    DEVICE="em1:1"
+    DEVICE="classroom"
     ONBOOT="yes"
-    BOOTPROTO="dhcp"
-    TYPE="Ethernet"
+    TYPE="OVSIntPort"
+    OVS_BRIDGE="br-public"
+    DEVICETYPE="ovs"
+    BOOTPROTO=dhcp
+    OVS_EXTRA="set Interface classroom type=internal"
 
 **Restart Networking and review the interface configuration:**
 
     service network restart
 
-Confirm the IP address moved to the bridge interface.
+Confirm the *172.16.0.1* IP address is assigned to the bridge interface *br-public*;
 
     ovs-vsctl show
     ip a
     
-Now the IP address should be on the *br-em1* interface and *em1:1* virtual interface should be functional.
+IP address should be on the *br-public* interface and the *classroom* interface should have received a new DHCP address.
           
-    ip a | grep em1
+    ip a | egrep "public|classroom"
 
 output:
 
-    2: em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
-    92: phy-br-em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-    93: int-br-em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-    154: br-em1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
-    inet 10.16.138.52/21 brd 10.16.143.255 scope global br-em1
+    92: phy-br-public: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    93: int-br-public: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    168: br-public: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
+        inet 172.10.0.1/16 brd 172.10.255.255 scope global br-public
+    169: classroom: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
+        inet 10.16.143.136/21 brd 10.16.143.255 scope global classroom
 
 **Lab 3 Complete!**
 
