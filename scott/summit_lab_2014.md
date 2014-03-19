@@ -32,7 +32,7 @@ At the conclusion of this training class, you should have a solid understanding 
 
 ##**1.3 Overview of OpenShift Enterprise PaaS**
 
-Platform as a Service is changing the way developers approach developing software. Developers typically use a local sandbox with their preferred application server and only deploy locally on that instance. Developers typically start JBoss locally using the startup.sh command and drop their .war or .ear file in the deployment directory and they are done.  Developers have a hard time understanding why deploying to the production infrastructure is such a time consuming process.
+Platform as a Service is changing the way developers approach developing software. Developers typically use a local sandbox with their preferred application server and only deploy locally on that instance. Developers typically start JBoss locally using the startup.sh command and drop their .war or .ear file in the deployment directory and they are done.  Developers have a hard time understanding why deploying to the production infrastructure is such a time consuming process, they just want to develop and test their applications.
 
 System Administrators understand the complexity of not only deploying the code, but procuring, provisioning, and maintaining a production level system. They need to stay up to date on the latest security patches and errata, ensure the firewall is properly configured, maintain a consistent and reliable backup and restore plan, monitor the application and servers for CPU load, disk IO, HTTP requests, etc.
 
@@ -44,11 +44,11 @@ OpenShift Enterprise is infrastructure agnostic. OpenShift Enterprise can be ins
 
 This means that in order to take advantage of OpenShift Enterprise any existing resources from your hardware pool may be used. Infrastructure may be based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack or even bare metal: essentially any Red Hat Enterprise Linux operating system running on x86_64.
 
-For this training class, Red Hat Linux OpenStack Platform 4.0 is the Infrastructure as a Service layer. The OpenStack environment has been installed on a single node with all the necessary components required to complete the lab.
+For this training class, Red Hat Enterprise Linux OpenStack Platform 4.0 is the Infrastructure as a Service layer. The OpenStack environment has been installed on a single server with all the necessary components required to complete the lab, but in a real production environment a deployment would consist of many servers.
 
 ##**1.5 Using the *openshift.sh* installation script**
 
-This training session will demonstrate the deployment mechanisms that Heat provides. Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the `openshift.sh` installation script.  `openshift.sh` automates the deployment and initial configuration of OpenShift Enterprise platform.  For a deeper understanding of the internals of the platform refer to the official [OpenShift Enterprise Deployment Guide](https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html).
+This training session will demonstrate the deployment mechanisms that Heat provides. Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the `openshift.sh` installation script.  `openshift.sh` automates the deployment and initial configuration of OpenShift Enterprise platform.  For a deeper understanding of the internals of the platform refer to the official [OpenShift Enterprise Deployment Guide](https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html). For details on Red Hat Enterprise Linux OpenStack Platform refer to [RHEL OSP Documentation](https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/).
 
 
 **Lab 1 Complete!**
@@ -59,7 +59,7 @@ This training session will demonstrate the deployment mechanisms that Heat provi
 
 #**2 Server Configuration**
 
-Each student will either recieve his / her own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 install as the base operating system.  The server was configured with OpenStack with packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.
+Each student will recieve their own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 installed as the base operating system.  The server was configured with OpenStack using packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.
 
 ![Lab Configuration](http://summitimage-scollier1.rhcloud.com/summit_lab.png)
 
@@ -74,37 +74,40 @@ Sudo access will be provided for certain commands.
 
 **System Partitions**
 
-If you have to reboot the system, we are on partition X NEED TO FILL THIS OUT.
+**WARNING!!!** There are multiple partitions on this system. It is VITAL that you only ever boot into or modify partition <X NEED TO FILL THIS OUT>. Do not mount the other partition or make any changes to the boot loader. Doing so will violate the spirit of Summit and make the panda very sad.
+
+If you have to reboot the system, select partition X NEED TO FILL THIS OUT.
 
 
 **Look at the configuration options for Heat and Neutron:**
 
-
-        vim /root/answer.txt
+    vim /root/answer.txt
 
 **Each system has software repositories that are shared out via the local Apache web server:**
 
-        ll /var/www/html
+    ll /var/www/html
 
 These will be utilized by the *openshift.sh* file when it is called by heat.
 
+**There are also local repositories for RHEL and RHEL OSP:**
+
+    ll /var/www/html/repos/
+
 **Explore the Heat template:**
 
-        egrep -i 'curl|wget' /root/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml
-        
+    egrep -i 'curl|wget' /root/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml
+    
 Here you can see that the Heat template was originally making calls to github for the *enterprise-2.0* and *openshift.sh* files. These lines were modified to point to local repositories for the purposes of this lab.
 
 **Look a the images that were pre-built for this lab:**
 
-        ls /home/images/RHEL*
-        
-These two images were pre-built using disk image builder(DIB) for the purpose of saving time in the lab. The commands used to 
+    ls /home/images/RHEL*
+    
+These two images were pre-built using disk image builder(DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT>
 
 **Check out the software repositories:**
 
-        yum repolist
-        
-
+    yum repolist
 
 **Lab 2 Complete!**
 
@@ -119,54 +122,63 @@ The server has a single network card. Configure both of the interface files at o
 
 **Explore the current network card interface setup:**
 
-        ovs-vsctl show
-        ip a
-        
+    ip a
+    ovs-vsctl show
+    ip a
+    
 Here you will notice that out of the box, packstack does not configure the interfaces.  In it's current state, *em1* has the IP address.  We need to migrate that IP address to the *br-em1* interface.
 
 **Set up the interfaces on the server:**
 
 For this lab, we will need 3 interfaces.  *ifcfg-em1* will be associated with the *ifcfg-br-em1* bridge. Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created - it does not exist out of box.  The three files on the host should look exactly the same as what is listed below.
 
-        
-        /etc/sysconfig/network-scripts/ifcfg-br-em1
-        DEVICE="br-em1"
-        ONBOOT="yes"
-        DEVICETYPE=ovs
-        TYPE="OVSBridge"
-        OVSBOOTPROTO="static"
-        IPADDR="172.10.0.1"
-        NETMASK="255.255.0.0"
-        OVSDHCPINTERFACES="em1"
+Create the file **/etc/sysconfig/network-scripts/ifcfg-br-em1** with the following contents:
 
-and configure em1, it exists already, just modify to make it look like:
+    DEVICE="br-em1"
+    ONBOOT="yes"
+    DEVICETYPE=ovs
+    TYPE="OVSBridge"
+    OVSBOOTPROTO="static"
+    IPADDR="172.10.0.1"
+    NETMASK="255.255.0.0"
+    OVSDHCPINTERFACES="em1"
 
-        /etc/sysconfig/network-scripts/ifcfg-em1
-        DEVICE="em1"
-        ONBOOT="yes"
-        TYPE="OVSPort"
-        OVS_BRIDGE="br-em1"
-        PROMISC="yes"
-        DEVICETYPE="ovs"
-        
-and configure em1:1 to provide external access.  This file needs to be created and look like:
+The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents:
 
-        DEVICE="em1:1"
-        ONBOOT="yes"
-        BOOTPROTO="dhcp"
-        TYPE="Ethernet"
+    DEVICE="em1"
+    ONBOOT="yes"
+    TYPE="OVSPort"
+    OVS_BRIDGE="br-em1"
+    PROMISC="yes"
+    DEVICETYPE="ovs"
+    
+Configure a subinterface em1:1 to provide external access. Create the file **/etc/sysconfig/network/ifcfg-em1:1** with the contents:
+
+    DEVICE="em1:1"
+    ONBOOT="yes"
+    BOOTPROTO="dhcp"
+    TYPE="Ethernet"
 
 **Restart Networking and review the interface configuration:**
 
-        service network restart
+    service network restart
 
 Confirm the IP address moved to the bridge interface.
 
-        ovs-vsctl show
-        ip a
-        
+    ovs-vsctl show
+    ip a
+    
 Now the IP address should be on the *br-em1* interface and *em1:1* virtual interface should be functional.
-              
+          
+    ip a | grep em1
+
+output:
+
+    2: em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+    92: phy-br-em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    93: int-br-em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    154: br-em1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
+    inet 10.16.138.52/21 brd 10.16.143.255 scope global br-em1
 
 **Lab 3 Complete!**
 
@@ -602,9 +614,6 @@ With Ruby and Git correctly installed, you can now use the RubyGems package mana
 
 ##**Configuring RHC setup**
 
-DELETE THE FOLLOWING LINE
-Bob K testing.
-
 By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our broker.hosts.example.com server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
 
 	$ rhc setup --server broker.hosts.example.com
@@ -650,18 +659,269 @@ This information will be read by the *rhc* command line tool for every future co
 
 #**Lab 9: Create a PHP Application**
 
-##**9.1 Create a PHP Application**
+**Tools used:**
 
-FILL OUT THIS
+* rhc
 
-**FILL OUT THIS**
+In this lab, we are ready to start using OpenShift Enterprise to create our
+first application.  To create an application, we will be using the *rhc app*
+command.  In order to view all of the switches available for the *rhc app*
+command, enter the following command:
 
-FILL OUT THIS
+	$ rhc app -h
+	
+This will provide you with the following output:
+	
+	List of Actions
+	  configure     Configure several properties that apply to an application
+	  create        Create an application
+	  delete        Delete an application from the server
+	  deploy        Deploy a git reference or binary file of an application
+	  force-stop    Stops all application processes
+	  reload        Reload the application's configuration
+	  restart       Restart the application
+	  show          Show information about an application
+	  start         Start the application
+	  stop          Stop the application
+	  tidy          Clean out the application's logs and tmp directories and tidy up the git repo on the
+	                server
 
+
+##**Create a new application**
+
+It is very easy to create an OpenShift Enterprise application using *rhc*. The command to create an application is *rhc app create*, and it requires two mandatory arguments:
+
+* **Application Name** : The name of the application. The application name can only contain alpha-numeric characters and at max contain only 32 characters.
+
+* **Type**: The type is used to specify which language runtime to use.  
+
+Create a directory to hold your OpenShift Enterprise code projects:
+
+	$ cd ~
+	$ mkdir ose
+	$ cd ose
+	
+To create an application that uses the *php* runtime, issue the following command:
+
+	$ rhc app create firstphp php-5.3
+	
+After entering that command, you should see output that resembles the following:
+
+	Application Options
+	-------------------
+	  Domain:     gshipley
+	  Cartridges: php-5.3
+	  Gear Size:  default
+	  Scaling:    no
+	
+	Creating application 'firstphp' ... done
+	
+	
+	Waiting for your DNS name to be available ... done
+	
+	Cloning into 'firstphp'...
+	The authenticity of host 'firstphp-ose.apps.example.com (209.132.178.87)' can't be established.
+	RSA key fingerprint is e8:e2:6b:9d:77:e2:ed:a2:94:54:17:72:af:71:28:04.
+	Are you sure you want to continue connecting (yes/no)? yes
+	Warning: Permanently added 'firstphp-ose.apps.example.com' (RSA) to the list of known hosts.
+	Checking connectivity... done
+	
+	Your application 'firstphp' is now available. OpenShift should
+	return a URL that you can visit with your web browser.
+	
+You should see the default template that OpenShift Enterprise uses for a new application.
+
+	Run 'rhc show-app firstphp' for more details about your app.
+
+##**What just happened?**
+
+After you entered the command to create a new PHP application, a lot of things happened under the covers:
+
+* A request was made to the broker application host to create a new php application.
+* A message was broadcast using MCollective and ActiveMQ to find a node host to handle the application creation request.
+* A node host responded to the request and created an application / gear for you.
+* SELinux and cgroup policies were enabled for your application gear.
+* A userid was created for your application gear.
+* A private Git repository was created for your gear on the node host.
+* The Git repository was cloned onto your local machine.
+* BIND was updated on the broker host to include an entry for your application.
+
+##**Understanding directory structure on the localhost**
+
+When you created the PHP application using the *rhc app create* command, the private git repository that was created on your node host was cloned to your local machine.
+
+	$ cd firstphp
+	$ ls -al
+	
+You should see the following information:
+
+
+	total 8
+	drwxr-xr-x   9 gshipley  staff   306 Jan 21 13:48 .
+	drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 ..
+	drwxr-xr-x  13 gshipley  staff   442 Jan 21 13:48 .git
+	drwxr-xr-x   5 gshipley  staff   170 Jan 21 13:48 .openshift
+	-rw-r--r--   1 gshipley  staff  2715 Jan 21 13:48 README
+	-rw-r--r--   1 gshipley  staff     0 Jan 21 13:48 deplist.txt
+	drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 libs
+	drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 misc
+	drwxr-xr-x   4 gshipley  staff   136 Jan 21 13:48 php
+
+
+###**.git directory**
+
+If you are not familiar with the Git revision control system, this is where information about the git repositories that you will be interacting with is stored.  For instance, to list all of the repositories that you are currently setup to use for this project, issue the following command:
+
+	$ cat .git/config
+	
+You should see the following information, which specifies the URL for our repository that is hosted on the OpenShift Enterprise node host:
+
+	[core]
+		repositoryformatversion = 0
+		filemode = true
+		bare = false
+		logallrefupdates = true
+		ignorecase = true
+	[remote "origin"]
+		fetch = +refs/heads/*:refs/remotes/origin/*
+		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.example.com/~/git/firstphp.git/
+	[branch "master"]
+		remote = origin
+		merge = refs/heads/master
+	[rhc]
+		app-uuid = e9e92282a16b49e7b78d69822ac53e1d
+
+
+**Note:** You are also able to add other remote repositories.  This is useful for developers who also use Github or have private git repositories for an existing code base.
+
+###**.openshift directory**
+
+The .openshift directory is a hidden directory where a user can create action hooks, set markers, and create cron jobs.  
+
+Action hooks are scripts that are executed directly, so they can be written in Python, PHP, Ruby, shell, etc.  OpenShift Enterprise supports the following action hooks:
+
+| Action Hook | Description|
+| :---------------  | :------------ |
+| build | Executed on your CI system if available.  Otherwise, executed before the deploy step | 
+| deploy | Executed after dependencies are resolved but before application has started | 
+| post_deploy | Executed after application has been deployed and started| 
+| pre_build | Executed on your CI system if available.  Otherwise, executed before the build step | 
+[Action Hooks][section-mmd-tables-table1] 
+
+OpenShift Enterprise also supports the ability for a user to schedule jobs to be ran based upon the familiar cron functionality of Linux.  To enable this functionality, you need to add the cron cartridge to your application.  Once you have done so, any scripts or jobs added to the minutely, hourly, daily, weekly or monthly directories will be run on a scheduled basis (frequency is as indicated by the name of the directory) using run-parts.  OpenShift supports the following schedule for cron jobs:
+
+* daily
+* hourly
+* minutely
+* monthly
+* weekly
+
+The markers directory will allow the user to specify settings such as enabling hot deployments or which version of Java to use.
+
+###**libs directory**
+
+The libs directory is a location where the developer can provide any dependencies that are not able to be deployed using the standard dependency resolution system for the selected runtime.  In the case of PHP, the standard convention that OpenShift Enterprise uses is providing *PEAR* modules in the deplist.txt file.
+
+###**misc directory**
+
+The misc directory is a location provided to the developer to store any application code that they do not want exposed publicly.
+
+###**php directory**
+
+The php directory is where all of the application code that the developer writes should be created.  By default, two files are created in this directory:
+
+* health_check.php - A simple file to determine if the application is responding to requests
+* index.php - The OpenShift template that we saw after application creation in the web browser.
+
+##**Make a change to the PHP application and deploy updated code**
+
+To get a good understanding of the development workflow for a user, let's change the contents of the *index.php* template that is provided on the newly created gear.  Edit the file and look for the following code block:
+
+	<h1>
+	    Welcome to OpenShift
+	</h1>
+
+Update this code block to the following and then save your changes:
+
+	<h1>
+	    Welcome to OpenShift Enterprise
+	</h1>
+
+**Note:** Make sure you are updating the \<h1> tag and not the \<title> tag.
+
+Once the code has been changed, we need to commit our change to the local Git repository.  This is accomplished with the *git commit* command:
+
+	$ git commit -am "Changed welcome message."
+	
+Now that our code has been committed to our local repository, we need to push those changes up to our repository that is located on the node host.  
+
+	$ git push
+	
+You should see the following output:
+
+	Counting objects: 7, done.
+	Delta compression using up to 8 threads.
+	Compressing objects: 100% (4/4), done.
+	Writing objects: 100% (4/4), 395 bytes, done.
+	Total 4 (delta 2), reused 0 (delta 0)
+	remote: restart_on_add=false
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.example.com for ServerName
+	remote: Waiting for stop to finish
+	remote: Done
+	remote: restart_on_add=false
+	remote: ~/git/firstphp.git ~/git/firstphp.git
+	remote: ~/git/firstphp.git
+	remote: Running .openshift/action_hooks/pre_build
+	remote: Running .openshift/action_hooks/build
+	remote: Running .openshift/action_hooks/deploy
+	remote: hot_deploy_added=false
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.example.com for ServerName
+	remote: Done
+	remote: Running .openshift/action_hooks/post_deploy
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.example.com/~/git/firstphp.git/
+	   3edf63b..edc0805  master -> master
+
+
+Notice that we stop the application runtime (Apache), deploy the code, and then run any action hooks that may have been specified in the .openshift directory.  
+
+
+##**Verify code change**
+
+If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:
+
+	http://firstphp-ose.apps.example.com
+	
+You should see the updated code for the application.
+
+![](http://training.runcloudrun.com/images/firstphpOSE.png)
+
+##**Adding a new PHP file**
+
+Adding a new source code file to your OpenShift Enterprise application is an easy and straightforward process.  For instance, to create a PHP source code file that displays the server date and time, create a new file located in *php* directory and name it *time.php*.  After creating this file, add the following contents:
+
+	<?php
+	// Print the date and time
+	echo date('l jS \of F Y h:i:s A');
+	?>
+
+Once you have saved this file, the process for pushing the changes involves adding the new file to your git repository, committing the change, and then pushing the code to your OpenShift Enterprise gear:
+
+	$ git add .
+	$ git commit -am "Adding time.php"
+	$ git push
+	
+##**Verify code change**
+
+To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:
+
+	http://firstphp-ose.example.com/time.php
+	
+You should see the updated code for the application.
+
+![](http://training.runcloudrun.com/images/firstphpTime.png)
+	
 **Lab 9 Complete!**
-
 <!--BREAK-->
-
 #**Lab 10: Extending the OpenShift Environment**
 
 As applications are added additional node hosts may be added to extend the capacity of the OpenShift Enterprise environment.
@@ -762,6 +1022,364 @@ Check mcollective traffic.  You should get a response from node 2 that was deplo
     oo-mco ping
 
 **Lab 10 Complete!**
+
+<!--BREAK-->
+
+#**Lab 11: Using cartridges**
+
+**Server used:**
+
+* localhost
+* node host
+
+**Tools used:**
+
+* rhc
+* mysql
+* tail
+* git
+* PHP
+
+Cartridges provide the actual functionality necessary to run applications. There are several cartridges available to support different programming languages, databases, monitoring, and management. Cartridges are designed to be extensible so the community can add support for any programming language, database, or any management tool not officially supported by OpenShift Enterprise. Please refer to the official OpenShift Enterprise documentation for how you can [write your own cartridge](https://openshift.redhat.com/community/wiki/introduction-to-cartridge-building).
+
+	https://www.openshift.com/wiki/introduction-to-cartridge-building
+
+##**Viewing available cartridges**
+
+To view all of the available commands for working with cartridges on OpenShift Enterprise, enter the following command:
+
+	$ rhc cartridge -h
+	
+##**List available cartridges**
+
+To see a list of all available cartridges to users of this OpenShift Enterprise deployment, issue the following command:
+
+	$ rhc cartridge list
+	
+You should see the following output depending on which cartridges you have installed:
+
+  jbosseap-6       JBoss Enterprise Application Platform 6.1.0 web
+  jenkins-1        Jenkins Server                              web
+  nodejs-0.10      Node.js 0.10                                web
+  perl-5.10        Perl 5.10                                   web
+  php-5.3          PHP 5.3                                     web
+  python-2.6       Python 2.6                                  web
+  python-2.7       Python 2.7                                  web
+  ruby-1.8         Ruby 1.8                                    web
+  ruby-1.9         Ruby 1.9                                    web
+  jbossews-1.0     Tomcat 6 (JBoss EWS 1.0)                    web
+  jbossews-2.0     Tomcat 7 (JBoss EWS 2.0)                    web
+  diy-0.1          Do-It-Yourself 0.1                          web
+  cron-1.4         Cron 1.4                                    addon
+  jenkins-client-1 Jenkins Client                              addon
+  mysql-5.1        MySQL 5.1                                   addon
+  postgresql-8.4   PostgreSQL 8.4                              addon
+  postgresql-9.2   PostgreSQL 9.2                              addon
+  haproxy-1.4      Web Load Balancer                           addon
+
+  Note: Web cartridges can only be added to new applications.
+	
+
+##**Add the MySQL cartridge**
+
+In order to use a cartridge, we need to embed it into our existing application.  OpenShift Enterprise provides support for version 5.1 of this popular open source database.  To enable MySQL support for the *firstphp* application, issue the following command:
+
+	$ rhc cartridge-add mysql-5.1 -a firstphp
+	
+	You should see the following output:
+
+	Adding mysql-5.1 to application 'firstphp' ... done
+
+	mysql-5.1 (MySQL 5.1)
+	---------------------
+	  Gears:          Located with php-5.3
+	  Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+	  Database Name:  firstphp
+	  Password:       9svQXLVtv89Y
+	  Username:       adminxzGaLVm
+
+	MySQL 5.1 database added.  Please make note of these credentials:
+
+	       Root User: adminxzGaLVm
+	   Root Password: 9svQXLVtv89Y
+	   Database Name: firstphp
+
+	Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+	
+##**Using MySQL**
+
+Developers will typically interact with MySQL by using the mysql shell command
+on OpenShift Enterprise.  In order to use the mysql shell, you will need to use
+ssh to login to your application gear.  
+
+$ rhc ssh firstphp
+
+	[firstphp-ose.example.com ~]\> mysql
+	
+You will notice that you did not have to authenticate to the MySQL database.  This is because OpenShift Enterprise sets environment variables that contains the connection information for the database. 
+
+When embedding the MySQL database, OpenShift Enterprise creates a default database based upon the application name.  That being said, the user has full permissions to create new databases inside of MySQL.  Let's use the default database that was created for us and create a *users* table:
+
+	mysql> use firstphp;
+	Database changed
+	
+	mysql> create table users (user_id int not null auto_increment, username varchar(200), PRIMARY KEY(user_id));
+	Query OK, 0 rows affected (0.01 sec)
+
+	mysql> insert into users values (null, 'gshipley@redhat.com');
+	Query OK, 1 row affected (0.00 sec)
+	
+Verify that the user record has been added by selecting all rows from the *users* table:
+
+	mysql> select * from users;
+	+---------+---------------------+
+	| user_id | username            |
+	+---------+---------------------+
+	|       1 | gshipley@redhat.com |
+	+---------+---------------------+
+	1 row in set (0.00 sec)
+	
+To exit out of the MySQL session, simply enter the *exit* command:
+
+	mysql> exit
+	
+##**MySQL environment variables**
+
+As mentioned earlier in this lab, OpenShift Enterprise creates environment variables that contain the connection information for your MySQL database.  If a user forgets their connection information, they can always retrieve the authentication information by viewing these environment variables:
+
+**Note:  Execute the following on the application gear**
+
+	[firstphp-ose.example.com ~]\> env |grep MYSQL
+	
+You should see the following information return from the command:
+
+	OPENSHIFT_MYSQL_DIR=/var/lib/openshift/52afd7bc3a0fb277cf000070/mysql/
+	OPENSHIFT_MYSQL_DB_PORT=3306
+	OPENSHIFT_MYSQL_DB_HOST=127.10.134.130
+	OPENSHIFT_MYSQL_DB_PASSWORD=9svQXLVtv89Y
+	OPENSHIFT_MYSQL_IDENT=redhat:mysql:5.1:0.2.6
+	OPENSHIFT_MYSQL_DB_USERNAME=adminxzGaLVm
+	OPENSHIFT_MYSQL_DB_SOCKET=/var/lib/openshift/52afd7bc3a0fb277cf000070/mysql//socket/mysql.sock
+	OPENSHIFT_MYSQL_DB_URL=mysql://adminxzGaLVm:9svQXLVtv89Y@127.10.134.130:3306/
+	OPENSHIFT_MYSQL_DB_LOG_DIR=/var/lib/openshift/52afd7bc3a0fb277cf000070/mysql//log/
+	
+To view a list of all *OPENSHIFT* environment variables, you can use the following command:
+
+	[firstphp-ose.example.com ~]\> env | grep OPENSHIFT
+
+##**Viewing MySQL logs**
+
+Given the above information, you can see that the log file directory for MySQL is specified with the *OPENSHIFT_MYSQL_DB_LOG_DIR* environment variable.  To view these log files, simply use the tail command:
+
+	[firstphp-ose.example.com ~]\> tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
+	
+##**Connecting to the MySQL cartridge from PHP**
+
+Now that we have verified that our MySQL database has been created correctly, and have created a database table with some user information, let's connect to the database from PHP in order to verify that our application code can communicate to the newly embedded MySQL cartridge.  Create a new file in the *php* directory of your *firstphp* application named *dbtest.php*.  Add the following source code to the *dbtest.php* file:
+
+
+	<?php
+	$dbhost = getenv("OPENSHIFT_MYSQL_DB_HOST");
+	$dbport = getenv("OPENSHIFT_MYSQL_DB_PORT");
+	$dbuser = getenv("OPENSHIFT_MYSQL_DB_USERNAME");
+	$dbpwd = getenv("OPENSHIFT_MYSQL_DB_PASSWORD");
+	$dbname = getenv("OPENSHIFT_APP_NAME");
+	
+	$connection = mysql_connect($dbhost, $dbuser, $dbpwd);
+	
+	if (!$connection) {
+	        echo "Could not connect to database";
+	} else {
+	        echo "Connected to database.<br>";
+	}
+	
+	$dbconnection = mysql_select_db($dbname);
+	
+	$query = "SELECT * from users";
+	
+	$rs = mysql_query($query);
+	while ($row = mysql_fetch_assoc($rs)) {
+	    echo $row['user_id'] . " " . $row['username'] . "\n";
+	}
+	
+	mysql_close();
+	
+	?>
+
+Once you have created the source file, add the file to your git repository, commit the change, and push the change to your OpenShift Enterprise gear.
+
+	$ git add .
+	$ git commit -am “Adding dbtest.php”
+	$ git push
+	
+After the code has been deployed to your application gear, open up a web browser and enter the following URL:
+
+	http://firstphp-ose.apps.example.com/dbtest.php
+	
+You should see a screen with the following information:
+
+	Connected to database.
+	1 gshipley@redhat.com 
+	
+	
+##**Managing cartridges**
+
+OpenShift Enterprise provides the ability to embed multiple cartridges in an application.  For instance, even though we are using MySQL for our *firstphp* application, we could also embed the cron cartridge as well.  It may be useful to stop, restart, or even check the status of a cartridge.  To check the status of our MySQL database, use the following command:
+
+	$ rhc cartridge-status mysql -a firstphp
+	
+To stop the cartridge, enter the following command:
+
+	$ rhc cartridge-stop mysql -a firstphp
+	
+Verify that the MySQL database has been stopped by either checking the status again or viewing the following URL in your browser:
+
+	http://firstphp-ose.example.com/dbtest.php
+	
+You should see the following message returned to your browser:
+
+	Could not connect to database
+	
+Start the database back up using the *cartridge-start* command.
+	
+	$ rhc cartridge-start mysql -a firstphp
+	
+
+Verify that the database has been restarted by opening up a web browser and entering in the following URL:
+
+	http://firstphp-ose.apps.example.com/dbtest.php
+	
+You should see a screen with the following information:
+
+	Connected to database.
+	1 gshipley@redhat.com 
+	
+OpenShift Enterprise also provides the ability to list important information about a cartridge by using the *cartridge-show* command.  For example, if a user has forgotten their MySQL connection information, they can display this information with the following command:
+
+	$ rhc cartridge-show mysql -a firstphp
+	
+The user will then be presented with the following output:
+
+	Password: ****
+
+	mysql-5.1 (MySQL 5.1)
+	---------------------
+	  Gears:          Located with php-5.3
+	  Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+	  Database Name:  firstphp
+	  Password:       9svQXLVtv89Y
+	  Username:       adminxzGaLVm
+	    
+##**Using port forwarding**
+
+At this point, you may have noticed that the database cartridge is only accessible via a 127.x.x.x private address.  This ensures that only the application gear can communicate with the database.
+
+With OpenShift Enterprise port-forwarding, developers can connect to remote services with local client tools.  This allows the developer to focus on code without having to worry about the details of configuring complicated firewall rules or SSH tunnels. To connect to the MySQL database running on our OpenShift Enterprise gear, you have to first forward all the ports to your local machine. This can be done using the *rhc port-forward* command.  This command is a wrapper that configures SSH port forwarding. Once the command is executed, you should see a list of services that are being forwarded and the associated IP address and port to use for connections as shown below:
+
+	$ rhc port-forward firstphp
+ 
+	To connect to a service running on OpenShift, use the Local address
+
+	Service Local               OpenShift
+	------- -------------- ---- -------------------
+	httpd   127.0.0.1:8080  =>  127.10.134.129:8080
+	mysql   127.0.0.1:3307  =>  127.10.134.130:3306
+
+	Press CTRL-C to terminate port forwarding
+
+In the above snippet, you can see that mysql database, which we added to the *firstphp* gear, is forwarded to our local machine. If you open http://127.0.0.1:8080 in your browser, you will see the application.
+
+**Note:** At the time of this writing, there is an extra step to enable port forwarding on Mac OS X based systems.  You will need to create an alias on your loopback device for the IP address listed in output shown above.  
+
+	sudo ifconfig lo0 alias 127.0.0.1
+
+Now that you have your services forward, you can connect to them using local client tools. To connect to the MySQL database running on the OpenShift Enterprise gear, run the *mysql* command as shown below:
+
+	$ mysql -uadmin -p -h 127.0.0.1
+	
+**Note:** The above command assumes that you have the MySQL client installed locally.
+
+##**Enable *hot_deploy***
+
+If you are familiar with PHP, you will probably be wondering why we stop and start Apache on each code deployment.  Fortunately, we provide a way for developers to signal to OpenShift Enterprise that they do not want to restart the application runtime for each deployment.  This is accomplished by creating a hot_deploy marker in the correct directory.  Change to your application root directory, for example ~/code/ose/firstphp, and issue the following commands:
+
+	$ touch .openshift/markers/hot_deploy
+	$ git add .
+	$ git commit -am “Adding hot_deploy marker”
+	$ git push
+	
+Pay attention to the output:
+
+	Counting objects: 7, done.
+	Delta compression using up to 8 threads.
+	Compressing objects: 100% (4/4), done.
+	Writing objects: 100% (4/4), 403 bytes, done.
+	Total 4 (delta 2), reused 0 (delta 0)
+	remote: restart_on_add=false
+	remote: Will add new hot deploy marker
+	remote: App will not be stopped due to presence of hot_deploy marker
+	remote: restart_on_add=false
+	remote: ~/git/firstphp.git ~/git/firstphp.git
+	remote: ~/git/firstphp.git
+	remote: Running .openshift/action_hooks/pre_build
+	remote: Running .openshift/action_hooks/build
+	remote: Running .openshift/action_hooks/deploy
+	remote: hot_deploy_added=false
+	remote: App will not be started due to presence of hot_deploy marker
+	remote: Running .openshift/action_hooks/post_deploy
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.example.com/~/git/firstphp.git/
+	   4fbda99..fdbd056  master -> master
+
+
+The two lines of importance are:
+
+	remote: Will add new hot deploy marker
+	remote: App will not be stopped due to presence of hot_deploy marker
+
+Adding a hot_deploy marker will significantly increase the speed of application deployments while developing an application.
+
+
+
+**Lab 11 Complete!**
+<!--BREAK-->
+
+#**Lab 12: Gear Scavenger Hunt**
+
+##**Servers Used**
+
+localhost
+
+node
+
+###**Steps**
+
+Choose an app that you have created and find out what public IP address it is
+using? (hint: use the <code>host</code> or <code>dig</code> command) 
+
+Using the web console or CLI tools, find out the ssh login string for an
+application. (hint: <code>rhc domain show</code>)
+
+Now, <code>ssh</code> into the application.
+
+What is your home directory? (hint: <code>pwd</code>)
+
+Try to list all home directories. (hint: <code>ls</code>)
+
+What private IP addresses is your app using? (hint: <code>env</code>)
+
+How much memory is this app using? (hint: <code>oo-cgroup-read
+memory.usage_in_bytes</code>)
+
+Stop your app and check the memory usage (hint: <code>ctl_app
+graceful-stop</code>)
+
+Restart your app (hint: <code>ctl_app start</code>)
+
+What is the total memory available for your app? (hint: <code>oo-cgroup-read
+memory.limit_in_bytes</code>)
+
+
+**Lab 12 Complete!**
 
 <!--BREAK-->
 
