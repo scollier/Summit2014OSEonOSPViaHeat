@@ -147,7 +147,6 @@ Action hooks are scripts that are executed directly, so they can be written in P
 | deploy | Executed after dependencies are resolved but before application has started | 
 | post_deploy | Executed after application has been deployed and started| 
 | pre_build | Executed on your CI system if available.  Otherwise, executed before the build step | 
-[Action Hooks][section-mmd-tables-table1] 
 
 OpenShift Enterprise also supports the ability for a user to schedule jobs to be ran based upon the familiar cron functionality of Linux.  To enable this functionality, you need to add the cron cartridge to your application.  Once you have done so, any scripts or jobs added to the minutely, hourly, daily, weekly or monthly directories will be run on a scheduled basis (frequency is as indicated by the name of the directory) using run-parts.  OpenShift supports the following schedule for cron jobs:
 
