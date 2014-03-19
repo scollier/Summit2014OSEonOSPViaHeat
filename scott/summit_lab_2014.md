@@ -128,61 +128,86 @@ The server has a single network card. Configure both of the interface files at o
 
     ip a
     ovs-vsctl show
-    ip a
     
-Here you will notice that out of the box, packstack does not configure the interfaces.  In it's current state, *em1* has the IP address.  We need to migrate that IP address to the *br-em1* interface.
+Here you will notice that out of the box, packstack does not configure the interfaces.  In it's current state, the single Ethernet interface has an IP address from the classroom DHCP server.  We need to migrate that IP address to the *br-public* interface.
 
 **Set up the interfaces on the server:**
 
-For this lab, we will need 3 interfaces.  *ifcfg-em1* will be associated with the *ifcfg-br-em1* bridge. Ensure the *ifcfg-em1* and *ifcfg-br-em1* files look as follows.  The ifcfg-br-em1 file will have to be created - it does not exist out of box.  The three files on the host should look exactly the same as what is listed below.
+For this lab we will need 3 interfaces. The DHCP interface will likely be *em1* or *eth0* or something similar. These instructions will assume *em1*. The interface *em1* will be associated with the *br-public* bridge. Lastly, a new interface *classroom* will be created and assume the MAC address of *em1* for external communications. Ensure the *ifcfg-em1*, *ifcfg-br-public*, and *ifcfg-classroom* files look as follows.  The *ifcfg-br-public* and *ifcfg-classroom* files will have to be created.  The three files on the host should look exactly the same as what is listed below.
 
-Create the file **/etc/sysconfig/network-scripts/ifcfg-br-em1** with the following contents:
+Before configuring these files, first copy the MAC address from the system *em1* interface
 
-    DEVICE="br-em1"
+    ip a show dev em1
+
+The MAC Address is on the second line of output on the link/ether line:
+
+    2: em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+        link/ether f0:4d:a2:3b:a0:59 brd ff:ff:ff:ff:ff:ff
+        inet 10.16.138.52/21 brd 10.16.143.255 scope global em1
+        inet6 fe80::f24d:a2ff:fe3b:a059/64 scope link 
+           valid_lft forever preferred_lft forever
+    
+Alternatively, this script will display only the MAC Address:
+
+    ip a show dev em1 | awk 'NR==2{print $2}'
+    f0:4d:a2:3b:a0:59
+
+Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st and 2nd bytes (5th and 6th octets in the right most position) to match your lab station number. Remember to convert to hex:
+
+    DEVICE="br-public"
     ONBOOT="yes"
     DEVICETYPE=ovs
     TYPE="OVSBridge"
     OVSBOOTPROTO="static"
-    IPADDR="172.10.0.1"
+    IPADDR="172.16.0.1"
     NETMASK="255.255.0.0"
-    OVSDHCPINTERFACES="em1"
+    MACADDR=de:ad:be:ef:00:00
 
-The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents:
+The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents. Use the same MAC address specified in the previous file:
 
     DEVICE="em1"
     ONBOOT="yes"
     TYPE="OVSPort"
-    OVS_BRIDGE="br-em1"
+    OVS_BRIDGE="br-public"
     PROMISC="yes"
     DEVICETYPE="ovs"
-    
-Configure a subinterface em1:1 to provide external access. Create the file **/etc/sysconfig/network/ifcfg-em1:1** with the contents:
+    MACADDR=de:ad:be:ef:00:00
 
-    DEVICE="em1:1"
+    
+Configure a new interface called *classroom* to provide external access. Create the file **/etc/sysconfig/network/ifcfg-classroom** with the contents. Use the MAC address that was copied from the original *em1* interface:
+
+    DEVICE="classroom"
     ONBOOT="yes"
-    BOOTPROTO="dhcp"
-    TYPE="Ethernet"
+    TYPE="OVSIntPort"
+    OVS_BRIDGE="br-public"
+    DEVICETYPE="ovs"
+    BOOTPROTO=dhcp
+    OVS_EXTRA="set Interface classroom type=internal"
+    MACADDR=f0:4d:a2:3b:a0:59
 
 **Restart Networking and review the interface configuration:**
 
+Note: Due to the reassigning of MAC addresses errors may occur until a reboot.
+
     service network restart
 
-Confirm the IP address moved to the bridge interface.
+Confirm the *172.16.0.1* IP address is assigned to the bridge interface *br-public*;
 
     ovs-vsctl show
     ip a
     
-Now the IP address should be on the *br-em1* interface and *em1:1* virtual interface should be functional.
+IP address should be on the *br-public* interface and the *classroom* interface should have received a new DHCP address.
           
-    ip a | grep em1
+    ip a | egrep "public|classroom"
 
 output:
 
-    2: em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
-    92: phy-br-em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-    93: int-br-em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-    154: br-em1: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
-    inet 10.16.138.52/21 brd 10.16.143.255 scope global br-em1
+    92: phy-br-public: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    93: int-br-public: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    168: br-public: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
+        inet 172.10.0.1/16 brd 172.10.255.255 scope global br-public
+    169: classroom: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
+        inet 10.16.143.136/21 brd 10.16.143.255 scope global classroom
 
 **Lab 3 Complete!**
 
@@ -202,8 +227,23 @@ Create a keypair and then list the key.
     nova keypair-list
 
 
+##**4.2 Configure the Neutron plugin.ini**
 
-##**4.2 Set up Neutron Networking**
+Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
+
+    # vxlan_udp_port=4789
+    # network_vlan_ranges=physnet1
+    tenant_network_type=local
+    enable_tunneling=False
+    integration_bridge=br-int
+    bridge_mappings=physnet1:br-public
+
+Restart neutron networking services
+
+    service openvswitch restart
+    for i in neutron-*; do service $i condrestart; done
+
+##**4.3 Set up Neutron Networking**
 
 **Set up neutron networking**
 
@@ -216,15 +256,15 @@ In this lab there is an existing network, much as there would be in a production
 
 A provider network was created via packstack named *physnet1*. This was specified in the following option:
 
-    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1:1113:1114
+    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1
 
-The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-em1* in the following option:
+The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-public* in the following option:
 
-    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-em1
+    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-public
 
-Lastly, this bridge *br-em1* was mapped to the physical interface *em1* in the following option:
+Lastly, this bridge *br-public* was mapped to the physical interface *em1* in the following option:
 
-    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-em1:em1
+    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-public:em1
 
 ###**Create the *Public* Network**
 
@@ -242,8 +282,8 @@ More detail is available with the *net-show* command.  If you have multiple netw
         
 Create the *public* subnet. Also specify an allocation pool of which floating IPs can be assigned. Without this option the entire subnet range will be used. Also specify the gateway here:
   
-    neutron subnet-create public --allocation-pool start=172.10.1.1,end=172.10.1.20 \
-        --gateway 172.10.0.1 --enable_dhcp=False 172.10.0.0/16 --name pub-sub    
+    neutron subnet-create public --allocation-pool start=172.16.1.1,end=172.16.1.20 \
+        --gateway 172.16.0.1 --enable_dhcp=False 172.16.0.0/16 --name pub-sub    
         
 List the subnets
 
@@ -303,19 +343,8 @@ Display router1 configuration.
 
     neutron router-show router1
     
-##**4.3 Configure the Neutron plugin.ini**
-
-Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
-
-    # vxlan_udp_port=4789
-    # network_vlan_ranges=physnet1:1113:1114
-    tenant_network_type=local
-    enable_tunneling=False
-    integration_bridge=br-int
-    bridge_mappings=physnet1:br-em1
-
     
-Reboot the server.
+Optional: Reboot the server to ensure all networks come up on boot.
 
     reboot
 
