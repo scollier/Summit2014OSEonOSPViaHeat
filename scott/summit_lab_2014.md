@@ -40,9 +40,9 @@ OpenShift Enterprise provides developers and IT organizations an auto-scaling cl
 
 ##**1.4 Overview of IaaS**
 
-OpenShift Enterprise is infrastructure agnostic. OpenShift Enterprise can be installed on bare metal, virtualized instances or on public/private cloud instances. At a basic level it requires Red Hat Enterprise Linux running on x86_64 architecture. Red Hat Enterprise Linux provides the advantage of SELinux and other enterprise features to ensure the installation is stable and secure.
+OpenShift Enterprise is infrastructure agnostic. OpenShift Enterprise can be installed on bare metal, virtualized instances, or on public/private cloud instances. At a basic level it requires Red Hat Enterprise Linux running on x86_64 architecture. Red Hat Enterprise Linux provides the advantage of SELinux and other enterprise features to ensure the installation is stable and secure.
 
-This means that in order to take advantage of OpenShift Enterprise any existing resources from your hardware pool may be used. Infrastructure may be based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack or even bare metal: essentially any Red Hat Enterprise Linux operating system running on x86_64.
+This means that in order to take advantage of OpenShift Enterprise any existing resources from your hardware pool may be used. Infrastructure may be based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack, or even bare metal: essentially any Red Hat Enterprise Linux operating system running on x86_64.
 
 For this training class, Red Hat Enterprise Linux OpenStack Platform 4.0 is the Infrastructure as a Service layer. The OpenStack environment has been installed on a single server with all the necessary components required to complete the lab, but in a real production environment a deployment would consist of many servers.
 
@@ -108,6 +108,10 @@ These two images were pre-built using disk image builder(DIB) for the purpose of
 **Check out the software repositories:**
 
     yum repolist
+
+**View OpenStack services**
+
+    nova service-list
 
 **Lab 2 Complete!**
 
@@ -201,42 +205,47 @@ Create a keypair and then list the key.
 
 ##**4.2 Set up Neutron Networking**
 
-**Set up the neutron networking.**
+**Set up neutron networking**
 
         
-Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE - ack - vvaldez
+###**Network Configuration Background**
+
+In this lab there is an existing network, much as there would be in a production environment. This is a real, physical network with a gateway and DHCP server somewhere on the network that we do not have control over. Therefore we decided to use the *provider* extension for Neutron.  A *provider network* maps to an existing, physical network and allows administrators to manage additional attributes for these networks. This is enabled via the following option in the packstack answer file:
+
+    CONFIG_NEUTRON_L3_EXT_BRIDGE=provider
+
+A provider network was created via packstack named *physnet1*. This was specified in the following option:
+
+    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1:1113:1114
+
+The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-em1* in the following option:
+
+    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-em1
+
+Lastly, this bridge *br-em1* was mapped to the physical interface *em1* in the following option:
+
+    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-em1:em1
+
+###**Create the *Public* Network**
+
+The network will be created using the *--provider* attributes *physical_network=physnet1* which we defined in packstack, and as the network is not using VLAN tags it will be specified as *network_type flat*. Lastly, as there is a real, physical router on this network, also specify *--router:external=True*. This results in the following command:
 
     neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
         
-List the network after creation.
+List networks after creation
 
     neutron net-list
 
-Show the public network.  If you have networks that are named the same thing, you can specify the UUID for the network instead of the name.
+More detail is available with the *net-show* command.  If you have multiple networks with identical names, you must specify the UUID for the network instead of the name.
         
     neutron net-show public
         
-Create the *private* network that the virtual machines will be deployed to.
-
-    neutron net-create private --provider:network_type local
-        
-List the network after creation.  This time you should see both **public** and **private**
-
-    neutron net-list
-        
-Show more details about the private network.
-
-    neutron net-show private
-      
-Create the *public* subnet. This command also creates a pool of IP addresses that will be *floating* IP addresses.  In addition, set up the gateway here.
+Create the *public* subnet. Also specify an allocation pool of which floating IPs can be assigned. Without this option the entire subnet range will be used. Also specify the gateway here:
   
-    # neutron subnet-create public --allocation-pool start=x.x.x.x,end=x.x.x.x \
-    --gateway x.x.x.x --enable_dhcp=False x.x.x.0/x --name pub-sub
-    
     neutron subnet-create public --allocation-pool start=172.10.1.1,end=172.10.1.20 \
-    --gateway 172.10.0.1 --enable_dhcp=False 172.10.0.0/16 --name pub-sub    
+        --gateway 172.10.0.1 --enable_dhcp=False 172.10.0.0/16 --name pub-sub    
         
-List the *public* subnet.
+List the subnets
 
     neutron subnet-list
         
@@ -244,11 +253,29 @@ Show more details about the *public* subnet.
 
     neutron subnet-show pub-sub
 
-Create the private subnet.       
+Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED, FOR OUR PURPOSES - VINNY, use 10.16.143.247**
+        
+    neutron subnet-update pub-sub --dns_nameservers list=true x.x.x.x
+
+###**Create Private Network**
+
+Create the *private* network that the virtual machines will be attached to. As this is an all-in-one configuration, use *network_type local*. A real production environment would use VLAN or tunnel technology such as GRE or VXLAN.
+
+    neutron net-create private --provider:network_type local
+        
+List networks after creation.  This time you should see both **public** and **private**
+
+    neutron net-list
+        
+Show more details about the private network.
+
+    neutron net-show private
+      
+Create the private subnet
 
     neutron subnet-create private --gateway 192.168.0.1 192.168.0.0/24 --name priv-sub
         
-List the *private* subnet.
+List the subnets
 
     neutron subnet-list
 
@@ -256,7 +283,7 @@ Show more details about the *pivate* subnet.
 
     neutron subnet-show priv-sub
 
-Create the router.
+Create a router. This is a neutron router that will route traffic from the private network to the public network.
         
     neutron router-create router1
 
@@ -267,10 +294,6 @@ Set the gateway for the router to reside on the *public* subnet.
 List the router.
         
     neutron router-list
-
-Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED, FOR OUR PURPOSES - VINNY, use 10.16.143.247**
-        
-    neutron subnet-update pub-sub --dns_nameservers list=true x.x.x.x
 
 Add an interface for the private subnet to the router.
         
@@ -806,7 +829,6 @@ Action hooks are scripts that are executed directly, so they can be written in P
 | deploy | Executed after dependencies are resolved but before application has started | 
 | post_deploy | Executed after application has been deployed and started| 
 | pre_build | Executed on your CI system if available.  Otherwise, executed before the build step | 
-[Action Hooks][section-mmd-tables-table1] 
 
 OpenShift Enterprise also supports the ability for a user to schedule jobs to be ran based upon the familiar cron functionality of Linux.  To enable this functionality, you need to add the cron cartridge to your application.  Once you have done so, any scripts or jobs added to the minutely, hourly, daily, weekly or monthly directories will be run on a scheduled basis (frequency is as indicated by the name of the directory) using run-parts.  OpenShift supports the following schedule for cron jobs:
 
@@ -1114,7 +1136,7 @@ ssh to login to your application gear.
 
 $ rhc ssh firstphp
 
-	[firstphp-ose.example.com ~]\> mysql
+	[firstphp-ose.novalocal ~]\> mysql
 	
 You will notice that you did not have to authenticate to the MySQL database.  This is because OpenShift Enterprise sets environment variables that contains the connection information for the database. 
 
@@ -1149,7 +1171,7 @@ As mentioned earlier in this lab, OpenShift Enterprise creates environment varia
 
 **Note:  Execute the following on the application gear**
 
-	[firstphp-ose.example.com ~]\> env |grep MYSQL
+	[firstphp-ose.novalocal ~]\> env |grep MYSQL
 	
 You should see the following information return from the command:
 
@@ -1165,13 +1187,13 @@ You should see the following information return from the command:
 	
 To view a list of all *OPENSHIFT* environment variables, you can use the following command:
 
-	[firstphp-ose.example.com ~]\> env | grep OPENSHIFT
+	[firstphp-ose.novalocal ~]\> env | grep OPENSHIFT
 
 ##**Viewing MySQL logs**
 
 Given the above information, you can see that the log file directory for MySQL is specified with the *OPENSHIFT_MYSQL_DB_LOG_DIR* environment variable.  To view these log files, simply use the tail command:
 
-	[firstphp-ose.example.com ~]\> tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
+	[firstphp-ose.novalocal ~]\> tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
 	
 ##**Connecting to the MySQL cartridge from PHP**
 
@@ -1214,7 +1236,7 @@ Once you have created the source file, add the file to your git repository, comm
 	
 After the code has been deployed to your application gear, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.apps.example.com/dbtest.php
+	http://firstphp-ose.apps.novalocal/dbtest.php
 	
 You should see a screen with the following information:
 
@@ -1234,7 +1256,7 @@ To stop the cartridge, enter the following command:
 	
 Verify that the MySQL database has been stopped by either checking the status again or viewing the following URL in your browser:
 
-	http://firstphp-ose.example.com/dbtest.php
+	http://firstphp-ose.novalocal/dbtest.php
 	
 You should see the following message returned to your browser:
 
@@ -1247,7 +1269,7 @@ Start the database back up using the *cartridge-start* command.
 
 Verify that the database has been restarted by opening up a web browser and entering in the following URL:
 
-	http://firstphp-ose.apps.example.com/dbtest.php
+	http://firstphp-ose.apps.novalocal/dbtest.php
 	
 You should see a screen with the following information:
 
@@ -1327,7 +1349,7 @@ Pay attention to the output:
 	remote: hot_deploy_added=false
 	remote: App will not be started due to presence of hot_deploy marker
 	remote: Running .openshift/action_hooks/post_deploy
-	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.example.com/~/git/firstphp.git/
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.novalocal/~/git/firstphp.git/
 	   4fbda99..fdbd056  master -> master
 
 
