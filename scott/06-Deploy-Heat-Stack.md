@@ -10,11 +10,11 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
 
 The names of these images are hard coded in the heat template.  Do not change the name here.
 
-    glance add name=RHEL65-x86_64-broker is_public=true disk_format=qcow2 \
-    container_format=bare < /home/images/RHEL65-x86_64-broker-v2.qcow2
+    glance image-create --name RHEL65-x86_64-broker --is-public true --disk-format qcow2 \
+        --container-format bare --file /home/images/RHEL65-x86_64-broker-v2.qcow2
     
-    glance add name=RHEL65-x86_64-node is_public=true disk_format=qcow2 \
-    container_format=bare < /home/images/RHEL65-x86_64-node-v2.qcow2
+    glance image-create --name RHEL65-x86_64-node --is-public true --disk-format qcow2 \
+        --container-format bare --file /home/images/RHEL65-x86_64-node-v2.qcow2
     
     glance image-list
 
@@ -24,11 +24,11 @@ The names of these images are hard coded in the heat template.  Do not change th
 Ensure the following variables are set in the /etc/heat/heat.conf file:
 
     # heat_metadata_server_url=http://IP of Controller:8000
-    heat_metadata_server_url=http://172.10.0.1:8000
+    heat_metadata_server_url=http://172.16.0.1:8000
     # heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
-    heat_waitcondition_server_url=http://172.10.0.1:8000/v1/waitcondition
+    heat_waitcondition_server_url=http://172.16.0.1:8000/v1/waitcondition
     # heat_watch_server_url=http://IP of Controller:8003
-    heat_watch_server_url=http://172.10.0.1:8003
+    heat_watch_server_url=http://172.16.0.1:8003
 
 
 ##**6.3 Create the openshift-environment file**
@@ -36,12 +36,12 @@ Ensure the following variables are set in the /etc/heat/heat.conf file:
 
 **Create the openshift-environment.yaml file:**
 
-Get the private and public network IDs as well as the private subnet ID out of the first column of the output of the below commands.  Place those parameters in the following file in the following fields: private_net_id: public_net_id: private_subnet_id: to replace FIXME.
+Run the following two commands to list the configured networks and subnets. Copy and paste each corresponding ID with the parameter in the next section. Place those parameters in the following file in the following fields: private_net_id: PUBLICH_NET_ID_HERE, public_net_id: PRIVATE_NET_ID_HERE, and private_subnet_id: PRIVATE_SUBNET_ID_HERE.
 
     neutron net-list
     neutron subnet-list
 
-Create the */root/openshift-environment.yaml* file and copy the following contents into it. For the IP address of the repo locations, please replace with the IP address of the host you are on.
+Edit the */root/openshift-environment.yaml* file and replace the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE with the actual UUID from the output of the previous commands.
 
     parameters:
       key_name: rootkp
@@ -50,16 +50,16 @@ Create the */root/openshift-environment.yaml* file and copy the following conten
       node_hostname: openshift.nodeinstance.novalocal
       conf_install_method: yum
       # conf_rhel_repo_base: http://IP_OF_HOST/rhel6.5
-      conf_rhel_repo_base: http://172.10.0.1/rhel6.5
+      conf_rhel_repo_base: http://172.16.0.1/rhel6.5
       # conf_jboss_repo_base: http://IP_OF_HOST
-      conf_jboss_repo_base: http://172.10.0.1
+      conf_jboss_repo_base: http://172.16.0.1
       # conf_ose_repo_base: http://IP_OF_HOST/ose-latest
-      conf_ose_repo_base: http://172.10.0.1/ose-latest
+      conf_ose_repo_base: http://172.16.0.1/ose-latest
       # conf_rhscl_repo_base: http://IP_OF_HOST
-      conf_rhscl_repo_base: http://172.10.0.1
-      private_net_id: FIXME
-      public_net_id: FIXME
-      private_subnet_id: FIXME
+      conf_rhscl_repo_base: http://172.16.0.1
+      private_net_id: PRIVATE_NET_ID_HERE
+      public_net_id: PUBLIC_NET_ID_HERE
+      private_subnet_id: PRIVATE_SUBNET_ID_HERE
       yum_validator_version: "2.0"
       ose_version: "2.0"
 
