@@ -12,8 +12,23 @@ Create a keypair and then list the key.
     nova keypair-list
 
 
+##**4.2 Configure the Neutron plugin.ini**
 
-##**4.2 Set up Neutron Networking**
+Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
+
+    # vxlan_udp_port=4789
+    # network_vlan_ranges=physnet1
+    tenant_network_type=local
+    enable_tunneling=False
+    integration_bridge=br-int
+    bridge_mappings=physnet1:br-public
+
+Restart neutron networking services
+
+    service openvswitch restart
+    for i in neutron-*; do service $i condrestart; done
+
+##**4.3 Set up Neutron Networking**
 
 **Set up neutron networking**
 
@@ -26,15 +41,15 @@ In this lab there is an existing network, much as there would be in a production
 
 A provider network was created via packstack named *physnet1*. This was specified in the following option:
 
-    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1:1113:1114
+    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1
 
-The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-em1* in the following option:
+The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-public* in the following option:
 
-    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-em1
+    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-public
 
-Lastly, this bridge *br-em1* was mapped to the physical interface *em1* in the following option:
+Lastly, this bridge *br-public* was mapped to the physical interface *em1* in the following option:
 
-    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-em1:em1
+    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-public:em1
 
 ###**Create the *Public* Network**
 
@@ -52,8 +67,8 @@ More detail is available with the *net-show* command.  If you have multiple netw
         
 Create the *public* subnet. Also specify an allocation pool of which floating IPs can be assigned. Without this option the entire subnet range will be used. Also specify the gateway here:
   
-    neutron subnet-create public --allocation-pool start=172.10.1.1,end=172.10.1.20 \
-        --gateway 172.10.0.1 --enable_dhcp=False 172.10.0.0/16 --name pub-sub    
+    neutron subnet-create public --allocation-pool start=172.16.1.1,end=172.16.1.20 \
+        --gateway 172.16.0.1 --enable_dhcp=False 172.16.0.0/16 --name pub-sub    
         
 List the subnets
 
@@ -113,19 +128,8 @@ Display router1 configuration.
 
     neutron router-show router1
     
-##**4.3 Configure the Neutron plugin.ini**
-
-Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
-
-    # vxlan_udp_port=4789
-    # network_vlan_ranges=physnet1:1113:1114
-    tenant_network_type=local
-    enable_tunneling=False
-    integration_bridge=br-int
-    bridge_mappings=physnet1:br-em1
-
     
-Reboot the server.
+Optional: Reboot the server to ensure all networks come up on boot.
 
     reboot
 
