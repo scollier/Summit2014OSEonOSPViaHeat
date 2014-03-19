@@ -31,12 +31,21 @@ Ensure the following variables are set in the /etc/heat/heat.conf file:
     heat_watch_server_url=http://172.16.0.1:8003
 
 
-##**6.3 Create the openshift-environment file**
+##**6.3 Modify the openshift-environment file**
 
 
-**Create the openshift-environment.yaml file:**
+**Modify the openshift-environment.yaml file:**
 
-Run the following two commands to list the configured networks and subnets. Copy and paste each corresponding ID with the parameter in the next section. Place those parameters in the following file in the following fields: private_net_id: PUBLICH_NET_ID_HERE, public_net_id: PRIVATE_NET_ID_HERE, and private_subnet_id: PRIVATE_SUBNET_ID_HERE.
+
+###**Scripted Steps**
+Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
+
+    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  openshift-environment.yaml
+    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  openshift-environment.yaml
+    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  openshift-environment.yaml
+
+###**Manual Steps**
+Run the following two commands to list the configured networks and subnets. Copy and paste each corresponding ID with the parameter in the next section. The IDs are as follows: private_net_id: PUBLICH_NET_ID_HERE, public_net_id: PRIVATE_NET_ID_HERE, and private_subnet_id: PRIVATE_SUBNET_ID_HERE.
 
     neutron net-list
     neutron subnet-list
@@ -44,16 +53,13 @@ Run the following two commands to list the configured networks and subnets. Copy
 Edit the */root/openshift-environment.yaml* file and replace the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE with the actual UUID from the output of the previous commands.
 
     parameters:
-      key_name: rootkp
+      key_name: adminkp
       prefix: novalocal
       broker_hostname: openshift.brokerinstance.novalocal
       node_hostname: openshift.nodeinstance.novalocal
       conf_install_method: yum
-      # conf_rhel_repo_base: http://IP_OF_HOST/rhel6.5
       conf_rhel_repo_base: http://172.16.0.1/rhel6.5
-      # conf_jboss_repo_base: http://IP_OF_HOST
       conf_jboss_repo_base: http://172.16.0.1
-      # conf_ose_repo_base: http://IP_OF_HOST/ose-latest
       conf_ose_repo_base: http://172.16.0.1/ose-latest
       # conf_rhscl_repo_base: http://IP_OF_HOST
       conf_rhscl_repo_base: http://172.16.0.1
@@ -66,6 +72,8 @@ Edit the */root/openshift-environment.yaml* file and replace the placeholder tex
 ##**6.4 Open the port for Return Signals**
 
 The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
+
+**WARNING**: Do NOT use lokkit as it will overwrite the custom iptables rules created by packstack
 
     iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
     service iptables save
