@@ -38,7 +38,7 @@ Lastly, this bridge *br-em1* was mapped to the physical interface *em1* in the f
 
 ###**Create the *Public* Network**
 
-The network will be created using the *--provider* attributes *physical_network=physnet1* which we defined in packstack, and as the network is not using VLAN tags so it will be specified as *network_type flat*. Lastly, as there is a real, physical router on this network, also specify *--router:external=True*. This results in the following command:
+The network will be created using the *--provider* attributes *physical_network=physnet1* which we defined in packstack, and as the network is not using VLAN tags it will be specified as *network_type flat*. Lastly, as there is a real, physical router on this network, also specify *--router:external=True*. This results in the following command:
 
     neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
         
@@ -117,6 +117,7 @@ Display router1 configuration.
 
 Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
 
+    # vxlan_udp_port=4789
     # network_vlan_ranges=physnet1:1113:1114
     tenant_network_type=local
     enable_tunneling=False
