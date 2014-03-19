@@ -30,6 +30,10 @@ Ensure the following variables are set in the /etc/heat/heat.conf file:
     # heat_watch_server_url=http://IP of Controller:8003
     heat_watch_server_url=http://172.16.0.1:8003
 
+Restart heat services
+
+    for i in openstack-heat-api openstack-heat-api-cfn openstack-heat-engine; do service $i restart; done
+
 
 ##**6.3 Modify the openshift-environment file**
 
@@ -102,11 +106,19 @@ List the *heat* stack
 
 Watch the heat events.
 
+    tail -f /var/log/heat/heat-engine.log &
+
     heat event-list openshift
 
     heat resource-list openshift
 
     nova list
+
+Once the stack is successfully built the wait_condition states for both broker and node will change to CREATE_COMPLETE
+
+    | broker_wait_condition               | 65 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:51:30Z |
+    | node_wait_condition                 | 66 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:52:01Z |
+
 
 Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
 
@@ -116,19 +128,17 @@ Get a VNC console address and open it in the browser.  Firefox must be launched 
 
 ##**6.7 Confirm Connectivity**
 
-Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.
-
-    ping x.x.x.x 
-    
-SSH into the broker instance.  This may take a minute or two while they are spawning.  This will use the key that was created with *nova keypair* earlier.
-
 Confirm which IP address belongs to the broker and to the node.
 
     nova list
 
-SSH into the broker
+Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.
 
-    ssh -i ~/adminkp.pem ec2-user@IP.OF.BROKER
+    ping 172.16.1.X
+    
+SSH into the broker instance.  This may take a minute or two while they are spawning.  Use the key that was created with *nova keypair* earlier and the username of *ec2-user*:
+
+    ssh -i ~/adminkp.pem ec2-user@172.16.1.BROKER_IP
 
 Once logged in, gain root access and explore the environment.
 
@@ -148,7 +158,7 @@ Check mcollective traffic.  You should get a response from the node that was dep
 
 SSH into the node, using the IP that was obtained above.
 
-    ssh -i ~/rootkp.pem ec2-user@IP.OF.NODE
+    ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE_IP
     
 Check node configuration
 
@@ -156,7 +166,10 @@ Check node configuration
 
 Confirm Console Access by opening a browser and putting in the IP address of the broker.
 
-http://IP.OF.BROKER/console
+http://172.16.1.BROKER_IP/console
+
+username: demo
+password: changeme
 
 **FILL OUT THIS**
 
