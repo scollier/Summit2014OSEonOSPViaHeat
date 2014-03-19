@@ -15,42 +15,47 @@ Create a keypair and then list the key.
 
 ##**4.2 Set up Neutron Networking**
 
-**Set up the neutron networking.**
+**Set up neutron networking**
 
         
-Create the *public* network. In the packstack answer file we specified the name *physnet1* for the physical external network.  INSERT VINNY HERE - ack - vvaldez
+###**Network Configuration Background**
+
+In this lab there is an existing network, much as there would be in a production environment. This is a real, physical network with a gateway and DHCP server somewhere on the network that we do not have control over. Therefore we decided to use the *provider* extension for Neutron.  A *provider network* maps to an existing, physical network and allows administrators to manage additional attributes for these networks. This is enabled via the following option in the packstack answer file:
+
+    CONFIG_NEUTRON_L3_EXT_BRIDGE=provider
+
+A provider network was created via packstack named *physnet1*. This was specified in the following option:
+
+    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1:1113:1114
+
+The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-em1* in the following option:
+
+    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-em1
+
+Lastly, this bridge *br-em1* was mapped to the physical interface *em1* in the following option:
+
+    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-em1:em1
+
+###**Create the *Public* Network**
+
+The network will be created using the *--provider* attributes *physical_network=physnet1* which we defined in packstack, and as the network is not using VLAN tags so it will be specified as *network_type flat*. Lastly, as there is a real, physical router on this network, also specify *--router:external=True*. This results in the following command:
 
     neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
         
-List the network after creation.
+List networks after creation
 
     neutron net-list
 
-Show the public network.  If you have networks that are named the same thing, you can specify the UUID for the network instead of the name.
+More detail is available with the *net-show* command.  If you have multiple networks with identical names, you must specify the UUID for the network instead of the name.
         
     neutron net-show public
         
-Create the *private* network that the virtual machines will be deployed to.
-
-    neutron net-create private --provider:network_type local
-        
-List the network after creation.  This time you should see both **public** and **private**
-
-    neutron net-list
-        
-Show more details about the private network.
-
-    neutron net-show private
-      
-Create the *public* subnet. This command also creates a pool of IP addresses that will be *floating* IP addresses.  In addition, set up the gateway here.
+Create the *public* subnet. Also specify an allocation pool of which floating IPs can be assigned. Without this option the entire subnet range will be used. Also specify the gateway here:
   
-    # neutron subnet-create public --allocation-pool start=x.x.x.x,end=x.x.x.x \
-    --gateway x.x.x.x --enable_dhcp=False x.x.x.0/x --name pub-sub
-    
     neutron subnet-create public --allocation-pool start=172.10.1.1,end=172.10.1.20 \
-    --gateway 172.10.0.1 --enable_dhcp=False 172.10.0.0/16 --name pub-sub    
+        --gateway 172.10.0.1 --enable_dhcp=False 172.10.0.0/16 --name pub-sub    
         
-List the *public* subnet.
+List the subnets
 
     neutron subnet-list
         
@@ -58,11 +63,29 @@ Show more details about the *public* subnet.
 
     neutron subnet-show pub-sub
 
-Create the private subnet.       
+Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED, FOR OUR PURPOSES - VINNY, use 10.16.143.247**
+        
+    neutron subnet-update pub-sub --dns_nameservers list=true x.x.x.x
+
+###**Create Private Network**
+
+Create the *private* network that the virtual machines will be attached to. As this is an all-in-one configuration, use *network_type local*. A real production environment would use VLAN or tunnel technology such as GRE or VXLAN.
+
+    neutron net-create private --provider:network_type local
+        
+List networks after creation.  This time you should see both **public** and **private**
+
+    neutron net-list
+        
+Show more details about the private network.
+
+    neutron net-show private
+      
+Create the private subnet
 
     neutron subnet-create private --gateway 192.168.0.1 192.168.0.0/24 --name priv-sub
         
-List the *private* subnet.
+List the subnets
 
     neutron subnet-list
 
@@ -70,7 +93,7 @@ Show more details about the *pivate* subnet.
 
     neutron subnet-show priv-sub
 
-Create the router.
+Create a router. This is a neutron router that will route traffic from the private network to the public network.
         
     neutron router-create router1
 
@@ -81,10 +104,6 @@ Set the gateway for the router to reside on the *public* subnet.
 List the router.
         
     neutron router-list
-
-Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED, FOR OUR PURPOSES - VINNY, use 10.16.143.247**
-        
-    neutron subnet-update pub-sub --dns_nameservers list=true x.x.x.x
 
 Add an interface for the private subnet to the router.
         
@@ -98,7 +117,6 @@ Display router1 configuration.
 
 Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
 
-    # vxlan_udp_port=4789
     # network_vlan_ranges=physnet1:1113:1114
     tenant_network_type=local
     enable_tunneling=False
