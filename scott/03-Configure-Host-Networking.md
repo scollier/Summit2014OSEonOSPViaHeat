@@ -23,7 +23,7 @@ Before configuring these files, first copy the MAC address from the system *em1*
 The MAC Address is on the second line of output on the link/ether line:
 
     2: em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
-        link/ether **f0:4d:a2:3b:a0:59** brd ff:ff:ff:ff:ff:ff
+        link/ether f0:4d:a2:3b:a0:59 brd ff:ff:ff:ff:ff:ff
         inet 10.16.138.52/21 brd 10.16.143.255 scope global em1
         inet6 fe80::f24d:a2ff:fe3b:a059/64 scope link 
            valid_lft forever preferred_lft forever
@@ -31,8 +31,9 @@ The MAC Address is on the second line of output on the link/ether line:
 Alternatively, this script will display only the MAC Address:
 
     ip a show dev em1 | awk 'NR==2{print $2}'
+    f0:4d:a2:3b:a0:59
 
-Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st bye/6th octet/left most to match your lab station number. Remember to convert to hex:
+Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st and 2nd bytes (5th and 6th octets in the right most position) to match your lab station number. Remember to convert to hex:
 
     DEVICE="br-public"
     ONBOOT="yes"
