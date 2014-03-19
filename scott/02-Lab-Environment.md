@@ -52,6 +52,10 @@ These two images were pre-built using disk image builder(DIB) for the purpose of
 
     yum repolist
 
+** View OpenStack services
+
+    nova service-list
+
 **Lab 2 Complete!**
 
 <!--BREAK-->
