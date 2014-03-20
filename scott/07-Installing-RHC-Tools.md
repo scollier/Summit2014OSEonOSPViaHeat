@@ -17,6 +17,19 @@ The OpenShift Client tools, known as **rhc**, are built and packaged using the R
 
 OpenShift Enterprise client tools can be installed on any operating system with Ruby 1.8.7 or higher.  Instructions for specific operating systems are provided below. It is assumed that you are running the commands from a command line window, such as Command Prompt, or Terminal. If you are using Ruby Version Manager (rvm) see the instructions below.
 
+##**Red Hat Enterprise Linux 6 with OpenShift entitlement**
+
+The most recent version of the OpenShift Enterprise client tools are available as a RPM from the OpenShift Enterprise hosted Yum repository. We recommend this version to remain up to date, although a version of the OpenShift Enterprise client tools RPM is also available through EPEL.
+
+With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:
+
+	$ sudo yum install rhc
+	
+
+**Lab 7 Complete!**
+
+#**NOTE**: The following Appendix includes commands for additional Operating Systems
+
 ##**Microsoft Windows**
 
 ###**Installing Ruby for Windows**
@@ -91,18 +104,6 @@ After the OpenShift Enterprise client tools have been installed, run:
 
 	$ rhc -v
 
-##**Red Hat Enterprise Linux 6 with OpenShift entitlement**
-
-The most recent version of the OpenShift Enterprise client tools are available as a RPM from the OpenShift Enterprise hosted Yum repository. We recommend this version to remain up to date, although a version of the OpenShift Enterprise client tools RPM is also available through EPEL.
-
-With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:
-
-	$ sudo yum install rubygem-rhc
-	
-If you do not have an OpenShift Enterprise on the system you want to install the client tools on, you can install ruby and rubygems and then issue the following command:
-
-	$ sudo gem install rhc
-
 ##**Ubuntu**
 
 Use the apt-get command line package manager to install Ruby and Git before you install the OpenShift Enterprise command line tools. Run:
@@ -121,7 +122,6 @@ With Ruby and Git correctly installed, you can now use the RubyGems package mana
 	$ sudo gem install rhc
 
 
-**Lab 7 Complete!**
 
 <!--BREAK-->
 
