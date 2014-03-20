@@ -7,7 +7,7 @@ The server has a single network card. Configure both of the interface files at o
 **Explore the current network card interface setup:**
 
     ip a
-    ovs-vsctl show
+    sudo ovs-vsctl show
     
 Here you will notice that out of the box, packstack does not configure the interfaces.  In it's current state, the single Ethernet interface has an IP address from the classroom DHCP server.  We need to migrate that IP address to the *br-public* interface.
 
@@ -34,6 +34,7 @@ Alternatively, this script will display only the MAC Address:
 
 Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st and 2nd bytes (5th and 6th octets in the right most position) to match your lab station number. Remember to convert to hex:
 
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-public
     DEVICE="br-public"
     ONBOOT="yes"
     DEVICETYPE=ovs
@@ -42,9 +43,11 @@ Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the foll
     IPADDR="172.16.0.1"
     NETMASK="255.255.0.0"
     MACADDR=de:ad:be:ef:00:00
+    EOF
 
 The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents. Use the same MAC address specified in the previous file:
 
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-em1
     DEVICE="em1"
     ONBOOT="yes"
     TYPE="OVSPort"
@@ -52,10 +55,12 @@ The configuration file for em1 exists already, edit **/etc/sysconfig/network-scr
     PROMISC="yes"
     DEVICETYPE="ovs"
     MACADDR=de:ad:be:ef:00:00
+    EOF
 
     
 Configure a new interface called *classroom* to provide external access. Create the file **/etc/sysconfig/network/ifcfg-classroom** with the contents. Use the MAC address that was copied from the original *em1* interface:
 
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-classroom
     DEVICE="classroom"
     ONBOOT="yes"
     TYPE="OVSIntPort"
@@ -64,21 +69,26 @@ Configure a new interface called *classroom* to provide external access. Create 
     BOOTPROTO=dhcp
     OVS_EXTRA="set Interface classroom type=internal"
     MACADDR=f0:4d:a2:3b:a0:59
+    EOF
 
 **Restart Networking and review the interface configuration:**
 
-Note: Due to the reassigning of MAC addresses errors may occur until a reboot.
+Restart networking services
 
-    service network restart
+    sudo service network restart
+
+Note: Due to the reassigning of MAC addresses errors may occur until a reboot. If needed reboot:
+
+    sudo reboot
 
 Confirm the *172.16.0.1* IP address is assigned to the bridge interface *br-public*;
 
-    ovs-vsctl show
+    sudo ovs-vsctl show
     ip a
     
 IP address should be on the *br-public* interface and the *classroom* interface should have received a new DHCP address.
           
-    ip a | egrep "public|classroom"
+    ip a | egrep "public|classroom|em1"
 
 output:
 
