@@ -12,10 +12,8 @@ The names of these images are hard coded in the heat template.  Do not change th
 
     glance image-create --name RHEL65-x86_64-broker --is-public true --disk-format qcow2 \
         --container-format bare --file /home/images/RHEL65-x86_64-broker-v2.qcow2
-    
     glance image-create --name RHEL65-x86_64-node --is-public true --disk-format qcow2 \
         --container-format bare --file /home/images/RHEL65-x86_64-node-v2.qcow2
-    
     glance image-list
 
 
@@ -99,10 +97,6 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
 
 **Note: it can take up to 10 minutes for this to complete**
 
-    source ~/keystonerc_admin    
-
-    cd ~
-
     heat create openshift \
     -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
     -e ~/openshift-environment.yaml
@@ -114,15 +108,21 @@ List the *heat* stack
 
     heat stack-list
 
-Watch the heat events.
-
-    sudo tail -f /var/log/heat/heat-engine.log &
+Watch the heat events with the following command:
 
     heat event-list openshift
 
+Each resouce can also be monitored with:
+
     heat resource-list openshift
 
+Once the instances are launched they can be view with:
+
     nova list
+
+Detailed information can be viewed in the heat log:
+
+    sudo tail -f /var/log/heat/heat-engine.log &
 
 Once the stack is successfully built the wait_condition states for both broker and node will change to CREATE_COMPLETE
 
@@ -144,7 +144,7 @@ Confirm which IP address belongs to the broker and to the node.
 
 Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.
 
-    ping 172.16.1.X
+    ping 172.16.1.BROKER_IP
     
 SSH into the broker instance.  This may take a minute or two while they are spawning.  Use the key that was created with *nova keypair* earlier and the username of *ec2-user*:
 
