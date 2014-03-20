@@ -98,6 +98,14 @@ Verify OpenShift repositories
 
 # Validate Setup
 
+Load keystonerc file
+
+    source ~/keystonerc_admin
+
+List OpenStack services
+
+    nova service-list
+
 Brose to the Horizon dashboard at **http://localhost** with username: admin password: password
 
 To login to the horizon dashboard via CLI:
@@ -113,6 +121,14 @@ To login to the horizon dashboard via CLI:
 
     chown -Rv user.user /home/user
     restorecon -Rv /home/user
+
+# Add sudo permissions for user
+
+    visudo
+
+Add the following line in the file
+
+    %user ALL=/usr/bin/ovs-vsctl, /bin/cat, /sbin/service network restart
 
 # END HOST SETUP
              
