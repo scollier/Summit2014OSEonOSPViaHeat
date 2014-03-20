@@ -7,8 +7,11 @@
     rhn-channel -u admin -p $SAT_PASSWD -a -c rhel-x86_64-server-rh-common-6
     yum -y install rhel-guest-image-6.noarch openstack-packstack git
 
+Verify repositories are available
 
-# Copy repos to local directory and create yum repositories
+    yum repolist
+
+# Sync and create local repos
 
     mkdir -p /var/www/html/repos
     reposync -lmnp /var/www/html/repos/
@@ -51,23 +54,10 @@
     wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/heat-templates.tgz -O /root/heat-templates.tgz
     tar xvf /root/heat-templates.tgz -C /root/
 
-#Subscribe to the appropriate channels:
-
-    rhn-channel -u admin -p PASSWORD -a -c rhel-x86_64-server-6-ost-4
-    rhn-channel -u admin -p PASSWORD -a -c rhel-x86_64-server-rh-common-6
-    yum -y install rhel-guest-image-6.noarch
-    yum -y install openstack-packstack
-    yum -y install git
-
 # Create user on the system
 
     useradd user
     echo password | passwd user --stdin
-
-# Copy answerfile local so it can be inspected by the students
-
-    cp -v /pub/projects/rhos/scollier/summit2014/answer_new.txt.localhost /root/answer.txt
-    wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/RHOSE-CLIENT-2.0.repo -O /etc/yum.repos.d/RHOSE-CLIENT-2.0.repo
 
 # Add NFS mount if needed
 
@@ -86,6 +76,11 @@
     ln -s /home/images/repos/latest /var/www/html/ose-latest
     ln -s /home/images/repos/rhel6.5 /var/www/html/rhel6.5
     ln -s /home/images/repos/rhscl /var/www/html/rhscl/1/os
+    wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/RHOSE-CLIENT-2.0.repo -O /etc/yum.repos.d/RHOSE-CLIENT-2.0.repo
+
+Verify OpenShift repositories
+
+    yum repolist
 
 # Copy github content local
 
@@ -100,17 +95,15 @@
 
     packstack --debug --answer-file=/root/answer.txt
 
-
-# Reboot the system to complete setup
-
-    reboot
-
 # Validate Setup
+
+Brose to the Horizon dashboard at **http://localhost** with username: admin password: password
+
+To login to the horizon dashboard via CLI:
 
     yum -y install links
     links http://localhost
-    wget http://localhost -O -
-    # more steps here
+
 
 # END HOST SETUP
              
