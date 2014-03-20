@@ -128,7 +128,7 @@ To login to the horizon dashboard via CLI:
 
 Add the following line in the file
 
-    %user ALL=/usr/bin/ovs-vsctl
+    %user ALL=/usr/bin/ovs-vsctl, /bin/cat, /sbin/service network restart
 
 # END HOST SETUP
              
