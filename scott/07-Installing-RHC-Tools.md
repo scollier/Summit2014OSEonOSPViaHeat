@@ -28,6 +28,8 @@ With the correct entitlements in place, you can now install the OpenShift Enterp
 
 **Lab 7 Complete!**
 
+---
+
 #**NOTE**: The following Appendix includes commands for additional Operating Systems
 
 ##**Microsoft Windows**
