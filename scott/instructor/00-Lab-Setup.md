@@ -138,11 +138,12 @@ Ensure the following variables are set in the **/etc/heat/heat.conf** file:
 
 This command will change these specific parameters in **/etc/heat/heat.conf**
 
-    # heat_metadata_server_url=http://IP of Controller:8000
+    grep "^heat_" /etc/heat/heat.conf
+
+Output:
+
     heat_metadata_server_url=http://172.16.0.1:8000
-    # heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
     heat_waitcondition_server_url=http://172.16.0.1:8000/v1/waitcondition
-    # heat_watch_server_url=http://IP of Controller:8003
     heat_watch_server_url=http://172.16.0.1:8003
 
 Restart heat services
@@ -169,6 +170,9 @@ The MAC Address is on the second line of output on the link/ether line:
 Alternatively, this script will display only the MAC Address:
 
     ip a show dev em1 | awk 'NR==2{print $2}'
+
+Output:
+
     f0:4d:a2:3b:a0:59
 
 Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st and 2nd bytes (5th and 6th octets in the right most position) to match your lab station number. Remember to convert to hex:
@@ -213,12 +217,17 @@ Configure a new interface called *classroom* to provide external access. Create 
 **Restart Networking and review the interface configuration:**
 
 Restart networking services
+**Note**: Due to the reassigning of MAC addresses errors may occur until a reboot but the following command may work:
 
-    service network restart
+    service network restart; ifdown classroom; ifup classroom
 
-Note: Due to the reassigning of MAC addresses errors may occur until a reboot. If needed reboot:
+Otherwise reboot the system:
 
     reboot
+
+IP address should be on the *br-public* interface and the *classroom* interface should have received a new DHCP address.
+          
+    ip a | egrep "public|classroom|em1"
 
 # END HOST SETUP
              
