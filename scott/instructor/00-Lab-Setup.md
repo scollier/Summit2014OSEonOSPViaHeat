@@ -86,7 +86,7 @@ Verify OpenShift repositories
 
     cp -v /pub/projects/rhos/scollier/summit2014/github_files_to_be_placed_local/enterprise-2.0 /var/www/html/.
     cp -v /pub/projects/rhos/scollier/summit2014/github_files_to_be_placed_local/openshift.sh /var/www/html/.
-    cp -v /pub/projects/rhos/scollier/summit2014/openshift-environment.yaml /root/.
+    cp -v /pub/projects/rhos/scollier/summit2014/openshift-environment.yaml /home/user/.
     
 # Copy answerfile local so it can be inspected by the students
 
@@ -128,7 +128,12 @@ To login to the horizon dashboard via CLI:
 
 Add the following line in the file
 
-    %user ALL=/usr/bin/ovs-vsctl, /bin/cat, /sbin/service network restart
+    %user ALL=(ALL)       ALL
+
+SPR to fix:
+
+    %user ALL=/usr/bin/ovs-vsctl, /bin/cat, /sbin/service, /sbin/reboot, /usr/bin/vim /etc/neutron/plugin.ini
+
 
 # END HOST SETUP
              
