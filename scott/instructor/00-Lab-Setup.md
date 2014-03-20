@@ -170,6 +170,9 @@ The MAC Address is on the second line of output on the link/ether line:
 Alternatively, this script will display only the MAC Address:
 
     ip a show dev em1 | awk 'NR==2{print $2}'
+
+Output:
+
     f0:4d:a2:3b:a0:59
 
 Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st and 2nd bytes (5th and 6th octets in the right most position) to match your lab station number. Remember to convert to hex:
