@@ -128,12 +128,97 @@ To login to the horizon dashboard via CLI:
 
 Add the following line in the file
 
-    %user ALL=(ALL)       ALL
+    %user ALL=/usr/bin/ovs-vsctl, /sbin/service, /sbin/reboot
 
-SPR to fix:
+#* Modify the heat.conf file **
 
-    %user ALL=/usr/bin/ovs-vsctl, /bin/cat, /sbin/service, /sbin/reboot, /usr/bin/vim /etc/neutron/plugin.ini
+Ensure the following variables are set in the **/etc/heat/heat.conf** file:
 
+    sed -i '/^heat_/s/127.0.0.1/172.16.0.1/g' /etc/heat/heat.conf
+
+This command will change these specific parameters in **/etc/heat/heat.conf**
+
+    # heat_metadata_server_url=http://IP of Controller:8000
+    heat_metadata_server_url=http://172.16.0.1:8000
+    # heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
+    heat_waitcondition_server_url=http://172.16.0.1:8000/v1/waitcondition
+    # heat_watch_server_url=http://IP of Controller:8003
+    heat_watch_server_url=http://172.16.0.1:8003
+
+Restart heat services
+
+    for i in openstack-heat-api openstack-heat-api-cfn openstack-heat-engine; do service $i restart; done
+
+
+#**Set up the interfaces on the server:**
+
+For this lab we will need 3 interfaces. The DHCP interface will be *em1*. The interface *em1* will be associated with the *br-public* bridge. Lastly, a new interface *classroom* will be created and assume the MAC address of *em1* for external communications. Ensure the *ifcfg-em1*, *ifcfg-br-public*, and *ifcfg-classroom* files look as follows.  The *ifcfg-br-public* and *ifcfg-classroom* files will have to be created.  The three files on the host should look exactly the same as what is listed below.
+
+Before configuring these files, first copy the MAC address from the system *em1* interface
+
+    ip a show dev em1
+
+The MAC Address is on the second line of output on the link/ether line:
+
+    2: em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+        link/ether f0:4d:a2:3b:a0:59 brd ff:ff:ff:ff:ff:ff
+        inet 10.16.138.52/21 brd 10.16.143.255 scope global em1
+        inet6 fe80::f24d:a2ff:fe3b:a059/64 scope link 
+           valid_lft forever preferred_lft forever
+    
+Alternatively, this script will display only the MAC Address:
+
+    ip a show dev em1 | awk 'NR==2{print $2}'
+    f0:4d:a2:3b:a0:59
+
+Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st and 2nd bytes (5th and 6th octets in the right most position) to match your lab station number. Remember to convert to hex:
+
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-public
+    DEVICE="br-public"
+    ONBOOT="yes"
+    DEVICETYPE=ovs
+    TYPE="OVSBridge"
+    OVSBOOTPROTO="static"
+    IPADDR="172.16.0.1"
+    NETMASK="255.255.0.0"
+    MACADDR=de:ad:be:ef:00:00
+    EOF
+
+The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents. Use the same MAC address specified in the previous file:
+
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-em1
+    DEVICE="em1"
+    ONBOOT="yes"
+    TYPE="OVSPort"
+    OVS_BRIDGE="br-public"
+    PROMISC="yes"
+    DEVICETYPE="ovs"
+    MACADDR=de:ad:be:ef:00:00
+    EOF
+
+    
+Configure a new interface called *classroom* to provide external access. Create the file **/etc/sysconfig/network/ifcfg-classroom** with the contents. Use the MAC address that was copied from the original *em1* interface:
+
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-classroom
+    DEVICE="classroom"
+    ONBOOT="yes"
+    TYPE="OVSIntPort"
+    OVS_BRIDGE="br-public"
+    DEVICETYPE="ovs"
+    BOOTPROTO=dhcp
+    OVS_EXTRA="set Interface classroom type=internal"
+    MACADDR=f0:4d:a2:3b:a0:59
+    EOF
+
+**Restart Networking and review the interface configuration:**
+
+Restart networking services
+
+    service network restart
+
+Note: Due to the reassigning of MAC addresses errors may occur until a reboot. If needed reboot:
+
+    reboot
 
 # END HOST SETUP
              

@@ -12,26 +12,7 @@ Create a keypair and then list the key.
     nova keypair-list
 
 
-##**4.2 Configure the Neutron plugin.ini**
-
-Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* is commented out.
-
-    # vxlan_udp_port=4789
-    network_vlan_ranges=physnet1:1:4094
-    tenant_network_type=local
-    enable_tunneling=False
-    integration_bridge=br-int
-    bridge_mappings=physnet1:br-public
-
-Restart neutron networking services
-
-    for i in openvswitch neutron-dhcp-agent neutron-l3-agent neutron-metadata-agent neutron-openvswitch-agent neutron-server
-    do
-        service $i restart
-    done
-
-
-##**4.3 Set up Neutron Networking**
+##**4.2 Set up Neutron Networking**
 
 **Set up neutron networking**
 

@@ -19,27 +19,8 @@ The names of these images are hard coded in the heat template.  Do not change th
     glance image-list
 
 
-##**6.2 Ensure the heat.conf file is confirgured correctly**
 
-Ensure the following variables are set in the **/etc/heat/heat.conf** file:
-
-    sed -i '/^heat_/s/127.0.0.1/172.16.0.1/g' /etc/heat/heat.conf
-
-This command will change these specific parameters in **/etc/heat/heat.conf**
-
-    # heat_metadata_server_url=http://IP of Controller:8000
-    heat_metadata_server_url=http://172.16.0.1:8000
-    # heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
-    heat_waitcondition_server_url=http://172.16.0.1:8000/v1/waitcondition
-    # heat_watch_server_url=http://IP of Controller:8003
-    heat_watch_server_url=http://172.16.0.1:8003
-
-Restart heat services
-
-    for i in openstack-heat-api openstack-heat-api-cfn openstack-heat-engine; do service $i restart; done
-
-
-##**6.3 Modify the openshift-environment file**
+##**6.2 Modify the openshift-environment file**
 
 
 **Modify the openshift-environment.yaml file:**
@@ -80,7 +61,7 @@ Edit the *~/openshift-environment.yaml* file and replace the placeholder text PU
       yum_validator_version: "2.0"
       ose_version: "2.0"
 
-##**6.4 Open the port for Return Signals**
+##**6.3 Open the port for Return Signals**
 
 The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
 
@@ -90,7 +71,7 @@ The *broker* and *node* VMs need to be able to deliver a completed signal to the
     sudo service iptables save
 
 
-##**6.5 Launch the stack**
+##**6.4 Launch the stack**
 
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
@@ -105,7 +86,7 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
     -e ~/openshift-environment.yaml
 
 
-##**6.6 Monitor the stack**
+##**6.5 Monitor the stack**
 
 List the *heat* stack
 
@@ -133,7 +114,7 @@ Get a VNC console address and open it in the browser.  Firefox must be launched 
     
     nova get-vnc-console node_instance novnc
 
-##**6.7 Confirm Connectivity**
+##**6.6 Confirm Connectivity**
 
 Confirm which IP address belongs to the broker and to the node.
 
