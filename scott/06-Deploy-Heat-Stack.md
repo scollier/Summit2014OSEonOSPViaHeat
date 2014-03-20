@@ -44,10 +44,6 @@ Restart heat services
 
 **Modify the openshift-environment.yaml file:**
 
-Load the keystonerc_admin file for neutron commands:
-
-    source ~/keystonerc_admin
-
 ###**Scripted Steps**
 Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
 
@@ -55,13 +51,17 @@ Run the following three commands to replace the placeholder text in the file wit
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/openshift-environment.yaml
     sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  ~/openshift-environment.yaml
 
-###**Manual Steps**
-Run the following two commands to list the configured networks and subnets. Copy and paste each corresponding ID with the parameter in the next section. The IDs are as follows: private_net_id: PUBLICH_NET_ID_HERE, public_net_id: PRIVATE_NET_ID_HERE, and private_subnet_id: PRIVATE_SUBNET_ID_HERE.
+###**Verify Changes**
+The scripts in the previous section should have added the correct network IDs to the yaml file. Run the following two commands to list the configured networks and subnets. 
 
     neutron net-list
     neutron subnet-list
 
-Edit the *~/openshift-environment.yaml* file and replace the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE with the actual UUID from the output of the previous commands.
+Inspect the *~/openshift-environment.yaml* file and verify the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE were replaced with the actual UUID from the output of the previous commands.
+
+    cat ~/openshift-environment.yaml
+
+Contents:
 
     parameters:
       key_name: adminkp
@@ -84,9 +84,12 @@ Edit the *~/openshift-environment.yaml* file and replace the placeholder text PU
 
 The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
 
-**WARNING**: Do NOT use lokkit as it will overwrite the custom iptables rules created by packstack
+**WARNING**: Do NOT use *lokkit* as it will overwrite the custom iptables rules created by packstack
 
     sudo iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
+
+Save the new rule:
+
     sudo service iptables save
 
 
