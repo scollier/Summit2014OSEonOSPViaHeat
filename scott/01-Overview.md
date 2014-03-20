@@ -1,4 +1,4 @@
-#**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
+#**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat Enterprise Linux OpenStack Platform 4.0 via Heat Templates**
 
 ##**1.1 Assumptions**
 
