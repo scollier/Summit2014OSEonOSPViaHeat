@@ -4,20 +4,20 @@
 
 All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
-    source /root/keystonerc_admin
+    source ~/keystonerc_admin
 
 Create a keypair and then list the key.
 
-    nova keypair-add adminkp > /root/adminkp.pem && chmod 400 /root/adminkp.pem
+    nova keypair-add adminkp > ~/adminkp.pem && chmod 400 ~/adminkp.pem
     nova keypair-list
 
 
 ##**4.2 Configure the Neutron plugin.ini**
 
-Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
+Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* is commented out.
 
     # vxlan_udp_port=4789
-    # network_vlan_ranges=physnet1
+    network_vlan_ranges=physnet1:1:4094
     tenant_network_type=local
     enable_tunneling=False
     integration_bridge=br-int
@@ -25,8 +25,11 @@ Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the
 
 Restart neutron networking services
 
-    service openvswitch restart
-    for i in neutron-*; do service $i condrestart; done
+    for i in openvswitch neutron-dhcp-agent neutron-l3-agent neutron-metadata-agent neutron-openvswitch-agent neutron-server
+    do
+        service $i restart
+    done
+
 
 ##**4.3 Set up Neutron Networking**
 
@@ -39,9 +42,9 @@ In this lab there is an existing network, much as there would be in a production
 
     CONFIG_NEUTRON_L3_EXT_BRIDGE=provider
 
-A provider network was created via packstack named *physnet1*. This was specified in the following option:
+A provider network was created via packstack named *physnet1*. This was specified in the following option. Note that although VLAN IDs are specified, they are not used in this environment but packstack requires these values:
 
-    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1
+    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1:1:4094
 
 The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-public* in the following option:
 
@@ -128,11 +131,6 @@ Display router1 configuration.
 
     neutron router-show router1
     
-    
-Optional: Reboot the server to ensure all networks come up on boot.
-
-    reboot
-
 **Lab 4 Complete!**
 
 <!--BREAK-->
