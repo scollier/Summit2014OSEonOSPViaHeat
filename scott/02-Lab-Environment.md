@@ -24,7 +24,7 @@ If you have to reboot the system, select partition X NEED TO FILL THIS OUT.
 
 **Look at the configuration options for Heat and Neutron:**
 
-    vim /root/answer.txt
+    vim /home/user/answer.txt
 
 **Each system has software repositories that are shared out via the local Apache web server:**
 
@@ -38,7 +38,7 @@ These will be utilized by the *openshift.sh* file when it is called by heat.
 
 **Explore the Heat template:**
 
-    egrep -i 'curl|wget' /root/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml
+    egrep -i 'curl|wget' /home/user/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml
     
 Here you can see that the Heat template was originally making calls to github for the *enterprise-2.0* and *openshift.sh* files. These lines were modified to point to local repositories for the purposes of this lab.
 
