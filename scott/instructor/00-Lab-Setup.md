@@ -225,6 +225,10 @@ Otherwise reboot the system:
 
     reboot
 
+IP address should be on the *br-public* interface and the *classroom* interface should have received a new DHCP address.
+          
+    ip a | egrep "public|classroom|em1"
+
 # END HOST SETUP
              
 
