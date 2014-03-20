@@ -107,12 +107,26 @@ Once the stack is successfully built the wait_condition states for both broker a
     | broker_wait_condition               | 65 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:51:30Z |
     | node_wait_condition                 | 66 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:52:01Z |
 
+Alternatively open Firefox and login to the Horizon dashboard to watch the heat stack status:
+
+* Open Firefox and browse to http://localhost
+* Login with *admin*:*password*
+* Select *Project* on the left
+* Under *Orchestration* select *Stacks*
+* Select *OpenShift* on the right pane
+* Enjoy the eye candy
 
 Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
 
     nova get-vnc-console broker_instance novnc
     
     nova get-vnc-console node_instance novnc
+
+Alternatively, in Horizon:
+
+* Under *Project* select *Instances*
+* On the right pane select either *broker_instance* or *node_instance*
+* Select *Console*
 
 ##**6.6 Confirm Connectivity**
 
