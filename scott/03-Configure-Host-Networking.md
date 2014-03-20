@@ -7,7 +7,7 @@ The server has a single network card. Configure both of the interface files at o
 **Explore the current network card interface setup:**
 
     ip a
-    ovs-vsctl show
+    sudo ovs-vsctl show
     
 Here you will notice that out of the box, packstack does not configure the interfaces.  In it's current state, the single Ethernet interface has an IP address from the classroom DHCP server.  We need to migrate that IP address to the *br-public* interface.
 
