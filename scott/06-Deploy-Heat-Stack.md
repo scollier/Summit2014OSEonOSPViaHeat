@@ -44,6 +44,9 @@ Restart heat services
 
 **Modify the openshift-environment.yaml file:**
 
+Load the keystonerc_admin file for neutron commands:
+
+    source ~/keystonerc_admin
 
 ###**Scripted Steps**
 Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
@@ -58,7 +61,7 @@ Run the following two commands to list the configured networks and subnets. Copy
     neutron net-list
     neutron subnet-list
 
-Edit the */root/openshift-environment.yaml* file and replace the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE with the actual UUID from the output of the previous commands.
+Edit the *~/openshift-environment.yaml* file and replace the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE with the actual UUID from the output of the previous commands.
 
     parameters:
       key_name: adminkp
@@ -98,8 +101,8 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
     cd ~
 
     heat create openshift \
-    -f heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
-    -e /root/openshift-environment.yaml
+    -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
+    -e ~/openshift-environment.yaml
 
 
 ##**6.6 Monitor the stack**
