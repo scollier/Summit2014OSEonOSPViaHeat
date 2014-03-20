@@ -16,7 +16,7 @@
 
 
 
-#**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat OpenStack 4.0 via Heat Templates**
+#**Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat Enterprise Linux OpenStack Platform 4.0 via Heat Templates**
 
 ##**1.1 Assumptions**
 
@@ -81,7 +81,7 @@ If you have to reboot the system, select partition X NEED TO FILL THIS OUT.
 
 **Look at the configuration options for Heat and Neutron:**
 
-    vim /root/answer.txt
+    vim ~/answer.txt
 
 **Each system has software repositories that are shared out via the local Apache web server:**
 
@@ -95,7 +95,7 @@ These will be utilized by the *openshift.sh* file when it is called by heat.
 
 **Explore the Heat template:**
 
-    egrep -i 'curl|wget' /root/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml
+    egrep -i 'curl|wget' /home/user/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml
     
 Here you can see that the Heat template was originally making calls to github for the *enterprise-2.0* and *openshift.sh* files. These lines were modified to point to local repositories for the purposes of this lab.
 
@@ -110,6 +110,12 @@ These two images were pre-built using disk image builder(DIB) for the purpose of
     yum repolist
 
 **View OpenStack services**
+
+Load the keystonerc_admin file which contains the authentication token information:
+
+    source ~/keystonerc_admin
+
+List OpenStack services running on this system:
 
     nova service-list
 
@@ -127,7 +133,7 @@ The server has a single network card. Configure both of the interface files at o
 **Explore the current network card interface setup:**
 
     ip a
-    ovs-vsctl show
+    sudo ovs-vsctl show
     
 Here you will notice that out of the box, packstack does not configure the interfaces.  In it's current state, the single Ethernet interface has an IP address from the classroom DHCP server.  We need to migrate that IP address to the *br-public* interface.
 
@@ -154,6 +160,7 @@ Alternatively, this script will display only the MAC Address:
 
 Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st and 2nd bytes (5th and 6th octets in the right most position) to match your lab station number. Remember to convert to hex:
 
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-public
     DEVICE="br-public"
     ONBOOT="yes"
     DEVICETYPE=ovs
@@ -162,9 +169,11 @@ Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the foll
     IPADDR="172.16.0.1"
     NETMASK="255.255.0.0"
     MACADDR=de:ad:be:ef:00:00
+    EOF
 
 The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents. Use the same MAC address specified in the previous file:
 
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-em1
     DEVICE="em1"
     ONBOOT="yes"
     TYPE="OVSPort"
@@ -172,10 +181,12 @@ The configuration file for em1 exists already, edit **/etc/sysconfig/network-scr
     PROMISC="yes"
     DEVICETYPE="ovs"
     MACADDR=de:ad:be:ef:00:00
+    EOF
 
     
 Configure a new interface called *classroom* to provide external access. Create the file **/etc/sysconfig/network/ifcfg-classroom** with the contents. Use the MAC address that was copied from the original *em1* interface:
 
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-classroom
     DEVICE="classroom"
     ONBOOT="yes"
     TYPE="OVSIntPort"
@@ -184,21 +195,26 @@ Configure a new interface called *classroom* to provide external access. Create 
     BOOTPROTO=dhcp
     OVS_EXTRA="set Interface classroom type=internal"
     MACADDR=f0:4d:a2:3b:a0:59
+    EOF
 
 **Restart Networking and review the interface configuration:**
 
-Note: Due to the reassigning of MAC addresses errors may occur until a reboot.
+Restart networking services
 
-    service network restart
+    sudo service network restart
+
+Note: Due to the reassigning of MAC addresses errors may occur until a reboot. If needed reboot:
+
+    sudo reboot
 
 Confirm the *172.16.0.1* IP address is assigned to the bridge interface *br-public*;
 
-    ovs-vsctl show
+    sudo ovs-vsctl show
     ip a
     
 IP address should be on the *br-public* interface and the *classroom* interface should have received a new DHCP address.
           
-    ip a | egrep "public|classroom"
+    ip a | egrep "public|classroom|em1"
 
 output:
 
@@ -219,20 +235,20 @@ output:
 
 All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
-    source /root/keystonerc_admin
+    source ~/keystonerc_admin
 
 Create a keypair and then list the key.
 
-    nova keypair-add adminkp > /root/adminkp.pem && chmod 400 /root/adminkp.pem
+    nova keypair-add adminkp > ~/adminkp.pem && chmod 400 ~/adminkp.pem
     nova keypair-list
 
 
 ##**4.2 Configure the Neutron plugin.ini**
 
-Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* and *network_vlan_ranges* are commented out.
+Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the *vxlan_udp_port* is commented out.
 
     # vxlan_udp_port=4789
-    # network_vlan_ranges=physnet1
+    network_vlan_ranges=physnet1:1:4094
     tenant_network_type=local
     enable_tunneling=False
     integration_bridge=br-int
@@ -240,8 +256,11 @@ Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the
 
 Restart neutron networking services
 
-    service openvswitch restart
-    for i in neutron-*; do service $i condrestart; done
+    for i in openvswitch neutron-dhcp-agent neutron-l3-agent neutron-metadata-agent neutron-openvswitch-agent neutron-server
+    do
+        service $i restart
+    done
+
 
 ##**4.3 Set up Neutron Networking**
 
@@ -254,9 +273,9 @@ In this lab there is an existing network, much as there would be in a production
 
     CONFIG_NEUTRON_L3_EXT_BRIDGE=provider
 
-A provider network was created via packstack named *physnet1*. This was specified in the following option:
+A provider network was created via packstack named *physnet1*. This was specified in the following option. Note that although VLAN IDs are specified, they are not used in this environment but packstack requires these values:
 
-    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1
+    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1:1:4094
 
 The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-public* in the following option:
 
@@ -343,11 +362,6 @@ Display router1 configuration.
 
     neutron router-show router1
     
-    
-Optional: Reboot the server to ensure all networks come up on boot.
-
-    reboot
-
 **Lab 4 Complete!**
 
 <!--BREAK-->
@@ -374,61 +388,78 @@ FILL OUT THIS
 
 All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
-    source /root/keystonerc_admin
+    source ~/keystonerc_admin
 
 
 The names of these images are hard coded in the heat template.  Do not change the name here.
 
-    glance add name=RHEL65-x86_64-broker is_public=true disk_format=qcow2 \
-    container_format=bare < /home/images/RHEL65-x86_64-broker-v2.qcow2
+    glance image-create --name RHEL65-x86_64-broker --is-public true --disk-format qcow2 \
+        --container-format bare --file /home/images/RHEL65-x86_64-broker-v2.qcow2
     
-    glance add name=RHEL65-x86_64-node is_public=true disk_format=qcow2 \
-    container_format=bare < /home/images/RHEL65-x86_64-node-v2.qcow2
+    glance image-create --name RHEL65-x86_64-node --is-public true --disk-format qcow2 \
+        --container-format bare --file /home/images/RHEL65-x86_64-node-v2.qcow2
     
     glance image-list
 
 
 ##**6.2 Ensure the heat.conf file is confirgured correctly**
 
-Ensure the following variables are set in the /etc/heat/heat.conf file:
+Ensure the following variables are set in the **/etc/heat/heat.conf** file:
+
+    sed -i '/^heat_/s/127.0.0.1/172.16.0.1/g' /etc/heat/heat.conf
+
+This command will change these specific parameters in **/etc/heat/heat.conf**
 
     # heat_metadata_server_url=http://IP of Controller:8000
-    heat_metadata_server_url=http://172.10.0.1:8000
+    heat_metadata_server_url=http://172.16.0.1:8000
     # heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
-    heat_waitcondition_server_url=http://172.10.0.1:8000/v1/waitcondition
+    heat_waitcondition_server_url=http://172.16.0.1:8000/v1/waitcondition
     # heat_watch_server_url=http://IP of Controller:8003
-    heat_watch_server_url=http://172.10.0.1:8003
+    heat_watch_server_url=http://172.16.0.1:8003
+
+Restart heat services
+
+    for i in openstack-heat-api openstack-heat-api-cfn openstack-heat-engine; do service $i restart; done
 
 
-##**6.3 Create the openshift-environment file**
+##**6.3 Modify the openshift-environment file**
 
 
-**Create the openshift-environment.yaml file:**
+**Modify the openshift-environment.yaml file:**
 
-Get the private and public network IDs as well as the private subnet ID out of the first column of the output of the below commands.  Place those parameters in the following file in the following fields: private_net_id: public_net_id: private_subnet_id: to replace FIXME.
+Load the keystonerc_admin file for neutron commands:
+
+    source ~/keystonerc_admin
+
+###**Scripted Steps**
+Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
+
+    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/openshift-environment.yaml
+    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/openshift-environment.yaml
+    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  ~/openshift-environment.yaml
+
+###**Manual Steps**
+Run the following two commands to list the configured networks and subnets. Copy and paste each corresponding ID with the parameter in the next section. The IDs are as follows: private_net_id: PUBLICH_NET_ID_HERE, public_net_id: PRIVATE_NET_ID_HERE, and private_subnet_id: PRIVATE_SUBNET_ID_HERE.
 
     neutron net-list
     neutron subnet-list
 
-Create the */root/openshift-environment.yaml* file and copy the following contents into it. For the IP address of the repo locations, please replace with the IP address of the host you are on.
+Edit the *~/openshift-environment.yaml* file and replace the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE with the actual UUID from the output of the previous commands.
 
     parameters:
-      key_name: rootkp
+      key_name: adminkp
       prefix: novalocal
       broker_hostname: openshift.brokerinstance.novalocal
       node_hostname: openshift.nodeinstance.novalocal
       conf_install_method: yum
-      # conf_rhel_repo_base: http://IP_OF_HOST/rhel6.5
-      conf_rhel_repo_base: http://172.10.0.1/rhel6.5
-      # conf_jboss_repo_base: http://IP_OF_HOST
-      conf_jboss_repo_base: http://172.10.0.1
-      # conf_ose_repo_base: http://IP_OF_HOST/ose-latest
-      conf_ose_repo_base: http://172.10.0.1/ose-latest
+      conf_rhel_repo_base: http://172.16.0.1/rhel6.5
+      conf_jboss_repo_base: http://172.16.0.1
+      conf_ose_repo_base: http://172.16.0.1/ose-latest
       # conf_rhscl_repo_base: http://IP_OF_HOST
-      conf_rhscl_repo_base: http://172.10.0.1
-      private_net_id: FIXME
-      public_net_id: FIXME
-      private_subnet_id: FIXME
+      conf_rhscl_repo_base: http://172.16.0.1
+      private_net_id: PRIVATE_NET_ID_HERE
+      public_net_id: PUBLIC_NET_ID_HERE
+      private_subnet_id: PRIVATE_SUBNET_ID_HERE
       yum_validator_version: "2.0"
       ose_version: "2.0"
 
@@ -436,8 +467,10 @@ Create the */root/openshift-environment.yaml* file and copy the following conten
 
 The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
 
-    iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
-    service iptables save
+**WARNING**: Do NOT use lokkit as it will overwrite the custom iptables rules created by packstack
+
+    sudo iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
+    sudo service iptables save
 
 
 ##**6.5 Launch the stack**
@@ -446,13 +479,13 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
 
 **Note: it can take up to 10 minutes for this to complete**
 
-    source /root/keystonerc_admin    
+    source ~/keystonerc_admin    
 
-    cd /root/
+    cd ~
 
     heat create openshift \
-    -f heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
-    -e /root/openshift-environment.yaml
+    -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
+    -e ~/openshift-environment.yaml
 
 
 ##**6.6 Monitor the stack**
@@ -463,11 +496,19 @@ List the *heat* stack
 
 Watch the heat events.
 
+    sudo tail -f /var/log/heat/heat-engine.log &
+
     heat event-list openshift
 
     heat resource-list openshift
 
     nova list
+
+Once the stack is successfully built the wait_condition states for both broker and node will change to CREATE_COMPLETE
+
+    | broker_wait_condition               | 65 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:51:30Z |
+    | node_wait_condition                 | 66 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:52:01Z |
+
 
 Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
 
@@ -477,19 +518,17 @@ Get a VNC console address and open it in the browser.  Firefox must be launched 
 
 ##**6.7 Confirm Connectivity**
 
-Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.
-
-    ping x.x.x.x 
-    
-SSH into the broker instance.  This may take a minute or two while they are spawning.  This will use the key that was created with *nova keypair* earlier.
-
 Confirm which IP address belongs to the broker and to the node.
 
     nova list
 
-SSH into the broker
+Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.
 
-    ssh -i ~/adminkp.pem ec2-user@IP.OF.BROKER
+    ping 172.16.1.X
+    
+SSH into the broker instance.  This may take a minute or two while they are spawning.  Use the key that was created with *nova keypair* earlier and the username of *ec2-user*:
+
+    ssh -i ~/adminkp.pem ec2-user@172.16.1.BROKER_IP
 
 Once logged in, gain root access and explore the environment.
 
@@ -509,7 +548,7 @@ Check mcollective traffic.  You should get a response from the node that was dep
 
 SSH into the node, using the IP that was obtained above.
 
-    ssh -i ~/rootkp.pem ec2-user@IP.OF.NODE
+    ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE_IP
     
 Check node configuration
 
@@ -517,7 +556,10 @@ Check node configuration
 
 Confirm Console Access by opening a browser and putting in the IP address of the broker.
 
-http://IP.OF.BROKER/console
+http://172.16.1.BROKER_IP/console
+
+username: demo
+password: changeme
 
 **FILL OUT THIS**
 
