@@ -34,7 +34,7 @@ Alternatively, this script will display only the MAC Address:
 
 Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. Note the line MACADDR will use a fabricated MAC address. Change the 1st and 2nd bytes (5th and 6th octets in the right most position) to match your lab station number. Remember to convert to hex:
 
-    cat << EOF >> /etc/sysconfig/network-scripts/ifcfg-br-public
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-public
     DEVICE="br-public"
     ONBOOT="yes"
     DEVICETYPE=ovs
@@ -47,7 +47,7 @@ Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the foll
 
 The configuration file for em1 exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents. Use the same MAC address specified in the previous file:
 
-    cat << EOF >> /etc/sysconfig/network-scripts/ifcfg-em1
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-em1
     DEVICE="em1"
     ONBOOT="yes"
     TYPE="OVSPort"
@@ -60,7 +60,7 @@ The configuration file for em1 exists already, edit **/etc/sysconfig/network-scr
     
 Configure a new interface called *classroom* to provide external access. Create the file **/etc/sysconfig/network/ifcfg-classroom** with the contents. Use the MAC address that was copied from the original *em1* interface:
 
-    cat << EOF >> /etc/sysconfig/network-scripts/ifcfg-classroom
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-classroom
     DEVICE="classroom"
     ONBOOT="yes"
     TYPE="OVSIntPort"
@@ -73,18 +73,22 @@ Configure a new interface called *classroom* to provide external access. Create 
 
 **Restart Networking and review the interface configuration:**
 
-Note: Due to the reassigning of MAC addresses errors may occur until a reboot.
+Restart networking services
 
     sudo service network restart
 
+Note: Due to the reassigning of MAC addresses errors may occur until a reboot. If needed reboot:
+
+    sudo reboot
+
 Confirm the *172.16.0.1* IP address is assigned to the bridge interface *br-public*;
 
-    ovs-vsctl show
+    sudo ovs-vsctl show
     ip a
     
 IP address should be on the *br-public* interface and the *classroom* interface should have received a new DHCP address.
           
-    ip a | egrep "public|classroom"
+    ip a | egrep "public|classroom|em1"
 
 output:
 
