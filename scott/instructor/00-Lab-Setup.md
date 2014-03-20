@@ -122,6 +122,14 @@ To login to the horizon dashboard via CLI:
     chown -Rv user.user /home/user
     restorecon -Rv /home/user
 
+# Add sudo permissions for user
+
+    visudo
+
+Add the following line in the file
+
+    %user ALL=/usr/bin/ovs-vsctl
+
 # END HOST SETUP
              
 
