@@ -51,8 +51,8 @@ Verify repositories are available
     mkdir -p /home/images/repos
     wget http://file.rdu.redhat.com/~calfonso/images/RHEL65-x86_64-node-v2.qcow2 -O /home/images/RHEL65-x86_64-node-v2.qcow2
     wget http://file.rdu.redhat.com/~calfonso/images/RHEL65-x86_64-broker-v2.qcow2 -O /home/images/RHEL65-x86_64-broker-v2.qcow2
-    wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/heat-templates.tgz -O /root/heat-templates.tgz
-    tar xvf /root/heat-templates.tgz -C /root/
+    wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/heat-templates.tgz -O /home/user/heat-templates.tgz
+    tar xvf /home/user/heat-templates.tgz -C /home/user/
 
 # Create user on the system
 
@@ -89,11 +89,11 @@ Verify OpenShift repositories
     
 # Copy answerfile local so it can be inspected by the students
 
-    wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/answer_new.txt.localhost -O /root/answer.txt
+    wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/answer_new.txt.localhost -O /home/user/answer.txt
 
 # Run packstack
 
-    packstack --debug --answer-file=/root/answer.txt
+    packstack --debug --answer-file=/home/user/answer.txt
 
 # Validate Setup
 
@@ -104,6 +104,9 @@ To login to the horizon dashboard via CLI:
     yum -y install links
     links http://localhost
 
+# Copy answer file to user director
+
+    cp /root/answer.txt /home/user/answer.txt
 
 # END HOST SETUP
              
