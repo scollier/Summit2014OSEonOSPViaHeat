@@ -138,11 +138,12 @@ Ensure the following variables are set in the **/etc/heat/heat.conf** file:
 
 This command will change these specific parameters in **/etc/heat/heat.conf**
 
-    # heat_metadata_server_url=http://IP of Controller:8000
+    grep "^heat_" /etc/heat/heat.conf
+
+Output:
+
     heat_metadata_server_url=http://172.16.0.1:8000
-    # heat_waitcondition_server_url=http://IP of Controller:8000/v1/waitcondition
     heat_waitcondition_server_url=http://172.16.0.1:8000/v1/waitcondition
-    # heat_watch_server_url=http://IP of Controller:8003
     heat_watch_server_url=http://172.16.0.1:8003
 
 Restart heat services
