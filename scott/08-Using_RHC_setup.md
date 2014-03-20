@@ -8,6 +8,26 @@
 
 * rhc
 
+##**Configure DNS**
+
+The broker instance is running a Bind DNS server to serve dynamic DNS for OpenShift. Add the broker's public IP to the system's */etc/resolv.conf*. First determine the Broker's IP.
+
+Collect the Broker's IP from *nova list*
+
+    nova list
+
+Once the IP is determined add it to */etc/resolv.conf*:
+
+    sudo vim /etc/resolv.conf
+
+Add it as the first nameserver
+
+    nameserver 172.16.1.BROKER_IP
+
+Test hostname resolution
+
+    host openshift.brokerinstance.novalocal
+
 ##**Configuring RHC setup**
 
 By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our broker.hosts.example.com server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
