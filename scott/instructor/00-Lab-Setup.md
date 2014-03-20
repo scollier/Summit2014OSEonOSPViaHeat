@@ -104,9 +104,9 @@ To login to the horizon dashboard via CLI:
     yum -y install links
     links http://localhost
 
-# Copy answer file to user director
+# Copy keystonerc_admin to user directory
 
-    cp /root/answer.txt /home/user/answer.txt
+    cp /root/keystonerc_admin /home/user/keystonerc_admin
 
 # Change ownership to user
 
