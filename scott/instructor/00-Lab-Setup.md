@@ -97,6 +97,14 @@ Verify OpenShift repositories
 
 # Validate Setup
 
+Load keystonerc file
+
+    source ~/keystonerc_admin
+
+List OpenStack services
+
+    nova service-list
+
 Brose to the Horizon dashboard at **http://localhost** with username: admin password: password
 
 To login to the horizon dashboard via CLI:
