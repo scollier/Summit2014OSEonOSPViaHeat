@@ -5,7 +5,7 @@
 
 All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
 
-    source /root/keystonerc_admin
+    source ~/keystonerc_admin
 
 
 The names of these images are hard coded in the heat template.  Do not change the name here.
@@ -21,7 +21,11 @@ The names of these images are hard coded in the heat template.  Do not change th
 
 ##**6.2 Ensure the heat.conf file is confirgured correctly**
 
-Ensure the following variables are set in the /etc/heat/heat.conf file:
+Ensure the following variables are set in the **/etc/heat/heat.conf** file:
+
+    sed -i '/^heat_/s/127.0.0.1/172.16.0.1/g' /etc/heat/heat.conf
+
+This command will change these specific parameters in **/etc/heat/heat.conf**
 
     # heat_metadata_server_url=http://IP of Controller:8000
     heat_metadata_server_url=http://172.16.0.1:8000
@@ -44,9 +48,9 @@ Restart heat services
 ###**Scripted Steps**
 Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
 
-    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  openshift-environment.yaml
-    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  openshift-environment.yaml
-    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  openshift-environment.yaml
+    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/openshift-environment.yaml
+    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/openshift-environment.yaml
+    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  ~/openshift-environment.yaml
 
 ###**Manual Steps**
 Run the following two commands to list the configured networks and subnets. Copy and paste each corresponding ID with the parameter in the next section. The IDs are as follows: private_net_id: PUBLICH_NET_ID_HERE, public_net_id: PRIVATE_NET_ID_HERE, and private_subnet_id: PRIVATE_SUBNET_ID_HERE.
@@ -79,8 +83,8 @@ The *broker* and *node* VMs need to be able to deliver a completed signal to the
 
 **WARNING**: Do NOT use lokkit as it will overwrite the custom iptables rules created by packstack
 
-    iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
-    service iptables save
+    sudo iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
+    sudo service iptables save
 
 
 ##**6.5 Launch the stack**
@@ -89,9 +93,9 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
 
 **Note: it can take up to 10 minutes for this to complete**
 
-    source /root/keystonerc_admin    
+    source ~/keystonerc_admin    
 
-    cd /root/
+    cd ~
 
     heat create openshift \
     -f heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
@@ -106,7 +110,7 @@ List the *heat* stack
 
 Watch the heat events.
 
-    tail -f /var/log/heat/heat-engine.log &
+    sudo tail -f /var/log/heat/heat-engine.log &
 
     heat event-list openshift
 
