@@ -130,7 +130,7 @@ Add the following line in the file
 
     %user ALL=/usr/bin/ovs-vsctl, /sbin/service, /sbin/reboot
 
-#* Modify the heat.conf file **
+#Modify the heat.conf file
 
 Ensure the following variables are set in the **/etc/heat/heat.conf** file:
 
