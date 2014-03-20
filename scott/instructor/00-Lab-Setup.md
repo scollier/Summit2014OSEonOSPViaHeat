@@ -46,6 +46,11 @@ Verify repositories are available
     rm -rf /etc/sysconfig/rhn/systemid
     yum repolist
 
+# Create user on the system
+
+    useradd user
+    echo password | passwd user --stdin
+
 # Get images and templates:
 
     mkdir -p /home/images/repos
@@ -53,11 +58,6 @@ Verify repositories are available
     wget http://file.rdu.redhat.com/~calfonso/images/RHEL65-x86_64-broker-v2.qcow2 -O /home/images/RHEL65-x86_64-broker-v2.qcow2
     wget http://refarch.cloud.lab.eng.bos.redhat.com/pub/projects/rhos/scollier/summit2014/heat-templates.tgz -O /home/user/heat-templates.tgz
     tar xvf /home/user/heat-templates.tgz -C /home/user/
-
-# Create user on the system
-
-    useradd user
-    echo password | passwd user --stdin
 
 # Add NFS mount if needed
 
@@ -107,6 +107,11 @@ To login to the horizon dashboard via CLI:
 # Copy answer file to user director
 
     cp /root/answer.txt /home/user/answer.txt
+
+# Change ownership to user
+
+    chown -Rv user.user /home/user
+    restorecon -Rv /home/user
 
 # END HOST SETUP
              
