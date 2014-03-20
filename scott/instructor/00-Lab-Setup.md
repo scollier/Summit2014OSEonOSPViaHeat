@@ -217,10 +217,11 @@ Configure a new interface called *classroom* to provide external access. Create 
 **Restart Networking and review the interface configuration:**
 
 Restart networking services
+**Note**: Due to the reassigning of MAC addresses errors may occur until a reboot but the following command may work:
 
-    service network restart
+    service network restart; ifdown classroom; ifup classroom
 
-Note: Due to the reassigning of MAC addresses errors may occur until a reboot. If needed reboot:
+Otherwise reboot the system:
 
     reboot
 
