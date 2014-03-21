@@ -5,42 +5,43 @@ As applications are added additional node hosts may be added to extend the capac
 ## 10.1 Create the node environment file
 A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.
 
-Create the _/root/node-environment.yaml_ file and copy the following contents into it.
-
-
+Create the _~/node-environment.yaml_ file and copy the following contents into it.
 
     parameters:
-      key_name: rootkp
+      key_name: adminkp
       domain: novalocal
-      broker1_floating_ip: 10.16.138.100
+      broker1_floating_ip: 172.16.1.3
       load_bal_hostname: openshift.brokerinstance.novalocal
       node_hostname: openshift.nodeinstance2.novalocal
       node_image: RHEL65-x86_64-node
       hosts_domain: novalocal
       replicants: ""
       install_method: yum
-      rhel_repo_base: http://10.16.138.52/rhel6.5
-      jboss_repo_base: http://10.16.138.52
-      openshift_repo_base: http://10.16.138.52/ose-latest
-      rhscl_repo_base: http://10.16.138.52
-      activemq_admin_pass: FIXME
-      activemq_user_pass: FIXME
-      mcollective_pass: FIXME
-      private_net_id: FIXME
-      public_net_id: FIXME
-      private_subnet_id: FIXME
+      rhel_repo_base: http://172.16.0.1/rhel6.5
+      jboss_repo_base: http://172.16.0.1
+      openshift_repo_base: http://172.16.0.1/ose-latest
+      rhscl_repo_base: http://172.16.0.1
+      activemq_admin_pass: password
+      activemq_user_pass: password
+      mcollective_pass: password
+      private_net_id: PRIVATE_NET_ID_HERE
+      public_net_id: PUBLIC_NET_ID_HERE
+      private_subnet_id: PRIVATE_SUBNET_ID_HERE
 
+Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
 
-
+    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
+    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
+    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  ~/node-environment.yaml
 
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
 
-    cd /root/
+    cd ~/
 
     heat stack-create ose_node \
     -f  heat-templates/openshift-enterprise/heat/neutron/highly-available/ose_node_stack.yaml \
-    -e /root/node-environment.yaml
+    -e ~/node-environment.yaml
 
 
 ##**10.3 Monitor the stack**
@@ -67,7 +68,7 @@ SSH into the node2 instance.  This may take a minute or two while they are spawn
 
 SSH into the node
 
-    ssh -i ~/rootkp.pem ec2-user@IP.OF.NODE2
+    ssh -i ~/adminkp.pem ec2-user@IP.OF.NODE2
 
 Once logged in, gain root access and explore the environment.
 
@@ -83,7 +84,7 @@ Check node configuration
 
 SSH into the broker instance to update the DNS zone file.
 
-    ssh -i ~/rootkp.pem ec2-user@IP.OF.BROKER
+    ssh -i ~/adminkp.pem ec2-user@IP.OF.BROKER
 
 Once logged in, gain root access.
 
