@@ -27,6 +27,7 @@ Create the _~/node-environment.yaml_ file and copy the following contents into i
       private_net_id: PRIVATE_NET_ID_HERE
       public_net_id: PUBLIC_NET_ID_HERE
       private_subnet_id: PRIVATE_SUBNET_ID_HERE
+      broker_floating_ip: OUTPUT_OF_NOVA_LIST
 
 Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
 
