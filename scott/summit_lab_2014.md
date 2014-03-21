@@ -187,29 +187,21 @@ Create a keypair and then list the key.
         
 ###**Network Configuration Background**
 
-In this lab there is an existing network, much as there would be in a production environment. This is a real, physical network with a gateway and DHCP server somewhere on the network that we do not have control over. Therefore we decided to use the *provider* extension for Neutron.  A *provider network* maps to an existing, physical network and allows administrators to manage additional attributes for these networks. This is enabled via the following option in the packstack answer file:
+In this lab there is an existing network, much as there would be in a production environment. This is a real, physical network with a gateway and DHCP server somewhere on the network that we do not have control over. Therefore we decided to use the a private network to represent our public network. This network will be setup on a brige called *br-ex* which is defined in the packstack file with the following option:
 
-    CONFIG_NEUTRON_L3_EXT_BRIDGE=provider
+    CONFIG_NEUTRON_L3_EXT_BRIDGE=br-ex
 
-A provider network was created via packstack named *physnet1*. This was specified in the following option. Note that although VLAN IDs are specified, they are not used in this environment but packstack requires these values:
-
-    CONFIG_NEUTRON_OVS_VLAN_RANGES=physnet1:1:4094
-
-The VLAN ranges specified are optional and not used in this environment, only the network name *physnet1* matters here. Next the network *physnet1* was mapped to a bridge we called *br-public* in the following option:
-
-    CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS=physnet1:br-public
-
-Lastly, this bridge *br-public* was mapped to the physical interface *em1* in the following option:
+This bridge was mapped to the physical interface *em1* in the following option:
 
     CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-public:em1
 
 ###**Create the *Public* Network**
 
-The network will be created using the *--provider* attributes *physical_network=physnet1* which we defined in packstack, and as the network is not using VLAN tags it will be specified as *network_type flat*. Lastly, as there is a real, physical router on this network, also specify *--router:external=True*. This results in the following command:
+Create a public network with the --router:external=True option to designate it as an external network:
 
-    neutron net-create public --provider:physical_network=physnet1 --provider:network_type flat --router:external=True
+    neutron net-create public --router:external=True
         
-List networks after creation
+List networks after creation:
 
     neutron net-list
 
@@ -217,50 +209,50 @@ More detail is available with the *net-show* command.  If you have multiple netw
         
     neutron net-show public
         
-Create the *public* subnet. Also specify an allocation pool of which floating IPs can be assigned. Without this option the entire subnet range will be used. Also specify the gateway here:
+Create the *public* subnet. Also specify an allocation pool from which floating IPs can be assigned. Without this option the entire subnet range will be used. Also specify the gateway here:
   
     neutron subnet-create public --allocation-pool start=172.16.1.1,end=172.16.1.20 \
-        --gateway 172.16.0.1 --enable_dhcp=False 172.16.0.0/16 --name pub-sub    
+        --gateway 172.16.0.1 --enable_dhcp=False 172.16.0.0/16 --name public    
         
-List the subnets
+List the subnets:
 
     neutron subnet-list
         
-Show more details about the *public* subnet.
+Show more details about the *public* subnet:
 
-    neutron subnet-show pub-sub
+    neutron subnet-show public
 
 Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED, FOR OUR PURPOSES - VINNY, use 10.16.143.247**
         
-    neutron subnet-update pub-sub --dns_nameservers list=true x.x.x.x
+    neutron subnet-update public --dns_nameservers list=true 10.16.143.247
 
 ###**Create Private Network**
 
-Create the *private* network that the virtual machines will be attached to. As this is an all-in-one configuration, use *network_type local*. A real production environment would use VLAN or tunnel technology such as GRE or VXLAN.
+Create a *private* network that the virtual machines will be attached to. As this is an all-in-one configuration, use *network_type local*. A real production environment would use VLAN or tunnel technology such as GRE or VXLAN.
 
     neutron net-create private --provider:network_type local
         
-List networks after creation.  This time you should see both **public** and **private**
+List networks after creation.  This time you should see both **public** and **private**:
 
     neutron net-list
         
-Show more details about the private network.
+Show more details about the private network:
 
     neutron net-show private
       
-Create the private subnet
+Create a private subnet:
 
-    neutron subnet-create private --gateway 192.168.0.1 192.168.0.0/24 --name priv-sub
+    neutron subnet-create private --gateway 192.168.0.1 192.168.0.0/24 --name private
         
 List the subnets
 
     neutron subnet-list
 
-Show more details about the *pivate* subnet.
+Show more details about the *pivate* subnet:
 
-    neutron subnet-show priv-sub
+    neutron subnet-show private
 
-Create a router. This is a neutron router that will route traffic from the private network to the public network.
+Create a router. This is a neutron router that will route traffic from the private network to the public network:
         
     neutron router-create router1
 
@@ -268,15 +260,15 @@ Set the gateway for the router to reside on the *public* subnet.
         
     neutron router-gateway-set router1 public
 
-List the router.
+List the router:
         
     neutron router-list
 
-Add an interface for the private subnet to the router.
+Add an interface for the private subnet to the router:
         
-    neutron router-interface-add router1 priv-sub
+    neutron router-interface-add router1 private
 
-Display router1 configuration.
+Display router1 configuration:
 
     neutron router-show router1
     
@@ -313,10 +305,8 @@ The names of these images are hard coded in the heat template.  Do not change th
 
     glance image-create --name RHEL65-x86_64-broker --is-public true --disk-format qcow2 \
         --container-format bare --file /home/images/RHEL65-x86_64-broker-v2.qcow2
-    
     glance image-create --name RHEL65-x86_64-node --is-public true --disk-format qcow2 \
         --container-format bare --file /home/images/RHEL65-x86_64-node-v2.qcow2
-    
     glance image-list
 
 
@@ -326,10 +316,6 @@ The names of these images are hard coded in the heat template.  Do not change th
 
 **Modify the openshift-environment.yaml file:**
 
-Load the keystonerc_admin file for neutron commands:
-
-    source ~/keystonerc_admin
-
 ###**Scripted Steps**
 Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
 
@@ -337,13 +323,17 @@ Run the following three commands to replace the placeholder text in the file wit
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/openshift-environment.yaml
     sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  ~/openshift-environment.yaml
 
-###**Manual Steps**
-Run the following two commands to list the configured networks and subnets. Copy and paste each corresponding ID with the parameter in the next section. The IDs are as follows: private_net_id: PUBLICH_NET_ID_HERE, public_net_id: PRIVATE_NET_ID_HERE, and private_subnet_id: PRIVATE_SUBNET_ID_HERE.
+###**Verify Changes**
+The scripts in the previous section should have added the correct network IDs to the yaml file. Run the following two commands to list the configured networks and subnets. 
 
     neutron net-list
     neutron subnet-list
 
-Edit the *~/openshift-environment.yaml* file and replace the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE with the actual UUID from the output of the previous commands.
+Inspect the *~/openshift-environment.yaml* file and verify the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE were replaced with the actual UUID from the output of the previous commands.
+
+    cat ~/openshift-environment.yaml
+
+Contents:
 
     parameters:
       key_name: adminkp
@@ -366,9 +356,12 @@ Edit the *~/openshift-environment.yaml* file and replace the placeholder text PU
 
 The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
 
-**WARNING**: Do NOT use lokkit as it will overwrite the custom iptables rules created by packstack
+**WARNING**: Do NOT use *lokkit* as it will overwrite the custom iptables rules created by packstack
 
     sudo iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
+
+Save the new rule:
+
     sudo service iptables save
 
 
@@ -377,10 +370,6 @@ The *broker* and *node* VMs need to be able to deliver a completed signal to the
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
 **Note: it can take up to 10 minutes for this to complete**
-
-    source ~/keystonerc_admin    
-
-    cd ~
 
     heat create openshift \
     -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
@@ -393,15 +382,21 @@ List the *heat* stack
 
     heat stack-list
 
-Watch the heat events.
-
-    sudo tail -f /var/log/heat/heat-engine.log &
+Watch the heat events with the following command:
 
     heat event-list openshift
 
+Each resouce can also be monitored with:
+
     heat resource-list openshift
 
+Once the instances are launched they can be view with:
+
     nova list
+
+Detailed information can be viewed in the heat log:
+
+    sudo tail -f /var/log/heat/heat-engine.log &
 
 Once the stack is successfully built the wait_condition states for both broker and node will change to CREATE_COMPLETE
 
@@ -437,7 +432,7 @@ Confirm which IP address belongs to the broker and to the node.
 
 Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.
 
-    ping 172.16.1.X
+    ping 172.16.1.BROKER_IP
     
 SSH into the broker instance.  This may take a minute or two while they are spawning.  Use the key that was created with *nova keypair* earlier and the username of *ec2-user*:
 
@@ -500,6 +495,21 @@ FILL OUT THIS
 The OpenShift Client tools, known as **rhc**, are built and packaged using the Ruby programming language.  OpenShift Enterprise integrates with the Git version control system to provide powerful, decentralized version control for your application source code.
 
 OpenShift Enterprise client tools can be installed on any operating system with Ruby 1.8.7 or higher.  Instructions for specific operating systems are provided below. It is assumed that you are running the commands from a command line window, such as Command Prompt, or Terminal. If you are using Ruby Version Manager (rvm) see the instructions below.
+
+##**Red Hat Enterprise Linux 6 with OpenShift entitlement**
+
+The most recent version of the OpenShift Enterprise client tools are available as a RPM from the OpenShift Enterprise hosted Yum repository. We recommend this version to remain up to date, although a version of the OpenShift Enterprise client tools RPM is also available through EPEL.
+
+With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:
+
+	$ sudo yum install rhc
+	
+
+**Lab 7 Complete!**
+
+---
+
+#**NOTE**: The following Appendix includes commands for additional Operating Systems
 
 ##**Microsoft Windows**
 
@@ -575,18 +585,6 @@ After the OpenShift Enterprise client tools have been installed, run:
 
 	$ rhc -v
 
-##**Red Hat Enterprise Linux 6 with OpenShift entitlement**
-
-The most recent version of the OpenShift Enterprise client tools are available as a RPM from the OpenShift Enterprise hosted Yum repository. We recommend this version to remain up to date, although a version of the OpenShift Enterprise client tools RPM is also available through EPEL.
-
-With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:
-
-	$ sudo yum install rubygem-rhc
-	
-If you do not have an OpenShift Enterprise on the system you want to install the client tools on, you can install ruby and rubygems and then issue the following command:
-
-	$ sudo gem install rhc
-
 ##**Ubuntu**
 
 Use the apt-get command line package manager to install Ruby and Git before you install the OpenShift Enterprise command line tools. Run:
@@ -605,7 +603,6 @@ With Ruby and Git correctly installed, you can now use the RubyGems package mana
 	$ sudo gem install rhc
 
 
-**Lab 7 Complete!**
 
 <!--BREAK-->
 
@@ -619,25 +616,45 @@ With Ruby and Git correctly installed, you can now use the RubyGems package mana
 
 * rhc
 
+##**Configure DNS**
+
+The broker instance is running a Bind DNS server to serve dynamic DNS for OpenShift. Add the broker's public IP to the system's */etc/resolv.conf*. First determine the Broker's IP.
+
+Collect the Broker's IP from *nova list*
+
+    nova list
+
+Once the IP is determined add it to */etc/resolv.conf*:
+
+    sudo vim /etc/resolv.conf
+
+Add it as the first nameserver
+
+    nameserver 172.16.1.BROKER_IP
+
+Test hostname resolution
+
+    host openshift.brokerinstance.novalocal
+
 ##**Configuring RHC setup**
 
-By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our broker.hosts.example.com server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
+By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our openshift.brokerinstance.novalocal server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
 
-	$ rhc setup --server broker.hosts.example.com
+	$ rhc setup --server openshift.brokerinstance.novalocal
 	
 Once you enter in that command, you will be prompted for the username that you would like to authenticate with.  For this training class, use the *demo* user account.  
 
 The first thing that you will be prompted with will look like the following:
 
 	The server's certificate is self-signed, which means that a secure connection can't be established to
-	'broker.hosts.example.com'.
+	'openshift.brokerinstance.novalocal'.
 	
 	You may bypass this check, but any data you send to the server could be intercepted by others.
 	Connect without checking the certificate? (yes|no):
 	
 Since we are using a self signed certificate, go ahead and select *yes* here and press the enter key. 
 
-At this point, you will be prompted for the username.  Enter in demo and specify the password for the demo user.
+At this point, you will be prompted for the username.  Enter in **demo** and specify the password **changeme**.
 
 After authenticating, OpenShift Enterprise will prompt if you want to create a authentication token for your system.  This will allow you to execute command on the PaaS as a developer without having to authenticate.  It is suggested that you generate a token to speed up the other labs in this training class.
 
@@ -655,7 +672,7 @@ The *rhc setup* tool is a convenient command line utility to ensure that the use
 	default_rhlogin=‘demo’
 
 	# Server API
-	libra_server = 'broker.hosts.example.com'
+	libra_server = 'openshift.brokerinstance.novalocal'
 	
 This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
 
@@ -675,7 +692,7 @@ first application.  To create an application, we will be using the *rhc app*
 command.  In order to view all of the switches available for the *rhc app*
 command, enter the following command:
 
-	$ rhc app -h
+	rhc app -h
 	
 This will provide you with the following output:
 	
@@ -704,13 +721,13 @@ It is very easy to create an OpenShift Enterprise application using *rhc*. The c
 
 Create a directory to hold your OpenShift Enterprise code projects:
 
-	$ cd ~
-	$ mkdir ose
-	$ cd ose
+    cd ~
+    mkdir ose
+    cd ose
 	
 To create an application that uses the *php* runtime, issue the following command:
 
-	$ rhc app create firstphp php-5.3
+    rhc app create firstphp php-5.3
 	
 After entering that command, you should see output that resembles the following:
 
@@ -727,10 +744,10 @@ After entering that command, you should see output that resembles the following:
 	Waiting for your DNS name to be available ... done
 	
 	Cloning into 'firstphp'...
-	The authenticity of host 'firstphp-ose.apps.example.com (209.132.178.87)' can't be established.
+	The authenticity of host 'firstphp-ose.novalocal (209.132.178.87)' can't be established.
 	RSA key fingerprint is e8:e2:6b:9d:77:e2:ed:a2:94:54:17:72:af:71:28:04.
 	Are you sure you want to continue connecting (yes/no)? yes
-	Warning: Permanently added 'firstphp-ose.apps.example.com' (RSA) to the list of known hosts.
+	Warning: Permanently added 'firstphp-ose.novalocal' (RSA) to the list of known hosts.
 	Checking connectivity... done
 	
 	Your application 'firstphp' is now available. OpenShift should
@@ -757,8 +774,8 @@ After you entered the command to create a new PHP application, a lot of things h
 
 When you created the PHP application using the *rhc app create* command, the private git repository that was created on your node host was cloned to your local machine.
 
-	$ cd firstphp
-	$ ls -al
+    cd firstphp
+    ls -al
 	
 You should see the following information:
 
@@ -779,7 +796,7 @@ You should see the following information:
 
 If you are not familiar with the Git revision control system, this is where information about the git repositories that you will be interacting with is stored.  For instance, to list all of the repositories that you are currently setup to use for this project, issue the following command:
 
-	$ cat .git/config
+    cat .git/config
 	
 You should see the following information, which specifies the URL for our repository that is hosted on the OpenShift Enterprise node host:
 
@@ -791,7 +808,7 @@ You should see the following information, which specifies the URL for our reposi
 		ignorecase = true
 	[remote "origin"]
 		fetch = +refs/heads/*:refs/remotes/origin/*
-		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.example.com/~/git/firstphp.git/
+		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
 	[branch "master"]
 		remote = origin
 		merge = refs/heads/master
@@ -850,18 +867,18 @@ To get a good understanding of the development workflow for a user, let's change
 Update this code block to the following and then save your changes:
 
 	<h1>
-	    Welcome to OpenShift Enterprise
+	    Welcome to OpenShift Enterprise on OpenStack
 	</h1>
 
 **Note:** Make sure you are updating the \<h1> tag and not the \<title> tag.
 
 Once the code has been changed, we need to commit our change to the local Git repository.  This is accomplished with the *git commit* command:
 
-	$ git commit -am "Changed welcome message."
+    git commit -am "Changed welcome message."
 	
 Now that our code has been committed to our local repository, we need to push those changes up to our repository that is located on the node host.  
 
-	$ git push
+    git push
 	
 You should see the following output:
 
@@ -871,7 +888,7 @@ You should see the following output:
 	Writing objects: 100% (4/4), 395 bytes, done.
 	Total 4 (delta 2), reused 0 (delta 0)
 	remote: restart_on_add=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.example.com for ServerName
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
 	remote: Waiting for stop to finish
 	remote: Done
 	remote: restart_on_add=false
@@ -881,10 +898,10 @@ You should see the following output:
 	remote: Running .openshift/action_hooks/build
 	remote: Running .openshift/action_hooks/deploy
 	remote: hot_deploy_added=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.example.com for ServerName
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
 	remote: Done
 	remote: Running .openshift/action_hooks/post_deploy
-	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.example.com/~/git/firstphp.git/
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
 	   3edf63b..edc0805  master -> master
 
 
@@ -895,7 +912,7 @@ Notice that we stop the application runtime (Apache), deploy the code, and then 
 
 If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:
 
-	http://firstphp-ose.apps.example.com
+	http://firstphp-ose.novalocal
 	
 You should see the updated code for the application.
 
@@ -912,15 +929,15 @@ Adding a new source code file to your OpenShift Enterprise application is an eas
 
 Once you have saved this file, the process for pushing the changes involves adding the new file to your git repository, committing the change, and then pushing the code to your OpenShift Enterprise gear:
 
-	$ git add .
-	$ git commit -am "Adding time.php"
-	$ git push
+    git add .
+    git commit -am "Adding time.php"
+    git push
 	
 ##**Verify code change**
 
 To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.example.com/time.php
+	http://firstphp-ose.novalocal/time.php
 	
 You should see the updated code for the application.
 
@@ -935,42 +952,43 @@ As applications are added additional node hosts may be added to extend the capac
 ## 10.1 Create the node environment file
 A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.
 
-Create the _/root/node-environment.yaml_ file and copy the following contents into it.
-
-
+Create the _~/node-environment.yaml_ file and copy the following contents into it.
 
     parameters:
-      key_name: rootkp
+      key_name: adminkp
       domain: novalocal
-      broker1_floating_ip: 10.16.138.100
+      broker1_floating_ip: 172.16.1.3
       load_bal_hostname: openshift.brokerinstance.novalocal
       node_hostname: openshift.nodeinstance2.novalocal
       node_image: RHEL65-x86_64-node
       hosts_domain: novalocal
       replicants: ""
       install_method: yum
-      rhel_repo_base: http://10.16.138.52/rhel6.5
-      jboss_repo_base: http://10.16.138.52
-      openshift_repo_base: http://10.16.138.52/ose-latest
-      rhscl_repo_base: http://10.16.138.52
-      activemq_admin_pass: FIXME
-      activemq_user_pass: FIXME
-      mcollective_pass: FIXME
-      private_net_id: FIXME
-      public_net_id: FIXME
-      private_subnet_id: FIXME
+      rhel_repo_base: http://172.16.0.1/rhel6.5
+      jboss_repo_base: http://172.16.0.1
+      openshift_repo_base: http://172.16.0.1/ose-latest
+      rhscl_repo_base: http://172.16.0.1
+      activemq_admin_pass: password
+      activemq_user_pass: password
+      mcollective_pass: password
+      private_net_id: PRIVATE_NET_ID_HERE
+      public_net_id: PUBLIC_NET_ID_HERE
+      private_subnet_id: PRIVATE_SUBNET_ID_HERE
 
+Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
 
-
+    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
+    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
+    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  ~/node-environment.yaml
 
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
 
-    cd /root/
+    cd ~/
 
     heat stack-create ose_node \
     -f  heat-templates/openshift-enterprise/heat/neutron/highly-available/ose_node_stack.yaml \
-    -e /root/node-environment.yaml
+    -e ~/node-environment.yaml
 
 
 ##**10.3 Monitor the stack**
@@ -997,7 +1015,7 @@ SSH into the node2 instance.  This may take a minute or two while they are spawn
 
 SSH into the node
 
-    ssh -i ~/rootkp.pem ec2-user@IP.OF.NODE2
+    ssh -i ~/adminkp.pem ec2-user@IP.OF.NODE2
 
 Once logged in, gain root access and explore the environment.
 
@@ -1013,7 +1031,7 @@ Check node configuration
 
 SSH into the broker instance to update the DNS zone file.
 
-    ssh -i ~/rootkp.pem ec2-user@IP.OF.BROKER
+    ssh -i ~/adminkp.pem ec2-user@IP.OF.BROKER
 
 Once logged in, gain root access.
 
