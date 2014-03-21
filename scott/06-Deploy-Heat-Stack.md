@@ -28,7 +28,7 @@ Run the following three commands to replace the placeholder text in the file wit
 
     sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/openshift-environment.yaml
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/openshift-environment.yaml
-    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/priv-sub/ {print $2}')/"  ~/openshift-environment.yaml
+    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/openshift-environment.yaml
 
 ###**Verify Changes**
 The scripts in the previous section should have added the correct network IDs to the yaml file. Run the following two commands to list the configured networks and subnets. 
