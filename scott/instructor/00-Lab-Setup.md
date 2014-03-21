@@ -149,26 +149,11 @@ Output:
 
 Restart heat services
 
-    for i in openstack-heat-api openstack-heat-api-cfn openstack-heat-engine; do service $i restart; done
-
-
-#**Modify Neutron Configuration**
-
-Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the vxlan_udp_port is commented out and remove the VLAN ids from the netowrk_vlan_ranges line.
-
-    # vxlan_udp_port=4789
-    network_vlan_ranges=physnet1
-    tenant_network_type=local
-    enable_tunneling=False
-    integration_bridge=br-int
-    bridge_mappings=physnet1:br-public
-
-Restart neutron networking services
-
-    for i in openvswitch neutron-dhcp-agent neutron-l3-agent neutron-metadata-agent neutron-openvswitch-agent neutron-server
-    do
+    for i in openstack-heat-api openstack-heat-api-cfn openstack-heat-engine
+    do 
         service $i restart
     done
+
 
 #**Set up the interfaces on the server:**
 
