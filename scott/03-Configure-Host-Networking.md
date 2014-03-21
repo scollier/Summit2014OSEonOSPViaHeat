@@ -28,10 +28,10 @@ IP address should be on the *br-public* interface and the *classroom* interface 
 
 output:
 
-    92: phy-br-public: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-    93: int-br-public: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
-    168: br-public: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
-        inet 172.10.0.1/16 brd 172.10.255.255 scope global br-public
+    2: em1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP qlen 1000
+    152: br-ex: <BROADCAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN 
+    inet 172.16.0.1/16 brd 172.16.255.255 scope global br-ex
+
 
 **Lab 3 Complete!**
 
