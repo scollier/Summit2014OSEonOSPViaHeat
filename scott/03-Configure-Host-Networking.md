@@ -12,7 +12,7 @@ The server has a single network card. Configure both of the interface files at o
 
 For this lab we will need 2 interfaces. The DHCP interface was the single NIC *em1*. The interface *em1* will be associated with the *br-public* bridge. Ensure the *ifcfg-em1* and *ifcfg-br-public* files look as follows.  The *ifcfg-br-public*  file will have to be created.  The files on the host should look exactly the same as what is listed below.
 
-    cat /etc/sysconfig/network-scripts/ifcfg-br-public
+    cat /etc/sysconfig/network-scripts/ifcfg-br-ex
     cat /etc/sysconfig/network-scripts/ifcfg-em1
 
 Packstack does not configure the interfaces but in this lab they have already been configured for you.  In the original state, the single Ethernet interface had an IP address from the classroom DHCP server.  We needed to migrate that IP address to the *br-public* interface.
