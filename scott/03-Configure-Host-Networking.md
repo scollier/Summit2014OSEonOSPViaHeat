@@ -24,7 +24,7 @@ Confirm the *172.16.0.1* IP address is assigned to the bridge interface *br-publ
     
 IP address should be on the *br-public* interface and the *classroom* interface should have received a new DHCP address.
           
-    ip a | egrep "public|em1"
+    ip a | egrep "br-ex|em1"
 
 output:
 
