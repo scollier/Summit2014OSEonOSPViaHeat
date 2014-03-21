@@ -157,12 +157,12 @@ Restart heat services
 
 #**Set up the interfaces on the server:**
 
-For this lab we will need to associate *em1* with the *br-public* bridge. Ensure *ifcfg-em1* and *ifcfg-br-public* files look as follows.  The *ifcfg-br-public* file will have to be created.
+For this lab we will need to associate *em1* with the *br-ex* bridge. Ensure *ifcfg-em1* and *ifcfg-br-ex* files look as follows.  The *ifcfg-br-ex* file will have to be created.
 
-Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. 
+Create the file **/etc/sysconfig/network-scripts/ifcfg-br-ex** with the following contents. 
 
-    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-public
-    DEVICE="br-public"
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-ex
+    DEVICE="br-ex"
     ONBOOT="yes"
     DEVICETYPE=ovs
     TYPE="OVSBridge"
@@ -177,7 +177,7 @@ The configuration file for *em1* exists already, edit **/etc/sysconfig/network-s
     DEVICE="em1"
     ONBOOT="yes"
     TYPE="OVSPort"
-    OVS_BRIDGE="br-public"
+    OVS_BRIDGE="br-ex"
     PROMISC="yes"
     DEVICETYPE="ovs"
     EOF
@@ -188,13 +188,11 @@ Restart networking services
 
     service network restart
 
-Otherwise reboot the system:
-
-    reboot
-
-IP address should be on the *br-public* interface.
+IP address should be on the *br-ex* interface.
           
-    ip a | egrep "public|em1"
+    ip a show dev br-ex
+
+    ip a show dev em1
 
 # END HOST SETUP
              
