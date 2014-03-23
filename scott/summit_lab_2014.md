@@ -668,7 +668,7 @@ Test hostname resolution
 
 By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our openshift.brokerinstance.novalocal server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
 
-	$ rhc setup --server openshift.brokerinstance.novalocal
+	rhc setup --server openshift.brokerinstance.novalocal
 	
 Once you enter in that command, you will be prompted for the username that you would like to authenticate with.  For this training class, use the *demo* user account.  
 
@@ -981,7 +981,7 @@ As applications are added additional node hosts may be added to extend the capac
 ## 10.1 Create the node environment file
 A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.
 
-Create the _~/node-environment.yaml_ file and copy the following contents into it.
+Create the _~/node-environment.yaml_ file and copy the following contents into it. This environment file instructs *heat* on which SSH key to use, domain, floating IP, and several other items.  Please take a minute to read through this and get a good handle on what we are passing to *heat*.
 
     parameters:
       key_name: adminkp
@@ -1005,11 +1005,15 @@ Create the _~/node-environment.yaml_ file and copy the following contents into i
       private_subnet_id: PRIVATE_SUBNET_ID_HERE
       broker_floating_ip: OUTPUT_OF_NOVA_LIST
 
-Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
+Run the following three commands to replace the placeholder text in the file with the correct IDs.
 
     sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
     sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
+    
+Confirm the changes.
+
+    cat ~/node-environment.yaml
 
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.

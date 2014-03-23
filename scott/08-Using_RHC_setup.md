@@ -32,7 +32,7 @@ Test hostname resolution
 
 By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our openshift.brokerinstance.novalocal server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
 
-	$ rhc setup --server openshift.brokerinstance.novalocal
+	rhc setup --server openshift.brokerinstance.novalocal
 	
 Once you enter in that command, you will be prompted for the username that you would like to authenticate with.  For this training class, use the *demo* user account.  
 
