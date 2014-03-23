@@ -273,24 +273,9 @@ Display router1 configuration:
 
 <!--BREAK-->
 
-#**Lab 5: Explore the Openstack Environment**
+#**Lab 5: Deploy Heat Stack**
 
-##**5 Server Configuration**
-
-FILL OUT THIS
-
-**FILL OUT THIS**
-
-FILL OUT THIS
-
-
-**Lab 5 Complete!**
-
-<!--BREAK-->
-
-#**Lab 6: Deploy Heat Stack**
-
-##**6.1 Import the Images into Glance**
+##**5.1 Import the Images into Glance**
 
 
 All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
@@ -308,7 +293,7 @@ The names of these images are hard coded in the heat template.  Do not change th
 
 
 
-##**6.2 Modify the openshift-environment file**
+##**5.2 Modify the openshift-environment file**
 
 
 **Modify the openshift-environment.yaml file:**
@@ -349,7 +334,7 @@ Contents:
       yum_validator_version: "2.0"
       ose_version: "2.0"
 
-##**6.3 Open the port for Return Signals**
+##**5.3 Open the port for Return Signals**
 
 The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
 
@@ -362,7 +347,7 @@ Save the new rule:
     sudo service iptables save
 
 
-##**6.4 Launch the stack**
+##**5.4 Launch the stack**
 
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
@@ -373,7 +358,7 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
     -e ~/openshift-environment.yaml
 
 
-##**6.5 Monitor the stack**
+##**5.5 Monitor the stack**
 
 List the *heat* stack
 
@@ -421,7 +406,7 @@ Alternatively, in Horizon:
 * On the right pane select either *broker_instance* or *node_instance*
 * Select *Console*
 
-##**6.6 Confirm Connectivity**
+##**5.6 Confirm Connectivity**
 
 Confirm which IP address belongs to the broker and to the node.
 
@@ -474,7 +459,7 @@ FILL OUT THIS
 
 <!--BREAK-->
 
-#**Lab 7: Installing the RHC client tools**
+#**Lab 6: Installing the RHC client tools**
 
 **Server used:**
 
@@ -502,7 +487,7 @@ With the correct entitlements in place, you can now install the OpenShift Enterp
 	$ sudo yum install rhc
 	
 
-**Lab 7 Complete!**
+**Lab 6 Complete!**
 
 ---
 
@@ -603,7 +588,7 @@ With Ruby and Git correctly installed, you can now use the RubyGems package mana
 
 <!--BREAK-->
 
-#**Lab 08: Using *rhc setup***
+#**Lab 07: Using *rhc setup***
 
 **Server used:**
 
@@ -674,11 +659,11 @@ The *rhc setup* tool is a convenient command line utility to ensure that the use
 This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
 
 
-**Lab 8 Complete!**
+**Lab 7 Complete!**
 
 <!--BREAK-->
 
-#**Lab 9: Create a PHP Application**
+#**Lab 8: Create a PHP Application**
 
 **Tools used:**
 
@@ -940,13 +925,14 @@ You should see the updated code for the application.
 
 ![](http://training.runcloudrun.com/images/firstphpTime.png)
 	
-**Lab 9 Complete!**
+**Lab 8 Complete!**
+
 <!--BREAK-->
-#**Lab 10: Extending the OpenShift Environment**
+#**Lab 9: Extending the OpenShift Environment**
 
 As applications are added additional node hosts may be added to extend the capacity of the OpenShift Enterprise environment.
 
-## 10.1 Create the node environment file
+## 9.1 Create the node environment file
 A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.
 
 Create the _~/node-environment.yaml_ file and copy the following contents into it.
@@ -979,7 +965,7 @@ Run the following three commands to replace the placeholder text in the file wit
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
     sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
 
-## 10.2 Launch the node heat stack
+## 9.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
 
     cd ~/
@@ -989,7 +975,7 @@ Now run the _heat_ command and launch the stack. The -f option tells _heat_ wher
     -e ~/node-environment.yaml
 
 
-##**10.3 Monitor the stack**
+##**9.3 Monitor the stack**
 
 List the *heat* stack
 
@@ -1003,7 +989,7 @@ Watch the heat events.
 
     nova list
 
-##**10.4 Confirm Connectivity**
+##**9.4 Confirm Connectivity**
 
 Ping the public IP of node 2
 
@@ -1043,11 +1029,11 @@ Check mcollective traffic.  You should get a response from node 2 that was deplo
 
     oo-mco ping
 
-**Lab 10 Complete!**
+**Lab 9 Complete!**
 
 <!--BREAK-->
 
-#**Lab 11: Using cartridges**
+#**Lab 10: Using cartridges**
 
 **Server used:**
 
@@ -1362,10 +1348,10 @@ Adding a hot_deploy marker will significantly increase the speed of application 
 
 
 
-**Lab 11 Complete!**
+**Lab 10 Complete!**
 <!--BREAK-->
 
-#**Lab 12: Gear Scavenger Hunt**
+#**Lab 11: Gear Scavenger Hunt**
 
 ##**Servers Used**
 
@@ -1401,7 +1387,7 @@ What is the total memory available for your app? (hint: <code>oo-cgroup-read
 memory.limit_in_bytes</code>)
 
 
-**Lab 12 Complete!**
+**Lab 11 Complete!**
 
 <!--BREAK-->
 
