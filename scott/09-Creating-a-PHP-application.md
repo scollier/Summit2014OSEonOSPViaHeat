@@ -1,4 +1,4 @@
-#**Lab 8: Create a PHP Application**
+#**Lab 9: Create a PHP Application**
 
 **Tools used:**
 
@@ -260,6 +260,6 @@ You should see the updated code for the application.
 
 ![](http://training.runcloudrun.com/images/firstphpTime.png)
 	
-**Lab 8 Complete!**
+**Lab 9 Complete!**
 
 <!--BREAK-->

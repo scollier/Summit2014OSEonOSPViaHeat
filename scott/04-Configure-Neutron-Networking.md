@@ -6,7 +6,7 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
 
     source ~/keystonerc_admin
 
-Create a keypair and then list the key.
+Keypairs are SSH credentials that are injected into images when they are launched. Create a keypair and then list the key.
 
     nova keypair-add adminkp > ~/adminkp.pem && chmod 400 ~/adminkp.pem
     nova keypair-list
@@ -54,9 +54,6 @@ Show more details about the *public* subnet:
 
     neutron subnet-show public
 
-Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED, FOR OUR PURPOSES - VINNY, use 10.16.143.247**
-        
-    neutron subnet-update public --dns_nameservers list=true 10.16.143.247
 
 ###**Create Private Network**
 

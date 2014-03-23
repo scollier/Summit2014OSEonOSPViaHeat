@@ -1,4 +1,4 @@
-#**Lab 07: Using *rhc setup***
+#**Lab 08: Using *rhc setup***
 
 **Server used:**
 
@@ -69,7 +69,7 @@ The *rhc setup* tool is a convenient command line utility to ensure that the use
 This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
 
 
-**Lab 7 Complete!**
+**Lab 8 Complete!**
 
 <!--BREAK-->
 

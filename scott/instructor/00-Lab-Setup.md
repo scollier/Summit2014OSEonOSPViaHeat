@@ -128,8 +128,11 @@ To login to the horizon dashboard via CLI:
 
 Add the following line in the file
 
-    %user ALL=/usr/bin/ovs-vsctl, /sbin/service, /sbin/reboot, /sbin/iptables, /sbin/ip, /usr/bin/tail, /usr/bin/yum, /usr/bin/vim /etc/resolv.conf, /usr/bin/vim /etc/neutron/plugin.ini
+    %user ALL=/usr/bin/ovs-vsctl, /sbin/service, /sbin/reboot, /sbin/iptables, /sbin/ip, /usr/bin/tail, /usr/bin/yum, /usr/bin/vim /etc/resolv.conf, /usr/bin/vim /etc/neutron/plugin.ini, /bin/rpm, /bin/ls
 
+# Give user read permissions to /etc/heat
+
+    chmod o+r /etc/heat
 
 #Modify the heat.conf file
 

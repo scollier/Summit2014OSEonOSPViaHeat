@@ -1,8 +1,8 @@
-#**Lab 9: Extending the OpenShift Environment**
+#**Lab 10: Extending the OpenShift Environment**
 
 As applications are added additional node hosts may be added to extend the capacity of the OpenShift Enterprise environment.
 
-## 9.1 Create the node environment file
+## 10.1 Create the node environment file
 A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.
 
 Create the _~/node-environment.yaml_ file and copy the following contents into it.
@@ -35,7 +35,7 @@ Run the following three commands to replace the placeholder text in the file wit
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
     sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
 
-## 9.2 Launch the node heat stack
+## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
 
     cd ~/
@@ -45,7 +45,7 @@ Now run the _heat_ command and launch the stack. The -f option tells _heat_ wher
     -e ~/node-environment.yaml
 
 
-##**9.3 Monitor the stack**
+##**10.3 Monitor the stack**
 
 List the *heat* stack
 
@@ -59,7 +59,7 @@ Watch the heat events.
 
     nova list
 
-##**9.4 Confirm Connectivity**
+##**10.4 Confirm Connectivity**
 
 Ping the public IP of node 2
 
@@ -99,7 +99,7 @@ Check mcollective traffic.  You should get a response from node 2 that was deplo
 
     oo-mco ping
 
-**Lab 9 Complete!**
+**Lab 10 Complete!**
 
 <!--BREAK-->
 

@@ -1,4 +1,4 @@
-#**Lab 11: Gear Scavenger Hunt**
+#**Lab 12: Gear Scavenger Hunt**
 
 ##**Servers Used**
 
@@ -34,7 +34,7 @@ What is the total memory available for your app? (hint: <code>oo-cgroup-read
 memory.limit_in_bytes</code>)
 
 
-**Lab 11 Complete!**
+**Lab 12 Complete!**
 
 <!--BREAK-->
 

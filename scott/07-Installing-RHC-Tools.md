@@ -1,4 +1,4 @@
-#**Lab 6: Installing the RHC client tools**
+#**Lab 7: Installing the RHC client tools**
 
 **Server used:**
 
@@ -26,7 +26,7 @@ With the correct entitlements in place, you can now install the OpenShift Enterp
 	$ sudo yum install rhc
 	
 
-**Lab 6 Complete!**
+**Lab 7 Complete!**
 
 ---
 

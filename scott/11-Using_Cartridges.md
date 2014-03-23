@@ -1,4 +1,4 @@
-#**Lab 10: Using cartridges**
+#**Lab 11: Using cartridges**
 
 **Server used:**
 
@@ -313,6 +313,6 @@ Adding a hot_deploy marker will significantly increase the speed of application 
 
 
 
-**Lab 10 Complete!**
+**Lab 11 Complete!**
 <!--BREAK-->
 
