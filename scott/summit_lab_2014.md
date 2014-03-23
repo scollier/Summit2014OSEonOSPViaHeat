@@ -4,13 +4,14 @@
 2. **Lab Environment**
 3. **Configure Host Networking**
 4. **Configure Neutron Networking**
-5. **Explore the Red Hat OpenStack 4.0 Environment**
-6. **Deploy Heat Stack**
-7. **Configure Red Hat OpenStack 4.0**
-8. **Installing RHC Tools**
-9. **Using *rhc setup***
-10. **Creating a PHP Application**
-11. **Deploy an Extra OpenShift Node**
+5. **Deploy Heat Stack**
+6. **Explore the OpenShift Environment** 
+7. **Installing RHC Tools**
+8. **Using *rhc setup***
+9. **Creating a PHP Application**
+10. **Deploy an Extra OpenShift Node**
+11. **Using Cartridges**
+12. **Gear Scavenger Hunt**
 
 <!--BREAK-->
 
@@ -171,7 +172,7 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
 
     source ~/keystonerc_admin
 
-Create a keypair and then list the key.
+Keypairs are SSH credentials that are injected into images when they are launched. Create a keypair and then list the key.
 
     nova keypair-add adminkp > ~/adminkp.pem && chmod 400 ~/adminkp.pem
     nova keypair-list
@@ -219,9 +220,6 @@ Show more details about the *public* subnet:
 
     neutron subnet-show public
 
-Update the *public* subnet with a valid DNS entry. **THIS WILL NEED TO BE MODIFIED, IT MAY NEED TO BE REMOVED, FOR OUR PURPOSES - VINNY, use 10.16.143.247**
-        
-    neutron subnet-update public --dns_nameservers list=true 10.16.143.247
 
 ###**Create Private Network**
 
@@ -283,7 +281,9 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
     source ~/keystonerc_admin
 
 
-The names of these images are hard coded in the heat template.  Do not change the name here.
+The names of these images are hard coded in the heat template.  Do not change the name here.  These images were created via disk image-builder (DIB) prior to the lab to save time.  For more information on how to create these images, please check the upstream README.
+
+https://github.com/openstack/heat-templates/blob/master/openshift-enterprise/README.rst
 
     glance image-create --name RHEL65-x86_64-broker --is-public true --disk-format qcow2 \
         --container-format bare --file /home/images/RHEL65-x86_64-broker-v2.qcow2
@@ -295,11 +295,12 @@ The names of these images are hard coded in the heat template.  Do not change th
 
 ##**5.2 Modify the openshift-environment file**
 
+There are two ways to pass parameters to the *heat* command.  The first is via the *heat* CLI.  The second is to via an environment file.  This lab uses the environment file method because it makes it easier to organize the parameters. 
 
 **Modify the openshift-environment.yaml file:**
 
 ###**Scripted Steps**
-Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and details manual steps see the next section:
+Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and detailed manual steps see the next section:
 
     sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/openshift-environment.yaml
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/openshift-environment.yaml
@@ -336,7 +337,17 @@ Contents:
 
 ##**5.3 Open the port for Return Signals**
 
-The *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
+Once the *heat* stack launches, several steps are performed, such as:
+* Configuring security groups for the broker and the node
+* Setting up the *broker* and *node* ports
+* Setting up the floating IPs
+* Installing any neccessary packages
+* Configuring OpenShift
+
+
+When these tasks are finished, the *broker* and *node* VMs need to be able to deliver a completed signal to the metadata service.
+
+Open the correct port to allow the signal to pass.
 
 **WARNING**: Do NOT use *lokkit* as it will overwrite the custom iptables rules created by packstack
 
@@ -349,7 +360,17 @@ Save the new rule:
 
 ##**5.4 Launch the stack**
 
+Get a feel for the options that *heat* supports.
+
+    heat --help
+    which heat
+    sudo rpm -qa | grep heat
+    sudo rpm -qc openstack-heat-common
+    sudo rpm -qf $(which heat)
+
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
+
+    . ~/keystone_admin
 
 **Note: it can take up to 10 minutes for this to complete**
 
@@ -359,6 +380,19 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
 
 
 ##**5.5 Monitor the stack**
+
+There are several ways to monitor the status of the deployment.  
+
+Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
+
+    nova get-vnc-console broker_instance novnc
+    
+    nova get-vnc-console node_instance novnc
+
+Open another terminal and tail the heat log:
+
+    sudo tail -f /var/log/heat/heat-engine.log &
+
 
 List the *heat* stack
 
@@ -376,9 +410,6 @@ Once the instances are launched they can be view with:
 
     nova list
 
-Detailed information can be viewed in the heat log:
-
-    sudo tail -f /var/log/heat/heat-engine.log &
 
 Once the stack is successfully built the wait_condition states for both broker and node will change to CREATE_COMPLETE
 
@@ -394,11 +425,7 @@ Alternatively open Firefox and login to the Horizon dashboard to watch the heat 
 * Select *OpenShift* on the right pane
 * Enjoy the eye candy
 
-Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
 
-    nova get-vnc-console broker_instance novnc
-    
-    nova get-vnc-console node_instance novnc
 
 Alternatively, in Horizon:
 
@@ -406,13 +433,19 @@ Alternatively, in Horizon:
 * On the right pane select either *broker_instance* or *node_instance*
 * Select *Console*
 
-##**5.6 Confirm Connectivity**
+**Lab 5 Complete!**
+
+<!--BREAK-->
+
+#**Lab 6: Explore the OpenShift Environment**
+
+##**6.1 List the Instances and Connect**
 
 Confirm which IP address belongs to the broker and to the node.
 
     nova list
 
-Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.
+Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.  The public IP will start with 172.
 
     ping 172.16.1.BROKER_IP
     
@@ -420,17 +453,33 @@ SSH into the broker instance.  This may take a minute or two while they are spaw
 
     ssh -i ~/adminkp.pem ec2-user@172.16.1.BROKER_IP
 
+##**6.2 Explore the Environment**
+
+
 Once logged in, gain root access and explore the environment.
 
     sudo su -
 
-Check the OpenShift install output.
+Check the OpenShift install output.  At the end of hte file, you shuold see "Installation and configuration is complete".  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files.
 
-    cat /tmp/openshift.out
+    vi /tmp/openshift.out
+    
+    vi /var/log/cfn-signal.log
+    
+    vi /var/log/cloud-init.log
+    
+    vi /var/log/cloud-init-output.log
+
+Now confirm OpenShift functionality. See what tools are available by tabbing out the oo-    command.
+
+    oo-<tab><tab>
+
 
 Check mcollective traffic.  You should get a response from the node that was deployed as part of the stack.
 
     oo-mco ping
+    
+Run some diagnostics to confirm functionality.  You should get a PASS and NO ERRORS on each of these.
     
     oo-diagnostics -v
     
@@ -451,19 +500,16 @@ http://172.16.1.BROKER_IP/console
 username: demo
 password: changeme
 
-**FILL OUT THIS**
-
-FILL OUT THIS
-
 **Lab 6 Complete!**
 
 <!--BREAK-->
 
-#**Lab 6: Installing the RHC client tools**
+
+#**Lab 7: Installing the RHC client tools**
 
 **Server used:**
 
-* localhost
+* localhost / hypervisor
 
 **Tools used:**
 
@@ -484,14 +530,14 @@ The most recent version of the OpenShift Enterprise client tools are available a
 
 With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:
 
-	$ sudo yum install rhc
+	sudo yum install rhc
 	
 
-**Lab 6 Complete!**
+**Lab 7 Complete!**
 
 ---
 
-#**NOTE**: The following Appendix includes commands for additional Operating Systems
+##**NOTE**: The following Appendix includes commands for additional Operating Systems
 
 ##**Microsoft Windows**
 
@@ -588,7 +634,7 @@ With Ruby and Git correctly installed, you can now use the RubyGems package mana
 
 <!--BREAK-->
 
-#**Lab 07: Using *rhc setup***
+#**Lab 08: Using *rhc setup***
 
 **Server used:**
 
@@ -659,11 +705,11 @@ The *rhc setup* tool is a convenient command line utility to ensure that the use
 This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
 
 
-**Lab 7 Complete!**
+**Lab 8 Complete!**
 
 <!--BREAK-->
 
-#**Lab 8: Create a PHP Application**
+#**Lab 9: Create a PHP Application**
 
 **Tools used:**
 
@@ -925,14 +971,14 @@ You should see the updated code for the application.
 
 ![](http://training.runcloudrun.com/images/firstphpTime.png)
 	
-**Lab 8 Complete!**
+**Lab 9 Complete!**
 
 <!--BREAK-->
-#**Lab 9: Extending the OpenShift Environment**
+#**Lab 10: Extending the OpenShift Environment**
 
 As applications are added additional node hosts may be added to extend the capacity of the OpenShift Enterprise environment.
 
-## 9.1 Create the node environment file
+## 10.1 Create the node environment file
 A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.
 
 Create the _~/node-environment.yaml_ file and copy the following contents into it.
@@ -965,7 +1011,7 @@ Run the following three commands to replace the placeholder text in the file wit
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
     sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
 
-## 9.2 Launch the node heat stack
+## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
 
     cd ~/
@@ -975,7 +1021,7 @@ Now run the _heat_ command and launch the stack. The -f option tells _heat_ wher
     -e ~/node-environment.yaml
 
 
-##**9.3 Monitor the stack**
+##**10.3 Monitor the stack**
 
 List the *heat* stack
 
@@ -989,7 +1035,7 @@ Watch the heat events.
 
     nova list
 
-##**9.4 Confirm Connectivity**
+##**10.4 Confirm Connectivity**
 
 Ping the public IP of node 2
 
@@ -1029,11 +1075,11 @@ Check mcollective traffic.  You should get a response from node 2 that was deplo
 
     oo-mco ping
 
-**Lab 9 Complete!**
+**Lab 10 Complete!**
 
 <!--BREAK-->
 
-#**Lab 10: Using cartridges**
+#**Lab 11: Using cartridges**
 
 **Server used:**
 
@@ -1348,10 +1394,10 @@ Adding a hot_deploy marker will significantly increase the speed of application 
 
 
 
-**Lab 10 Complete!**
+**Lab 11 Complete!**
 <!--BREAK-->
 
-#**Lab 11: Gear Scavenger Hunt**
+#**Lab 12: Gear Scavenger Hunt**
 
 ##**Servers Used**
 
@@ -1387,7 +1433,7 @@ What is the total memory available for your app? (hint: <code>oo-cgroup-read
 memory.limit_in_bytes</code>)
 
 
-**Lab 11 Complete!**
+**Lab 12 Complete!**
 
 <!--BREAK-->
 
