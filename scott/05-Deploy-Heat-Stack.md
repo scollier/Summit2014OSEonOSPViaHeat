@@ -116,6 +116,13 @@ Get a VNC console address and open it in the browser.  Firefox must be launched 
     
     nova get-vnc-console node_instance novnc
 
+Alternatively, in Horizon:
+
+* Under *Project* select *Instances*
+* On the right pane select either *broker_instance* or *node_instance*
+* Select *Console*
+
+
 Open another terminal and tail the heat log:
 
     sudo tail -f /var/log/heat/heat-engine.log &
@@ -152,13 +159,6 @@ Alternatively open Firefox and login to the Horizon dashboard to watch the heat 
 * Select *OpenShift* on the right pane
 * Enjoy the eye candy
 
-
-
-Alternatively, in Horizon:
-
-* Under *Project* select *Instances*
-* On the right pane select either *broker_instance* or *node_instance*
-* Select *Console*
 
 **Lab 5 Complete!**
 
