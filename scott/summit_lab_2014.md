@@ -1045,6 +1045,8 @@ Ping the public IP of node 2
 
     ping x.x.x.x 
 
+*Note the IP address of node 2. The address will be needed later in this lab.*
+
 SSH into the node2 instance.  This may take a minute or two while they are spawning.  This will use the key that was created with *nova keypair* earlier.
 
 SSH into the node
@@ -1071,9 +1073,18 @@ Once logged in, gain root access.
 
     sudo su -
 
-Append the node 2 instance _A_ record to the zone file so node 2 hostname resolves.
+Add node 2 instance _A_ record to the zone file so node 2 hostname resolves.
 
-    echo "openshift.nodeinstance2    A   IP.OF.NODE2" >> /var/named/dynamic/novalocal.db
+    oo-register-dns \
+    --with-node-hostname openshift.nodeinstance2 \
+    --with-node-ip 172.16.1.4 \
+    --domain novalocal \
+    --dns-server openshift.brokerinstance.novalocal
+    service named restart
+
+Check hostname resolution
+
+    host openshift.nodeinstance2.novalocal
 
 Check mcollective traffic.  You should get a response from node 2 that was deployed as part of the stack.
 
