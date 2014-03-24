@@ -4,13 +4,14 @@
 2. **Lab Environment**
 3. **Configure Host Networking**
 4. **Configure Neutron Networking**
-5. **Explore the Red Hat OpenStack 4.0 Environment**
-6. **Deploy Heat Stack**
-7. **Configure Red Hat OpenStack 4.0**
-8. **Installing RHC Tools**
-9. **Using *rhc setup***
-10. **Creating a PHP Application**
-11. **Deploy an Extra OpenShift Node**
+5. **Deploy Heat Stack**
+6. **Explore the OpenShift Environment** 
+7. **Installing RHC Tools**
+8. **Using *rhc setup***
+9. **Creating a PHP Application**
+10. **Deploy an Extra OpenShift Node**
+11. **Using Cartridges**
+12. **Gear Scavenger Hunt**
 
 <!--BREAK-->
 

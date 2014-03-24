@@ -30,23 +30,23 @@ Test hostname resolution
 
 ##**Configuring RHC setup**
 
-By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our broker.hosts.example.com server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
+By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our openshift.brokerinstance.novalocal server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
 
-	$ rhc setup --server broker.hosts.example.com
+	rhc setup --server openshift.brokerinstance.novalocal
 	
 Once you enter in that command, you will be prompted for the username that you would like to authenticate with.  For this training class, use the *demo* user account.  
 
 The first thing that you will be prompted with will look like the following:
 
 	The server's certificate is self-signed, which means that a secure connection can't be established to
-	'broker.hosts.example.com'.
+	'openshift.brokerinstance.novalocal'.
 	
 	You may bypass this check, but any data you send to the server could be intercepted by others.
 	Connect without checking the certificate? (yes|no):
 	
 Since we are using a self signed certificate, go ahead and select *yes* here and press the enter key. 
 
-At this point, you will be prompted for the username.  Enter in demo and specify the password for the demo user.
+At this point, you will be prompted for the username.  Enter in **demo** and specify the password **changeme**.
 
 After authenticating, OpenShift Enterprise will prompt if you want to create a authentication token for your system.  This will allow you to execute command on the PaaS as a developer without having to authenticate.  It is suggested that you generate a token to speed up the other labs in this training class.
 
@@ -64,7 +64,7 @@ The *rhc setup* tool is a convenient command line utility to ensure that the use
 	default_rhlogin=‘demo’
 
 	# Server API
-	libra_server = 'broker.hosts.example.com'
+	libra_server = 'openshift.brokerinstance.novalocal'
 	
 This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
 

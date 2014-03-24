@@ -128,8 +128,11 @@ To login to the horizon dashboard via CLI:
 
 Add the following line in the file
 
-    %user ALL=/usr/bin/ovs-vsctl, /sbin/service, /sbin/reboot, /sbin/iptables, /sbin/ip, /usr/bin/tail, /usr/bin/yum, /usr/bin/vim /etc/resolv.conf, /usr/bin/vim /etc/neutron/plugin.ini
+    %user ALL=/usr/bin/ovs-vsctl, /sbin/service, /sbin/reboot, /sbin/iptables, /sbin/ip, /usr/bin/tail, /usr/bin/yum, /usr/bin/vim /etc/resolv.conf, /usr/bin/vim /etc/neutron/plugin.ini, /bin/rpm, /bin/ls
 
+# Give user read permissions to /etc/heat
+
+    chmod o+r /etc/heat
 
 #Modify the heat.conf file
 
@@ -149,35 +152,20 @@ Output:
 
 Restart heat services
 
-    for i in openstack-heat-api openstack-heat-api-cfn openstack-heat-engine; do service $i restart; done
-
-
-#**Modify Neutron Configuration**
-
-Ensure the */etc/neutron/plugin.ini* has this configuration at the bottom of the file in the [OVS] stanza. The key part is to ensure the vxlan_udp_port is commented out and remove the VLAN ids from the netowrk_vlan_ranges line.
-
-    # vxlan_udp_port=4789
-    network_vlan_ranges=physnet1
-    tenant_network_type=local
-    enable_tunneling=False
-    integration_bridge=br-int
-    bridge_mappings=physnet1:br-public
-
-Restart neutron networking services
-
-    for i in openvswitch neutron-dhcp-agent neutron-l3-agent neutron-metadata-agent neutron-openvswitch-agent neutron-server
-    do
+    for i in openstack-heat-api openstack-heat-api-cfn openstack-heat-engine
+    do 
         service $i restart
     done
 
+
 #**Set up the interfaces on the server:**
 
-For this lab we will need to associate *em1* with the *br-public* bridge. Ensure *ifcfg-em1* and *ifcfg-br-public* files look as follows.  The *ifcfg-br-public* file will have to be created.
+For this lab we will need to associate *em1* with the *br-ex* bridge. Ensure *ifcfg-em1* and *ifcfg-br-ex* files look as follows.  The *ifcfg-br-ex* file will have to be created.
 
-Create the file **/etc/sysconfig/network-scripts/ifcfg-br-public** with the following contents. 
+Create the file **/etc/sysconfig/network-scripts/ifcfg-br-ex** with the following contents. 
 
-    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-public
-    DEVICE="br-public"
+    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-ex
+    DEVICE="br-ex"
     ONBOOT="yes"
     DEVICETYPE=ovs
     TYPE="OVSBridge"
@@ -192,7 +180,7 @@ The configuration file for *em1* exists already, edit **/etc/sysconfig/network-s
     DEVICE="em1"
     ONBOOT="yes"
     TYPE="OVSPort"
-    OVS_BRIDGE="br-public"
+    OVS_BRIDGE="br-ex"
     PROMISC="yes"
     DEVICETYPE="ovs"
     EOF
@@ -203,13 +191,11 @@ Restart networking services
 
     service network restart
 
-Otherwise reboot the system:
-
-    reboot
-
-IP address should be on the *br-public* interface.
+IP address should be on the *br-ex* interface.
           
-    ip a | egrep "public|em1"
+    ip a show dev br-ex
+
+    ip a show dev em1
 
 # END HOST SETUP
              

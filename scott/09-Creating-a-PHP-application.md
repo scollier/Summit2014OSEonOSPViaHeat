@@ -9,7 +9,7 @@ first application.  To create an application, we will be using the *rhc app*
 command.  In order to view all of the switches available for the *rhc app*
 command, enter the following command:
 
-	$ rhc app -h
+	rhc app -h
 	
 This will provide you with the following output:
 	
@@ -38,13 +38,13 @@ It is very easy to create an OpenShift Enterprise application using *rhc*. The c
 
 Create a directory to hold your OpenShift Enterprise code projects:
 
-	$ cd ~
-	$ mkdir ose
-	$ cd ose
+    cd ~
+    mkdir ose
+    cd ose
 	
 To create an application that uses the *php* runtime, issue the following command:
 
-	$ rhc app create firstphp php-5.3
+    rhc app create firstphp php-5.3
 	
 After entering that command, you should see output that resembles the following:
 
@@ -61,10 +61,10 @@ After entering that command, you should see output that resembles the following:
 	Waiting for your DNS name to be available ... done
 	
 	Cloning into 'firstphp'...
-	The authenticity of host 'firstphp-ose.apps.example.com (209.132.178.87)' can't be established.
+	The authenticity of host 'firstphp-ose.novalocal (209.132.178.87)' can't be established.
 	RSA key fingerprint is e8:e2:6b:9d:77:e2:ed:a2:94:54:17:72:af:71:28:04.
 	Are you sure you want to continue connecting (yes/no)? yes
-	Warning: Permanently added 'firstphp-ose.apps.example.com' (RSA) to the list of known hosts.
+	Warning: Permanently added 'firstphp-ose.novalocal' (RSA) to the list of known hosts.
 	Checking connectivity... done
 	
 	Your application 'firstphp' is now available. OpenShift should
@@ -91,8 +91,8 @@ After you entered the command to create a new PHP application, a lot of things h
 
 When you created the PHP application using the *rhc app create* command, the private git repository that was created on your node host was cloned to your local machine.
 
-	$ cd firstphp
-	$ ls -al
+    cd firstphp
+    ls -al
 	
 You should see the following information:
 
@@ -113,7 +113,7 @@ You should see the following information:
 
 If you are not familiar with the Git revision control system, this is where information about the git repositories that you will be interacting with is stored.  For instance, to list all of the repositories that you are currently setup to use for this project, issue the following command:
 
-	$ cat .git/config
+    cat .git/config
 	
 You should see the following information, which specifies the URL for our repository that is hosted on the OpenShift Enterprise node host:
 
@@ -125,7 +125,7 @@ You should see the following information, which specifies the URL for our reposi
 		ignorecase = true
 	[remote "origin"]
 		fetch = +refs/heads/*:refs/remotes/origin/*
-		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.example.com/~/git/firstphp.git/
+		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
 	[branch "master"]
 		remote = origin
 		merge = refs/heads/master
@@ -184,18 +184,18 @@ To get a good understanding of the development workflow for a user, let's change
 Update this code block to the following and then save your changes:
 
 	<h1>
-	    Welcome to OpenShift Enterprise
+	    Welcome to OpenShift Enterprise on OpenStack
 	</h1>
 
 **Note:** Make sure you are updating the \<h1> tag and not the \<title> tag.
 
 Once the code has been changed, we need to commit our change to the local Git repository.  This is accomplished with the *git commit* command:
 
-	$ git commit -am "Changed welcome message."
+    git commit -am "Changed welcome message."
 	
 Now that our code has been committed to our local repository, we need to push those changes up to our repository that is located on the node host.  
 
-	$ git push
+    git push
 	
 You should see the following output:
 
@@ -205,7 +205,7 @@ You should see the following output:
 	Writing objects: 100% (4/4), 395 bytes, done.
 	Total 4 (delta 2), reused 0 (delta 0)
 	remote: restart_on_add=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.example.com for ServerName
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
 	remote: Waiting for stop to finish
 	remote: Done
 	remote: restart_on_add=false
@@ -215,10 +215,10 @@ You should see the following output:
 	remote: Running .openshift/action_hooks/build
 	remote: Running .openshift/action_hooks/deploy
 	remote: hot_deploy_added=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.example.com for ServerName
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
 	remote: Done
 	remote: Running .openshift/action_hooks/post_deploy
-	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.example.com/~/git/firstphp.git/
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
 	   3edf63b..edc0805  master -> master
 
 
@@ -229,7 +229,7 @@ Notice that we stop the application runtime (Apache), deploy the code, and then 
 
 If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:
 
-	http://firstphp-ose.apps.example.com
+	http://firstphp-ose.novalocal
 	
 You should see the updated code for the application.
 
@@ -246,19 +246,20 @@ Adding a new source code file to your OpenShift Enterprise application is an eas
 
 Once you have saved this file, the process for pushing the changes involves adding the new file to your git repository, committing the change, and then pushing the code to your OpenShift Enterprise gear:
 
-	$ git add .
-	$ git commit -am "Adding time.php"
-	$ git push
+    git add .
+    git commit -am "Adding time.php"
+    git push
 	
 ##**Verify code change**
 
 To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.example.com/time.php
+	http://firstphp-ose.novalocal/time.php
 	
 You should see the updated code for the application.
 
 ![](http://training.runcloudrun.com/images/firstphpTime.png)
 	
 **Lab 9 Complete!**
+
 <!--BREAK-->

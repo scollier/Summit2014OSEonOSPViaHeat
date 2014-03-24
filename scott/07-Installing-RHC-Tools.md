@@ -2,7 +2,7 @@
 
 **Server used:**
 
-* localhost
+* localhost / hypervisor
 
 **Tools used:**
 
@@ -23,14 +23,14 @@ The most recent version of the OpenShift Enterprise client tools are available a
 
 With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:
 
-	$ sudo yum install rhc
+	sudo yum install rhc
 	
 
 **Lab 7 Complete!**
 
 ---
 
-#**NOTE**: The following Appendix includes commands for additional Operating Systems
+##**NOTE**: The following Appendix includes commands for additional Operating Systems
 
 ##**Microsoft Windows**
 
