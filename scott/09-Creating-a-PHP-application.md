@@ -39,7 +39,7 @@ It is very easy to create an OpenShift Enterprise application using *rhc*. The c
 Create a directory to hold your OpenShift Enterprise code projects:
 
     mkdir ~/ose
-    cd ~/ose
+    pushd ~/ose
 	
 To create an application that uses the *php* runtime, issue the following command:
 
@@ -90,7 +90,7 @@ After you entered the command to create a new PHP application, a lot of things h
 
 When you created the PHP application using the *rhc app create* command, the private git repository that was created on your node host was cloned to your local machine.
 
-    cd firstphp
+    pushd firstphp
     ls -al
 	
 You should see the following information:
@@ -268,6 +268,11 @@ To verify that we have created and deployed the new PHP source file correctly, o
 You should see the updated code for the application.
 
 ![](http://training.runcloudrun.com/images/firstphpTime.png)
+
+Return to your previous directories
+
+    pushd
+    pushd
     
 **Lab 9 Complete!**
 
