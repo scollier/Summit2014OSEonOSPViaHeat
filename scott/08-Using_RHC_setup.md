@@ -58,13 +58,17 @@ Finally, you will be asked to create a namespace for the provided user account. 
 
 ##**Under the covers**
 
-The *rhc setup* tool is a convenient command line utility to ensure that the user's operating system is configured properly to create and manage applications from the command line.  After this command has been executed, a *.openshift* directory will have been created in the user's home directory with some basic configuration items specified in the *express.conf* file.  The contents of that file are as follows:
+The *rhc setup* tool is a convenient command line utility to ensure that the user's operating system is configured properly to create and manage applications from the command line.  After this command has been executed, a *.openshift* directory will have been created in the user's home directory with some basic configuration items specified in the *express.conf* file.  
 
-	# Default user login
-	default_rhlogin=‘demo’
+    cat ~/.openshift/express.conf
 
-	# Server API
-	libra_server = 'openshift.brokerinstance.novalocal'
+The contents of that file are as follows:
+
+    # Default user login
+    default_rhlogin=‘demo’
+
+    # Server API
+    libra_server = 'openshift.brokerinstance.novalocal'
 	
 This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
 
