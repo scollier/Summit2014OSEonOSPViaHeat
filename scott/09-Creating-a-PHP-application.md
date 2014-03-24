@@ -38,9 +38,8 @@ It is very easy to create an OpenShift Enterprise application using *rhc*. The c
 
 Create a directory to hold your OpenShift Enterprise code projects:
 
-    cd ~
-    mkdir ose
-    cd ose
+    mkdir ~/ose
+    cd ~/ose
 	
 To create an application that uses the *php* runtime, issue the following command:
 
@@ -175,17 +174,21 @@ The php directory is where all of the application code that the developer writes
 
 ##**Make a change to the PHP application and deploy updated code**
 
-To get a good understanding of the development workflow for a user, let's change the contents of the *index.php* template that is provided on the newly created gear.  Edit the file and look for the following code block:
+To get a good understanding of the development workflow for a user, let's change the contents of the *index.php* template that is provided on the newly created gear.  Edit the following file:
 
-	<h1>
-	    Welcome to OpenShift
-	</h1>
+    vim php/index.php
+
+Look for the following code block:
+
+    <h1>
+        Welcome to OpenShift
+    </h1>
 
 Update this code block to the following and then save your changes:
 
-	<h1>
-	    Welcome to OpenShift Enterprise on OpenStack
-	</h1>
+    <h1>
+        Welcome to OpenShift Enterprise on OpenStack
+    </h1>
 
 **Note:** Make sure you are updating the \<h1> tag and not the \<title> tag.
 
@@ -199,27 +202,27 @@ Now that our code has been committed to our local repository, we need to push th
 	
 You should see the following output:
 
-	Counting objects: 7, done.
-	Delta compression using up to 8 threads.
-	Compressing objects: 100% (4/4), done.
-	Writing objects: 100% (4/4), 395 bytes, done.
-	Total 4 (delta 2), reused 0 (delta 0)
-	remote: restart_on_add=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
-	remote: Waiting for stop to finish
-	remote: Done
-	remote: restart_on_add=false
-	remote: ~/git/firstphp.git ~/git/firstphp.git
-	remote: ~/git/firstphp.git
-	remote: Running .openshift/action_hooks/pre_build
-	remote: Running .openshift/action_hooks/build
-	remote: Running .openshift/action_hooks/deploy
-	remote: hot_deploy_added=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
-	remote: Done
-	remote: Running .openshift/action_hooks/post_deploy
-	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
-	   3edf63b..edc0805  master -> master
+    Counting objects: 7, done.
+    Delta compression using up to 8 threads.
+    Compressing objects: 100% (4/4), done.
+    Writing objects: 100% (4/4), 395 bytes, done.
+    Total 4 (delta 2), reused 0 (delta 0)
+    remote: restart_on_add=false
+    remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
+    remote: Waiting for stop to finish
+    remote: Done
+    remote: restart_on_add=false
+    remote: ~/git/firstphp.git ~/git/firstphp.git
+    remote: ~/git/firstphp.git
+    remote: Running .openshift/action_hooks/pre_build
+    remote: Running .openshift/action_hooks/build
+    remote: Running .openshift/action_hooks/deploy
+    remote: hot_deploy_added=false
+    remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
+    remote: Done
+    remote: Running .openshift/action_hooks/post_deploy
+    To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
+       3edf63b..edc0805  master -> master
 
 
 Notice that we stop the application runtime (Apache), deploy the code, and then run any action hooks that may have been specified in the .openshift directory.  
@@ -229,37 +232,43 @@ Notice that we stop the application runtime (Apache), deploy the code, and then 
 
 If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:
 
-	http://firstphp-ose.novalocal
-	
+    http://firstphp-ose.novalocal
+    
 You should see the updated code for the application.
 
 ![](http://training.runcloudrun.com/images/firstphpOSE.png)
 
 ##**Adding a new PHP file**
 
-Adding a new source code file to your OpenShift Enterprise application is an easy and straightforward process.  For instance, to create a PHP source code file that displays the server date and time, create a new file located in *php* directory and name it *time.php*.  After creating this file, add the following contents:
+Adding a new source code file to your OpenShift Enterprise application is an easy and straightforward process.  For instance, to create a PHP source code file that displays the server date and time: 
 
-	<?php
-	// Print the date and time
-	echo date('l jS \of F Y h:i:s A');
-	?>
+Create a new file located in *php* directory and name it *time.php*:
+
+    vim php/time.php
+
+Add the following contents:
+
+    <?php
+    // Print the date and time
+    echo date('l jS \of F Y h:i:s A');
+    ?>
 
 Once you have saved this file, the process for pushing the changes involves adding the new file to your git repository, committing the change, and then pushing the code to your OpenShift Enterprise gear:
 
     git add .
     git commit -am "Adding time.php"
     git push
-	
+    
 ##**Verify code change**
 
 To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.novalocal/time.php
-	
+    http://firstphp-ose.novalocal/time.php
+    
 You should see the updated code for the application.
 
 ![](http://training.runcloudrun.com/images/firstphpTime.png)
-	
+    
 **Lab 9 Complete!**
 
 <!--BREAK-->
