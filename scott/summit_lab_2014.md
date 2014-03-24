@@ -991,7 +991,7 @@ Create the _~/node-environment.yaml_ file and copy the following contents into i
       node_hostname: openshift.nodeinstance2.novalocal
       node_image: RHEL65-x86_64-node
       hosts_domain: novalocal
-      replicants: ""
+      replicants: openshift.brokerinstance.novalocal
       install_method: yum
       rhel_repo_base: http://172.16.0.1/rhel6.5
       jboss_repo_base: http://172.16.0.1
@@ -999,7 +999,7 @@ Create the _~/node-environment.yaml_ file and copy the following contents into i
       rhscl_repo_base: http://172.16.0.1
       activemq_admin_pass: password
       activemq_user_pass: password
-      mcollective_pass: password
+      mcollective_pass: marionette
       private_net_id: PRIVATE_NET_ID_HERE
       public_net_id: PUBLIC_NET_ID_HERE
       private_subnet_id: PRIVATE_SUBNET_ID_HERE
