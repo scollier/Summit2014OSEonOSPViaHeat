@@ -297,16 +297,30 @@ https://github.com/openstack/heat-templates/blob/master/openshift-enterprise/REA
 
 There are two ways to pass parameters to the *heat* command.  The first is via the *heat* CLI.  The second is to via an environment file.  This lab uses the environment file method because it makes it easier to organize the parameters. 
 
-**Modify the openshift-environment.yaml file:**
+Review the provided environment file with placeholder text:
 
-###**Scripted Steps**
+    parameters:
+      key_name: adminkp
+      prefix: summit2014.lab
+      broker_hostname: broker.summit2014.lab
+      node_hostname: node1.summit2014.lab
+      conf_install_method: yum
+      conf_rhel_repo_base: http://172.16.0.1/rhel6.5
+      conf_jboss_repo_base: http://172.16.0.1
+      conf_ose_repo_base: http://172.16.0.1/ose-latest
+      conf_rhscl_repo_base: http://172.16.0.1
+      private_net_id: PRIVATE_NET_ID_HERE
+      public_net_id: PUBLIC_NET_ID_HERE
+      private_subnet_id: PRIVATE_SUBNET_ID_HERE
+      yum_validator_version: "2.0"
+      ose_version: "2.0"
+    
 Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and detailed manual steps see the next section:
 
     sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/openshift-environment.yaml
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/openshift-environment.yaml
     sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/openshift-environment.yaml
 
-###**Verify Changes**
 The scripts in the previous section should have added the correct network IDs to the yaml file. Run the following two commands to list the configured networks and subnets. 
 
     neutron net-list
@@ -316,22 +330,21 @@ Inspect the *~/openshift-environment.yaml* file and verify the placeholder text 
 
     cat ~/openshift-environment.yaml
 
-Contents:
+Contents should resemble the following (the IDs will be different):
 
     parameters:
       key_name: adminkp
-      prefix: novalocal
-      broker_hostname: openshift.brokerinstance.novalocal
-      node_hostname: openshift.nodeinstance.novalocal
+      prefix: summit2014.lab
+      broker_hostname: broker.summit2014.lab
+      node_hostname: node1.summit2014.lab
       conf_install_method: yum
       conf_rhel_repo_base: http://172.16.0.1/rhel6.5
       conf_jboss_repo_base: http://172.16.0.1
       conf_ose_repo_base: http://172.16.0.1/ose-latest
-      # conf_rhscl_repo_base: http://IP_OF_HOST
       conf_rhscl_repo_base: http://172.16.0.1
-      private_net_id: PRIVATE_NET_ID_HERE
-      public_net_id: PUBLIC_NET_ID_HERE
-      private_subnet_id: PRIVATE_SUBNET_ID_HERE
+      private_net_id: 9eb390d1-a1ad-4545-82db-a16f18fac959
+      public_net_id: 84078660-baf4-4b51-a790-759fb897a5f5
+      private_subnet_id: bbd59b2e-0eee-4e3d-8bae-85cc91201ecd
       yum_validator_version: "2.0"
       ose_version: "2.0"
 
@@ -389,6 +402,13 @@ Get a VNC console address and open it in the browser.  Firefox must be launched 
     
     nova get-vnc-console node_instance novnc
 
+Alternatively, in Horizon:
+
+* Under *Project* select *Instances*
+* On the right pane select either *broker_instance* or *node_instance*
+* Select *Console*
+
+
 Open another terminal and tail the heat log:
 
     sudo tail -f /var/log/heat/heat-engine.log &
@@ -426,13 +446,6 @@ Alternatively open Firefox and login to the Horizon dashboard to watch the heat 
 * Enjoy the eye candy
 
 
-
-Alternatively, in Horizon:
-
-* Under *Project* select *Instances*
-* On the right pane select either *broker_instance* or *node_instance*
-* Select *Console*
-
 **Lab 5 Complete!**
 
 <!--BREAK-->
@@ -445,6 +458,8 @@ Confirm which IP address belongs to the broker and to the node.
 
     nova list
 
+###**6.2 Explore the OpenShift Broker**
+
 Ping the public IP of the instance.  Get the public IP by running *nova list* on the controller.  The public IP will start with 172.
 
     ping 172.16.1.BROKER_IP
@@ -453,27 +468,23 @@ SSH into the broker instance.  This may take a minute or two while they are spaw
 
     ssh -i ~/adminkp.pem ec2-user@172.16.1.BROKER_IP
 
-##**6.2 Explore the Environment**
-
-
 Once logged in, gain root access and explore the environment.
 
-    sudo su -
+    sudo -i
 
 Check the OpenShift install output.  At the end of hte file, you shuold see "Installation and configuration is complete".  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files.
 
-    vi /tmp/openshift.out
+    view /tmp/openshift.out
     
-    vi /var/log/cfn-signal.log
+    view /var/log/cfn-signal.log
     
-    vi /var/log/cloud-init.log
+    view /var/log/cloud-init.log
     
-    vi /var/log/cloud-init-output.log
+    view /var/log/cloud-init-output.log
 
 Now confirm OpenShift functionality. See what tools are available by tabbing out the oo-    command.
 
     oo-<tab><tab>
-
 
 Check mcollective traffic.  You should get a response from the node that was deployed as part of the stack.
 
@@ -482,17 +493,36 @@ Check mcollective traffic.  You should get a response from the node that was dep
 Run some diagnostics to confirm functionality.  You should get a PASS and NO ERRORS on each of these.
     
     oo-diagnostics -v
+
+Look for the output: **NO ERRORS**
     
     oo-accept-broker -v
+
+Look for the output: **PASS**
+
+###**6.2 Explore the OpenShift Node**
 
 SSH into the node, using the IP that was obtained above.
 
     ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE_IP
+
+Once logged in, gain root access and explore the environment.
     
+    view /tmp/openshift.out
+    
+    view /var/log/cfn-signal.log
+    
+    view /var/log/cloud-init.log
+    
+    view /var/log/cloud-init-output.log
+
 Check node configuration
 
     oo-accept-node
 
+Look for the output: **PASS**
+
+##**6.3 Connect to OpenShift Console**
 Confirm Console Access by opening a browser and putting in the IP address of the broker.
 
 http://172.16.1.BROKER_IP/console
@@ -662,20 +692,20 @@ Add it as the first nameserver
 
 Test hostname resolution
 
-    host openshift.brokerinstance.novalocal
+    host broker.summit2014.lab
 
 ##**Configuring RHC setup**
 
-By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our openshift.brokerinstance.novalocal server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
+By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell *rhc* to use our broker.summit2014.lab server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the *rhc setup* command using the optional *--server* parameter.
 
-	rhc setup --server openshift.brokerinstance.novalocal
+	rhc setup --server broker.summit2014.lab
 	
 Once you enter in that command, you will be prompted for the username that you would like to authenticate with.  For this training class, use the *demo* user account.  
 
 The first thing that you will be prompted with will look like the following:
 
 	The server's certificate is self-signed, which means that a secure connection can't be established to
-	'openshift.brokerinstance.novalocal'.
+	'broker.summit2014.lab'.
 	
 	You may bypass this check, but any data you send to the server could be intercepted by others.
 	Connect without checking the certificate? (yes|no):
@@ -694,13 +724,17 @@ Finally, you will be asked to create a namespace for the provided user account. 
 
 ##**Under the covers**
 
-The *rhc setup* tool is a convenient command line utility to ensure that the user's operating system is configured properly to create and manage applications from the command line.  After this command has been executed, a *.openshift* directory will have been created in the user's home directory with some basic configuration items specified in the *express.conf* file.  The contents of that file are as follows:
+The *rhc setup* tool is a convenient command line utility to ensure that the user's operating system is configured properly to create and manage applications from the command line.  After this command has been executed, a *.openshift* directory will have been created in the user's home directory with some basic configuration items specified in the *express.conf* file.  
 
-	# Default user login
-	default_rhlogin=‘demo’
+    cat ~/.openshift/express.conf
+
+The contents of that file are as follows:
+
+    # Default user login
+    default_rhlogin=‘demo’
 
 	# Server API
-	libra_server = 'openshift.brokerinstance.novalocal'
+	libra_server = 'broker.summit2014.lab'
 	
 This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
 
@@ -749,9 +783,8 @@ It is very easy to create an OpenShift Enterprise application using *rhc*. The c
 
 Create a directory to hold your OpenShift Enterprise code projects:
 
-    cd ~
-    mkdir ose
-    cd ose
+    mkdir ~/ose
+    pushd ~/ose
 	
 To create an application that uses the *php* runtime, issue the following command:
 
@@ -772,10 +805,10 @@ After entering that command, you should see output that resembles the following:
 	Waiting for your DNS name to be available ... done
 	
 	Cloning into 'firstphp'...
-	The authenticity of host 'firstphp-ose.novalocal (209.132.178.87)' can't be established.
+	The authenticity of host 'firstphp-ose.summit2014.lab (209.132.178.87)' can't be established.
 	RSA key fingerprint is e8:e2:6b:9d:77:e2:ed:a2:94:54:17:72:af:71:28:04.
 	Are you sure you want to continue connecting (yes/no)? yes
-	Warning: Permanently added 'firstphp-ose.novalocal' (RSA) to the list of known hosts.
+	Warning: Permanently added 'firstphp-ose.summit2014.lab' (RSA) to the list of known hosts.
 	Checking connectivity... done
 	
 	Your application 'firstphp' is now available. OpenShift should
@@ -802,7 +835,7 @@ After you entered the command to create a new PHP application, a lot of things h
 
 When you created the PHP application using the *rhc app create* command, the private git repository that was created on your node host was cloned to your local machine.
 
-    cd firstphp
+    pushd firstphp
     ls -al
 	
 You should see the following information:
@@ -836,7 +869,7 @@ You should see the following information, which specifies the URL for our reposi
 		ignorecase = true
 	[remote "origin"]
 		fetch = +refs/heads/*:refs/remotes/origin/*
-		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
+		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.summit2014.lab/~/git/firstphp.git/
 	[branch "master"]
 		remote = origin
 		merge = refs/heads/master
@@ -886,17 +919,21 @@ The php directory is where all of the application code that the developer writes
 
 ##**Make a change to the PHP application and deploy updated code**
 
-To get a good understanding of the development workflow for a user, let's change the contents of the *index.php* template that is provided on the newly created gear.  Edit the file and look for the following code block:
+To get a good understanding of the development workflow for a user, let's change the contents of the *index.php* template that is provided on the newly created gear.  Edit the following file:
 
-	<h1>
-	    Welcome to OpenShift
-	</h1>
+    vim php/index.php
+
+Look for the following code block:
+
+    <h1>
+        Welcome to OpenShift
+    </h1>
 
 Update this code block to the following and then save your changes:
 
-	<h1>
-	    Welcome to OpenShift Enterprise on OpenStack
-	</h1>
+    <h1>
+        Welcome to OpenShift Enterprise on OpenStack
+    </h1>
 
 **Note:** Make sure you are updating the \<h1> tag and not the \<title> tag.
 
@@ -916,7 +953,7 @@ You should see the following output:
 	Writing objects: 100% (4/4), 395 bytes, done.
 	Total 4 (delta 2), reused 0 (delta 0)
 	remote: restart_on_add=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.summit2014.lab for ServerName
 	remote: Waiting for stop to finish
 	remote: Done
 	remote: restart_on_add=false
@@ -926,10 +963,10 @@ You should see the following output:
 	remote: Running .openshift/action_hooks/build
 	remote: Running .openshift/action_hooks/deploy
 	remote: hot_deploy_added=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.summit2014.lab for ServerName
 	remote: Done
 	remote: Running .openshift/action_hooks/post_deploy
-	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.summit2014.lab/~/git/firstphp.git/
 	   3edf63b..edc0805  master -> master
 
 
@@ -940,7 +977,7 @@ Notice that we stop the application runtime (Apache), deploy the code, and then 
 
 If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:
 
-	http://firstphp-ose.novalocal
+	http://firstphp-ose.summit2014.lab
 	
 You should see the updated code for the application.
 
@@ -948,29 +985,40 @@ You should see the updated code for the application.
 
 ##**Adding a new PHP file**
 
-Adding a new source code file to your OpenShift Enterprise application is an easy and straightforward process.  For instance, to create a PHP source code file that displays the server date and time, create a new file located in *php* directory and name it *time.php*.  After creating this file, add the following contents:
+Adding a new source code file to your OpenShift Enterprise application is an easy and straightforward process.  For instance, to create a PHP source code file that displays the server date and time: 
 
-	<?php
-	// Print the date and time
-	echo date('l jS \of F Y h:i:s A');
-	?>
+Create a new file located in *php* directory and name it *time.php*:
+
+    vim php/time.php
+
+Add the following contents:
+
+    <?php
+    // Print the date and time
+    echo date('l jS \of F Y h:i:s A');
+    ?>
 
 Once you have saved this file, the process for pushing the changes involves adding the new file to your git repository, committing the change, and then pushing the code to your OpenShift Enterprise gear:
 
     git add .
     git commit -am "Adding time.php"
     git push
-	
+    
 ##**Verify code change**
 
 To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.novalocal/time.php
+	http://firstphp-ose.summit2014.lab/time.php
 	
 You should see the updated code for the application.
 
 ![](http://training.runcloudrun.com/images/firstphpTime.png)
-	
+
+Return to your previous directories
+
+    pushd
+    pushd
+    
 **Lab 9 Complete!**
 
 <!--BREAK-->
@@ -981,17 +1029,23 @@ As applications are added additional node hosts may be added to extend the capac
 ## 10.1 Create the node environment file
 A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.
 
-Create the _~/node-environment.yaml_ file and copy the following contents into it. This environment file instructs *heat* on which SSH key to use, domain, floating IP, and several other items.  Please take a minute to read through this and get a good handle on what we are passing to *heat*.
+Review the _~/node2-environment.yaml_ file and and notice the placeholder text included. This environment file instructs *heat* on which SSH key to use, domain, floating IP, and several other items.  Please take a minute to read through this and get a good handle on what we are passing to *heat*.
+
+Review the file:
+
+    view ~/node2-environment.yaml
+
+The default contents will be:
 
     parameters:
       key_name: adminkp
-      domain: novalocal
+      domain: summit2014.lab
       broker1_floating_ip: 172.16.1.3
-      load_bal_hostname: openshift.brokerinstance.novalocal
-      node_hostname: openshift.nodeinstance2.novalocal
+      load_bal_hostname: broker.summit2014.lab
+      node_hostname: node2.summit2014.lab
       node_image: RHEL65-x86_64-node
-      hosts_domain: novalocal
-      replicants: openshift.brokerinstance.novalocal
+      hosts_domain: summit2014.lab
+      replicants: broker.summit2014.lab
       install_method: yum
       rhel_repo_base: http://172.16.0.1/rhel6.5
       jboss_repo_base: http://172.16.0.1
@@ -1003,26 +1057,52 @@ Create the _~/node-environment.yaml_ file and copy the following contents into i
       private_net_id: PRIVATE_NET_ID_HERE
       public_net_id: PUBLIC_NET_ID_HERE
       private_subnet_id: PRIVATE_SUBNET_ID_HERE
-      broker_floating_ip: OUTPUT_OF_NOVA_LIST
 
-Run the following three commands to replace the placeholder text in the file with the correct IDs.
+Run the following four commands to replace the placeholder text in the file with the correct data:
 
-    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
-    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
-    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
-    
+    sed -i "s/BROKER_IP/$(nova list | awk '/broker_instance/ {print $13 }')/" node2-environment.yaml
+    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/node2-environment.yaml
+    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node2-environment.yaml
+    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node2-environment.yaml
+
 Confirm the changes.
 
-    cat ~/node-environment.yaml
+    cat ~/node2-environment.yaml
+
+Verify the value of BROKER_IP matches the Broker's ip from **nova list**
+
+Verify the network and subnet IDs match the output from **neutron net-list** and **neutron subnet-list**
+
+The file should now resemble the following, with the correct IP and IDs:
+
+    parameters:
+      key_name: adminkp
+      domain: summit2014.lab
+      broker1_floating_ip: 172.16.1.2
+      load_bal_hostname: broker.summit2014.lab
+      node_hostname: node2.summit2014.lab
+      node_image: RHEL65-x86_64-node
+      hosts_domain: summit2014.lab
+      replicants: broker.summit2014.lab
+      install_method: yum
+      rhel_repo_base: http://172.16.0.1/rhel6.5
+      jboss_repo_base: http://172.16.0.1
+      openshift_repo_base: http://172.16.0.1/ose-latest
+      rhscl_repo_base: http://172.16.0.1
+      activemq_admin_pass: password
+      activemq_user_pass: password
+      mcollective_pass: marionette
+      private_net_id: 9eb390d1-a1ad-4545-82db-a16f18fac959
+      public_net_id: 84078660-baf4-4b51-a790-759fb897a5f5
+      private_subnet_id: bbd59b2e-0eee-4e3d-8bae-85cc91201ecd
+
 
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
 
-    cd ~/
-
-    heat stack-create ose_node \
-    -f  heat-templates/openshift-enterprise/heat/neutron/highly-available/ose_node_stack.yaml \
-    -e ~/node-environment.yaml
+    heat stack-create add_node2 \
+    -f  ~/heat-templates/openshift-enterprise/heat/neutron/highly-available/ose_node_stack.yaml \
+    -e ~/node2-environment.yaml
 
 
 ##**10.3 Monitor the stack**
@@ -1033,17 +1113,17 @@ List the *heat* stack
 
 Watch the heat events.
 
-    heat event-list openshift
+    heat event-list add_node2
 
-    heat resource-list openshift
+    heat resource-list add_node2
 
     nova list
 
-##**10.4 Confirm Connectivity**
+##**10.4 Confirm Node2 Connectivity**
 
 Ping the public IP of node 2
 
-    ping x.x.x.x 
+    ping 172.16.1.NODE2_IP
 
 *Note the IP address of node 2. The address will be needed later in this lab.*
 
@@ -1051,44 +1131,70 @@ SSH into the node2 instance.  This may take a minute or two while they are spawn
 
 SSH into the node
 
-    ssh -i ~/adminkp.pem ec2-user@IP.OF.NODE2
+    ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE2_IP
 
 Once logged in, gain root access and explore the environment.
 
-    sudo su -
+    sudo -i
 
 Check the OpenShift install output.
 
-    cat /tmp/openshift.out
+    view /tmp/openshift.out
 
 Check node configuration
 
-    oo-accept-node
+    oo-accept-node -v
+
+Note that this will fail because node2 does not have a fully qualified domain name. 
+
+##**Add Node2 To Broker DNS**
 
 SSH into the broker instance to update the DNS zone file.
 
-    ssh -i ~/adminkp.pem ec2-user@IP.OF.BROKER
+    ssh -i ~/adminkp.pem ec2-user@172.16.1.BROKER_IP
 
 Once logged in, gain root access.
 
-    sudo su -
+    sudo -i
 
-Add node 2 instance _A_ record to the zone file so node 2 hostname resolves.
+Add node 2 instance _A_ record to the zone file so node 2 hostname resolves. Verify the IP address matches the IP from **nova list**.
 
     oo-register-dns \
-    --with-node-hostname openshift.nodeinstance2 \
+    --with-node-hostname node2 \
     --with-node-ip 172.16.1.4 \
-    --domain novalocal \
-    --dns-server openshift.brokerinstance.novalocal
-    service named restart
+    --domain summit2014.lab \
+    --dns-server broker.summit2014.lab
+    service named reload
 
 Check hostname resolution
 
-    host openshift.nodeinstance2.novalocal
+    host node2.summit2014.lab
 
 Check mcollective traffic.  You should get a response from node 2 that was deployed as part of the stack.
 
     oo-mco ping
+
+##**Verify Node2**
+
+SSH into the node
+
+    ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE2_IP
+
+Once logged in, gain root access and explore the environment.
+
+    sudo -i
+
+Check the OpenShift install output.
+
+    view /tmp/openshift.out
+
+Check node configuration
+
+    oo-accept-node -v
+
+This time it should succeed.
+
+    PASS
 
 **Lab 10 Complete!**
 
@@ -1183,7 +1289,7 @@ ssh to login to your application gear.
 
 $ rhc ssh firstphp
 
-	[firstphp-ose.novalocal ~]\> mysql
+	[firstphp-ose.summit2014.lab ~]\> mysql
 	
 You will notice that you did not have to authenticate to the MySQL database.  This is because OpenShift Enterprise sets environment variables that contains the connection information for the database. 
 
@@ -1218,7 +1324,7 @@ As mentioned earlier in this lab, OpenShift Enterprise creates environment varia
 
 **Note:  Execute the following on the application gear**
 
-	[firstphp-ose.novalocal ~]\> env |grep MYSQL
+	[firstphp-ose.summit2014.lab ~]\> env |grep MYSQL
 	
 You should see the following information return from the command:
 
@@ -1234,13 +1340,13 @@ You should see the following information return from the command:
 	
 To view a list of all *OPENSHIFT* environment variables, you can use the following command:
 
-	[firstphp-ose.novalocal ~]\> env | grep OPENSHIFT
+	[firstphp-ose.summit2014.lab ~]\> env | grep OPENSHIFT
 
 ##**Viewing MySQL logs**
 
 Given the above information, you can see that the log file directory for MySQL is specified with the *OPENSHIFT_MYSQL_DB_LOG_DIR* environment variable.  To view these log files, simply use the tail command:
 
-	[firstphp-ose.novalocal ~]\> tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
+	[firstphp-ose.summit2014.lab ~]\> tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
 	
 ##**Connecting to the MySQL cartridge from PHP**
 
@@ -1283,7 +1389,7 @@ Once you have created the source file, add the file to your git repository, comm
 	
 After the code has been deployed to your application gear, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.apps.novalocal/dbtest.php
+	http://firstphp-ose.apps.summit2014.lab/dbtest.php
 	
 You should see a screen with the following information:
 
@@ -1303,7 +1409,7 @@ To stop the cartridge, enter the following command:
 	
 Verify that the MySQL database has been stopped by either checking the status again or viewing the following URL in your browser:
 
-	http://firstphp-ose.novalocal/dbtest.php
+	http://firstphp-ose.summit2014.lab/dbtest.php
 	
 You should see the following message returned to your browser:
 
@@ -1316,7 +1422,7 @@ Start the database back up using the *cartridge-start* command.
 
 Verify that the database has been restarted by opening up a web browser and entering in the following URL:
 
-	http://firstphp-ose.apps.novalocal/dbtest.php
+	http://firstphp-ose.apps.summit2014.lab/dbtest.php
 	
 You should see a screen with the following information:
 
@@ -1396,7 +1502,7 @@ Pay attention to the output:
 	remote: hot_deploy_added=false
 	remote: App will not be started due to presence of hot_deploy marker
 	remote: Running .openshift/action_hooks/post_deploy
-	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.novalocal/~/git/firstphp.git/
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.summit2014.lab/~/git/firstphp.git/
 	   4fbda99..fdbd056  master -> master
 
 
