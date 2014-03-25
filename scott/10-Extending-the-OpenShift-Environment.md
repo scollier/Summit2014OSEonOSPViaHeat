@@ -53,13 +53,13 @@ The file should now resemble the following, with the correct IP and IDs:
 
     parameters:
       key_name: adminkp
-      domain: novalocal
+      domain: summit2014.lab
       broker1_floating_ip: 172.16.1.2
-      load_bal_hostname: broker.novalocal
-      node_hostname: node2.novalocal
+      load_bal_hostname: broker.summit2014.lab
+      node_hostname: node2.summit2014.lab
       node_image: RHEL65-x86_64-node
-      hosts_domain: novalocal
-      replicants: broker.novalocal
+      hosts_domain: summit2014.lab
+      replicants: broker.summit2014.lab
       install_method: yum
       rhel_repo_base: http://172.16.0.1/rhel6.5
       jboss_repo_base: http://172.16.0.1
@@ -71,7 +71,7 @@ The file should now resemble the following, with the correct IP and IDs:
       private_net_id: 9eb390d1-a1ad-4545-82db-a16f18fac959
       public_net_id: 84078660-baf4-4b51-a790-759fb897a5f5
       private_subnet_id: bbd59b2e-0eee-4e3d-8bae-85cc91201ecd
-    
+
 
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
