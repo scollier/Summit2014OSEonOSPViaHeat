@@ -53,7 +53,7 @@ Verify the value of BROKER_IP matches the Broker's ip from **nova list**
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
 
-    heat stack-create ose_node \
+    heat stack-create add_node2 \
     -f  ~/heat-templates/openshift-enterprise/heat/neutron/highly-available/ose_node_stack.yaml \
     -e ~/node-environment.yaml
 
@@ -66,9 +66,9 @@ List the *heat* stack
 
 Watch the heat events.
 
-    heat event-list ose_node
+    heat event-list add_node2
 
-    heat resource-list ose_node
+    heat resource-list add_node2
 
     nova list
 
