@@ -24,8 +24,24 @@ https://github.com/openstack/heat-templates/blob/master/openshift-enterprise/REA
 
 There are two ways to pass parameters to the *heat* command.  The first is via the *heat* CLI.  The second is to via an environment file.  This lab uses the environment file method because it makes it easier to organize the parameters. 
 
-**Modify the openshift-environment.yaml file:**
+Review the provided environment file with placeholder text:
 
+    parameters:
+      key_name: adminkp
+      prefix: novalocal
+      broker_hostname: broker.novalocal
+      node_hostname: node1.novalocal
+      conf_install_method: yum
+      conf_rhel_repo_base: http://172.16.0.1/rhel6.5
+      conf_jboss_repo_base: http://172.16.0.1
+      conf_ose_repo_base: http://172.16.0.1/ose-latest
+      conf_rhscl_repo_base: http://172.16.0.1
+      private_net_id: PRIVATE_NET_ID_HERE
+      public_net_id: PUBLIC_NET_ID_HERE
+      private_subnet_id: PRIVATE_SUBNET_ID_HERE
+      yum_validator_version: "2.0"
+      ose_version: "2.0"
+    
 Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and detailed manual steps see the next section:
 
     sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/openshift-environment.yaml
@@ -52,7 +68,6 @@ Contents should resemble the following (the IDs will be different):
       conf_rhel_repo_base: http://172.16.0.1/rhel6.5
       conf_jboss_repo_base: http://172.16.0.1
       conf_ose_repo_base: http://172.16.0.1/ose-latest
-      # conf_rhscl_repo_base: http://IP_OF_HOST
       conf_rhscl_repo_base: http://172.16.0.1
       private_net_id: 9eb390d1-a1ad-4545-82db-a16f18fac959
       public_net_id: 84078660-baf4-4b51-a790-759fb897a5f5
