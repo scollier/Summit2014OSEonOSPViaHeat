@@ -28,9 +28,9 @@ Review the provided environment file with placeholder text:
 
     parameters:
       key_name: adminkp
-      prefix: novalocal
-      broker_hostname: broker.novalocal
-      node_hostname: node1.novalocal
+      prefix: summit2014.lab
+      broker_hostname: broker.summit2014.lab
+      node_hostname: node1.summit2014.lab
       conf_install_method: yum
       conf_rhel_repo_base: http://172.16.0.1/rhel6.5
       conf_jboss_repo_base: http://172.16.0.1
@@ -61,9 +61,9 @@ Contents should resemble the following (the IDs will be different):
 
     parameters:
       key_name: adminkp
-      prefix: novalocal
-      broker_hostname: broker.novalocal
-      node_hostname: node1.novalocal
+      prefix: summit2014.lab
+      broker_hostname: broker.summit2014.lab
+      node_hostname: node1.summit2014.lab
       conf_install_method: yum
       conf_rhel_repo_base: http://172.16.0.1/rhel6.5
       conf_jboss_repo_base: http://172.16.0.1
