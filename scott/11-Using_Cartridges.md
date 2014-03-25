@@ -87,7 +87,7 @@ ssh to login to your application gear.
 
 $ rhc ssh firstphp
 
-	[firstphp-ose.novalocal ~]\> mysql
+	[firstphp-ose.summit2014.lab ~]\> mysql
 	
 You will notice that you did not have to authenticate to the MySQL database.  This is because OpenShift Enterprise sets environment variables that contains the connection information for the database. 
 
@@ -122,7 +122,7 @@ As mentioned earlier in this lab, OpenShift Enterprise creates environment varia
 
 **Note:  Execute the following on the application gear**
 
-	[firstphp-ose.novalocal ~]\> env |grep MYSQL
+	[firstphp-ose.summit2014.lab ~]\> env |grep MYSQL
 	
 You should see the following information return from the command:
 
@@ -138,13 +138,13 @@ You should see the following information return from the command:
 	
 To view a list of all *OPENSHIFT* environment variables, you can use the following command:
 
-	[firstphp-ose.novalocal ~]\> env | grep OPENSHIFT
+	[firstphp-ose.summit2014.lab ~]\> env | grep OPENSHIFT
 
 ##**Viewing MySQL logs**
 
 Given the above information, you can see that the log file directory for MySQL is specified with the *OPENSHIFT_MYSQL_DB_LOG_DIR* environment variable.  To view these log files, simply use the tail command:
 
-	[firstphp-ose.novalocal ~]\> tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
+	[firstphp-ose.summit2014.lab ~]\> tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
 	
 ##**Connecting to the MySQL cartridge from PHP**
 
@@ -187,7 +187,7 @@ Once you have created the source file, add the file to your git repository, comm
 	
 After the code has been deployed to your application gear, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.apps.novalocal/dbtest.php
+	http://firstphp-ose.apps.summit2014.lab/dbtest.php
 	
 You should see a screen with the following information:
 
@@ -207,7 +207,7 @@ To stop the cartridge, enter the following command:
 	
 Verify that the MySQL database has been stopped by either checking the status again or viewing the following URL in your browser:
 
-	http://firstphp-ose.novalocal/dbtest.php
+	http://firstphp-ose.summit2014.lab/dbtest.php
 	
 You should see the following message returned to your browser:
 
@@ -220,7 +220,7 @@ Start the database back up using the *cartridge-start* command.
 
 Verify that the database has been restarted by opening up a web browser and entering in the following URL:
 
-	http://firstphp-ose.apps.novalocal/dbtest.php
+	http://firstphp-ose.apps.summit2014.lab/dbtest.php
 	
 You should see a screen with the following information:
 
@@ -300,7 +300,7 @@ Pay attention to the output:
 	remote: hot_deploy_added=false
 	remote: App will not be started due to presence of hot_deploy marker
 	remote: Running .openshift/action_hooks/post_deploy
-	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.novalocal/~/git/firstphp.git/
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.summit2014.lab/~/git/firstphp.git/
 	   4fbda99..fdbd056  master -> master
 
 

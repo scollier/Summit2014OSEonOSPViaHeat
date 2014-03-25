@@ -61,10 +61,10 @@ After entering that command, you should see output that resembles the following:
 	Waiting for your DNS name to be available ... done
 	
 	Cloning into 'firstphp'...
-	The authenticity of host 'firstphp-ose.novalocal (209.132.178.87)' can't be established.
+	The authenticity of host 'firstphp-ose.summit2014.lab (209.132.178.87)' can't be established.
 	RSA key fingerprint is e8:e2:6b:9d:77:e2:ed:a2:94:54:17:72:af:71:28:04.
 	Are you sure you want to continue connecting (yes/no)? yes
-	Warning: Permanently added 'firstphp-ose.novalocal' (RSA) to the list of known hosts.
+	Warning: Permanently added 'firstphp-ose.summit2014.lab' (RSA) to the list of known hosts.
 	Checking connectivity... done
 	
 	Your application 'firstphp' is now available. OpenShift should
@@ -125,7 +125,7 @@ You should see the following information, which specifies the URL for our reposi
 		ignorecase = true
 	[remote "origin"]
 		fetch = +refs/heads/*:refs/remotes/origin/*
-		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
+		url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.summit2014.lab/~/git/firstphp.git/
 	[branch "master"]
 		remote = origin
 		merge = refs/heads/master
@@ -205,7 +205,7 @@ You should see the following output:
 	Writing objects: 100% (4/4), 395 bytes, done.
 	Total 4 (delta 2), reused 0 (delta 0)
 	remote: restart_on_add=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.summit2014.lab for ServerName
 	remote: Waiting for stop to finish
 	remote: Done
 	remote: restart_on_add=false
@@ -215,10 +215,10 @@ You should see the following output:
 	remote: Running .openshift/action_hooks/build
 	remote: Running .openshift/action_hooks/deploy
 	remote: hot_deploy_added=false
-	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.novalocal for ServerName
+	remote: httpd: Could not reliably determine the server's fully qualified domain name, using node.summit2014.lab for ServerName
 	remote: Done
 	remote: Running .openshift/action_hooks/post_deploy
-	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.novalocal/~/git/firstphp.git/
+	To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.summit2014.lab/~/git/firstphp.git/
 	   3edf63b..edc0805  master -> master
 
 
@@ -229,7 +229,7 @@ Notice that we stop the application runtime (Apache), deploy the code, and then 
 
 If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:
 
-	http://firstphp-ose.novalocal
+	http://firstphp-ose.summit2014.lab
 	
 You should see the updated code for the application.
 
@@ -254,7 +254,7 @@ Once you have saved this file, the process for pushing the changes involves addi
 
 To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.novalocal/time.php
+	http://firstphp-ose.summit2014.lab/time.php
 	
 You should see the updated code for the application.
 

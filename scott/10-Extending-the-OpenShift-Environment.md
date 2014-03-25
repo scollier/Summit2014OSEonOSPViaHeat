@@ -9,13 +9,13 @@ Create the _~/node-environment.yaml_ file and copy the following contents into i
 
     parameters:
       key_name: adminkp
-      domain: novalocal
+      domain: summit2014.lab
       broker1_floating_ip: 172.16.1.3
-      load_bal_hostname: openshift.brokerinstance.novalocal
-      node_hostname: openshift.nodeinstance2.novalocal
+      load_bal_hostname: broker.summit2014.lab
+      node_hostname: openshift.nodeinstance2.summit2014.lab
       node_image: RHEL65-x86_64-node
-      hosts_domain: novalocal
-      replicants: openshift.brokerinstance.novalocal
+      hosts_domain: summit2014.lab
+      replicants: broker.summit2014.lab
       install_method: yum
       rhel_repo_base: http://172.16.0.1/rhel6.5
       jboss_repo_base: http://172.16.0.1
@@ -102,13 +102,13 @@ Add node 2 instance _A_ record to the zone file so node 2 hostname resolves.
     oo-register-dns \
     --with-node-hostname openshift.nodeinstance2 \
     --with-node-ip 172.16.1.4 \
-    --domain novalocal \
-    --dns-server openshift.brokerinstance.novalocal
+    --domain summit2014.lab \
+    --dns-server broker.summit2014.lab
     service named restart
 
 Check hostname resolution
 
-    host openshift.nodeinstance2.novalocal
+    host openshift.nodeinstance2.summit2014.lab
 
 Check mcollective traffic.  You should get a response from node 2 that was deployed as part of the stack.
 
