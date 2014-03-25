@@ -68,7 +68,6 @@ Contents should resemble the following (the IDs will be different):
       conf_rhel_repo_base: http://172.16.0.1/rhel6.5
       conf_jboss_repo_base: http://172.16.0.1
       conf_ose_repo_base: http://172.16.0.1/ose-latest
-      # conf_rhscl_repo_base: http://IP_OF_HOST
       conf_rhscl_repo_base: http://172.16.0.1
       private_net_id: 9eb390d1-a1ad-4545-82db-a16f18fac959
       public_net_id: 84078660-baf4-4b51-a790-759fb897a5f5
