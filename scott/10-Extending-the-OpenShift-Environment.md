@@ -17,11 +17,11 @@ With contents:
       key_name: adminkp
       domain: novalocal
       broker1_floating_ip: BROKER_IP
-      load_bal_hostname: openshift.brokerinstance.novalocal
-      node_hostname: openshift.nodeinstance2.novalocal
+      load_bal_hostname: broker.novalocal
+      node_hostname: node2.novalocal
       node_image: RHEL65-x86_64-node
       hosts_domain: novalocal
-      replicants: openshift.brokerinstance.novalocal
+      replicants: broker.novalocal
       install_method: yum
       rhel_repo_base: http://172.16.0.1/rhel6.5
       jboss_repo_base: http://172.16.0.1
@@ -34,19 +34,21 @@ With contents:
       public_net_id: PUBLIC_NET_ID_HERE
       private_subnet_id: PRIVATE_SUBNET_ID_HERE
 
-Run the following three commands to replace the placeholder text in the file with the correct IDs.
+Run the following four commands to replace the placeholder text in the file with the correct IDs.
 
+    sed -i "s/BROKER_IP/$(nova list | awk '/broker_instance/ {print $13 }')/" node-environment.yaml
     sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
     sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
     sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
 
-Change the value of BROKER_IP to match he Broker's ip from **nova list**
-
-    broker1_floating_ip: 172.16.1.BROKER_IP
-    
 Confirm the changes.
 
     cat ~/node-environment.yaml
+
+Verify the network and subnet IDs match the output from **neutron net-list** and **neutron subnet-list**
+
+Verify the value of BROKER_IP matches the Broker's ip from **nova list**
+
 
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
@@ -111,15 +113,15 @@ Once logged in, gain root access.
 Add node 2 instance _A_ record to the zone file so node 2 hostname resolves. Verify the IP address matches the IP from **nova list**.
 
     oo-register-dns \
-    --with-node-hostname openshift.nodeinstance2 \
+    --with-node-hostname node2 \
     --with-node-ip 172.16.1.4 \
     --domain novalocal \
-    --dns-server openshift.brokerinstance.novalocal
+    --dns-server broker.novalocal
     service named reload
 
 Check hostname resolution
 
-    host openshift.nodeinstance2.novalocal
+    host node2.novalocal
 
 Check mcollective traffic.  You should get a response from node 2 that was deployed as part of the stack.
 
