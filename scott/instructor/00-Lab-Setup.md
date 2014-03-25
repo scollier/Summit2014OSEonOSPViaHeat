@@ -88,6 +88,7 @@ Verify OpenShift repositories
     cp -v /pub/projects/rhos/scollier/summit2014/github_files_to_be_placed_local/enterprise-2.0 /var/www/html/.
     cp -v /pub/projects/rhos/scollier/summit2014/github_files_to_be_placed_local/openshift.sh /var/www/html/.
     cp -v /pub/projects/rhos/scollier/summit2014/openshift-environment.yaml /home/user/.
+    cp -v /pub/projects/rhos/scollier/summit2014/node2-environment.yaml /home/user/.
     
 # Copy answer file locally
 
