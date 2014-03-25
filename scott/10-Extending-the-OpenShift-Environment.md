@@ -5,13 +5,13 @@ As applications are added additional node hosts may be added to extend the capac
 ## 10.1 Create the node environment file
 A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.
 
-Create the _~/node-environment.yaml_ file and copy the following contents into it. This environment file instructs *heat* on which SSH key to use, domain, floating IP, and several other items.  Please take a minute to read through this and get a good handle on what we are passing to *heat*.
+Review the _~/node2-environment.yaml_ file and and notice the placeholder text included. This environment file instructs *heat* on which SSH key to use, domain, floating IP, and several other items.  Please take a minute to read through this and get a good handle on what we are passing to *heat*.
 
-Create the file:
+Review the file:
 
-    vim ~/node-environment.yaml
+    view ~/node2-environment.yaml
 
-With contents:
+The default contents will be:
 
     parameters:
       key_name: adminkp
@@ -34,28 +34,51 @@ With contents:
       public_net_id: PUBLIC_NET_ID_HERE
       private_subnet_id: PRIVATE_SUBNET_ID_HERE
 
-Run the following four commands to replace the placeholder text in the file with the correct IDs.
+Run the following four commands to replace the placeholder text in the file with the correct data:
 
-    sed -i "s/BROKER_IP/$(nova list | awk '/broker_instance/ {print $13 }')/" node-environment.yaml
-    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
-    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node-environment.yaml
-    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node-environment.yaml
+    sed -i "s/BROKER_IP/$(nova list | awk '/broker_instance/ {print $13 }')/" node2-environment.yaml
+    sed -i "s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk '/private/ {print $2}')/"  ~/node2-environment.yaml
+    sed -i "s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk '/public/ {print $2}')/"  ~/node2-environment.yaml
+    sed -i "s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk '/private/ {print $2}')/"  ~/node2-environment.yaml
 
 Confirm the changes.
 
-    cat ~/node-environment.yaml
-
-Verify the network and subnet IDs match the output from **neutron net-list** and **neutron subnet-list**
+    cat ~/node2-environment.yaml
 
 Verify the value of BROKER_IP matches the Broker's ip from **nova list**
 
+Verify the network and subnet IDs match the output from **neutron net-list** and **neutron subnet-list**
+
+The file should now resemble the following, with the correct IP and IDs:
+
+    parameters:
+      key_name: adminkp
+      domain: novalocal
+      broker1_floating_ip: 172.16.1.2
+      load_bal_hostname: broker.novalocal
+      node_hostname: node2.novalocal
+      node_image: RHEL65-x86_64-node
+      hosts_domain: novalocal
+      replicants: broker.novalocal
+      install_method: yum
+      rhel_repo_base: http://172.16.0.1/rhel6.5
+      jboss_repo_base: http://172.16.0.1
+      openshift_repo_base: http://172.16.0.1/ose-latest
+      rhscl_repo_base: http://172.16.0.1
+      activemq_admin_pass: password
+      activemq_user_pass: password
+      mcollective_pass: marionette
+      private_net_id: 9eb390d1-a1ad-4545-82db-a16f18fac959
+      public_net_id: 84078660-baf4-4b51-a790-759fb897a5f5
+      private_subnet_id: bbd59b2e-0eee-4e3d-8bae-85cc91201ecd
+    
 
 ## 10.2 Launch the node heat stack
 Now run the _heat_ command and launch the stack. The -f option tells _heat_ where the template file resides. The -e option points _heat_ to the environment file that was created in the previous section.
 
     heat stack-create add_node2 \
     -f  ~/heat-templates/openshift-enterprise/heat/neutron/highly-available/ose_node_stack.yaml \
-    -e ~/node-environment.yaml
+    -e ~/node2-environment.yaml
 
 
 ##**10.3 Monitor the stack**
