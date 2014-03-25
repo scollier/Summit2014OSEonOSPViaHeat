@@ -18,7 +18,7 @@ The default contents will be:
       domain: summit2014.lab
       broker1_floating_ip: 172.16.1.3
       load_bal_hostname: broker.summit2014.lab
-      node_hostname: openshift.nodeinstance2.summit2014.lab
+      node_hostname: node2.summit2014.lab
       node_image: RHEL65-x86_64-node
       hosts_domain: summit2014.lab
       replicants: broker.summit2014.lab
@@ -140,11 +140,11 @@ Add node 2 instance _A_ record to the zone file so node 2 hostname resolves. Ver
     --with-node-ip 172.16.1.4 \
     --domain summit2014.lab \
     --dns-server broker.summit2014.lab
-    service named restart
+    service named reload
 
 Check hostname resolution
 
-    host openshift.nodeinstance2.summit2014.lab
+    host node2.summit2014.lab
 
 Check mcollective traffic.  You should get a response from node 2 that was deployed as part of the stack.
 
