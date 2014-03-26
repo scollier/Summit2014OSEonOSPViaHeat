@@ -61,6 +61,7 @@ Verify repositories are available
 
 # Add NFS mount if needed
 
+    mkdir /pub
     mount -t nfs -o vers=3 refarch.cloud.lab.eng.bos.redhat.com:/pub /pub
 
 # Set up the remaining repos
