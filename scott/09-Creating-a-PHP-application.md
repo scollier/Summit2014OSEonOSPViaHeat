@@ -1,8 +1,6 @@
 #**Lab 9: Create a PHP Application**
 
-**Tools used:**
 
-* rhc
 
 In this lab, we are ready to start using OpenShift Enterprise to create our
 first application.  To create an application, we will be using the *rhc app*

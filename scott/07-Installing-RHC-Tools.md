@@ -1,15 +1,5 @@
 #**Lab 7: Installing the RHC client tools**
 
-**Server used:**
-
-* localhost / hypervisor
-
-**Tools used:**
-
-* sudo
-* git
-* yum
-* rhc
 
 The OpenShift Client tools, known as **rhc**, are built and packaged using the Ruby programming language.  OpenShift Enterprise integrates with the Git version control system to provide powerful, decentralized version control for your application source code.
 
@@ -28,7 +18,7 @@ With the correct entitlements in place, you can now install the OpenShift Enterp
 
 ---
 
-##**NOTE**: The following Appendix includes commands for additional Operating Systems
+##**NOTE**: The following section includes commands for additional Operating Systems
 
 ##**Microsoft Windows**
 

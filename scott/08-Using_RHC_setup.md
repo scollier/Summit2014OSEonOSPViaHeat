@@ -1,12 +1,6 @@
 #**Lab 8: Using *rhc setup***
 
-**Server used:**
 
-* localhost
-
-**Tools used:**
-
-* rhc
 
 ##**Configure DNS**
 

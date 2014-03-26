@@ -1,18 +1,5 @@
 #**Lab 11: Using cartridges**
 
-**Server used:**
-
-* localhost
-* node host
-
-**Tools used:**
-
-* rhc
-* mysql
-* tail
-* git
-* PHP
-
 Cartridges provide the actual functionality necessary to run applications. There are several cartridges available to support different programming languages, databases, monitoring, and management. Cartridges are designed to be extensible so the community can add support for any programming language, database, or any management tool not officially supported by OpenShift Enterprise. Please refer to the official OpenShift Enterprise documentation for how you can [write your own cartridge](https://openshift.redhat.com/community/wiki/introduction-to-cartridge-building).
 
 	https://www.openshift.com/wiki/introduction-to-cartridge-building

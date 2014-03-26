@@ -1,10 +1,5 @@
 #**Lab 12: Gear Scavenger Hunt**
 
-##**Servers Used**
-
-localhost
-
-node
 
 ###**Steps**
 
