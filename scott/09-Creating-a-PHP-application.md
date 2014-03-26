@@ -101,7 +101,7 @@ You should see the following information:
 	drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 ..
 	drwxr-xr-x  13 gshipley  staff   442 Jan 21 13:48 .git
 	drwxr-xr-x   5 gshipley  staff   170 Jan 21 13:48 .openshift
-	-rw-r--r--   1 gshipley  staff  2715 Jan 21 13:48 README
+	-rw-r--r--   1 gshipley  staff  2715 Jan 21 13:48 README.md
 	-rw-r--r--   1 gshipley  staff     0 Jan 21 13:48 deplist.txt
 	drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 libs
 	drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 misc

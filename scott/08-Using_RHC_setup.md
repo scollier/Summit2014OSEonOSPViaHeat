@@ -1,4 +1,4 @@
-#**Lab 08: Using *rhc setup***
+#**Lab 8: Using *rhc setup***
 
 **Server used:**
 

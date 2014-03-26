@@ -20,7 +20,7 @@ Once logged in, gain root access and explore the environment.
 
     sudo -i
 
-Check the OpenShift install output.  At the end of hte file, you shuold see "Installation and configuration is complete".  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files.
+Check the OpenShift install output.  At the end of hte file, you shuold see "Installation and configuration is complete".  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files. Ignore any notices about NTP, it is because the lab does not have network connectivity.
 
     view /tmp/openshift.out
     
@@ -53,6 +53,7 @@ Look for the output: **PASS**
 SSH into the node, using the IP that was obtained above.
 
     ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE_IP
+    sudo -i
 
 Once logged in, gain root access and explore the environment.
     

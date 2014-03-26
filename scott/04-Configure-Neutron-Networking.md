@@ -19,7 +19,7 @@ Keypairs are SSH credentials that are injected into images when they are launche
         
 ###**Network Configuration Background**
 
-In this lab there is an existing network, much as there would be in a production environment. This is a real, physical network with a gateway and DHCP server somewhere on the network that we do not have control over. Therefore we decided to use the a private network to represent our public network. This network will be setup on a brige called *br-ex* which is defined in the packstack file with the following option:
+In this lab there is an existing network, much as there would be in a production environment. This is a real, physical network with a gateway and DHCP server somewhere on the network that we do not have control over. Therefore we decided to use the a private network to represent our public network. This network will be setup on a brige called *br-ex* which is defined in the packstack answer file with the following option:
 
     CONFIG_NEUTRON_L3_EXT_BRIDGE=br-ex
 

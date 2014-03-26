@@ -8,7 +8,7 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
     source ~/keystonerc_admin
 
 
-The names of these images are hard coded in the heat template.  Do not change the name here.  These images were created via disk image-builder (DIB) prior to the lab to save time.  For more information on how to create these images, please check the upstream README.
+The names of these images are hard coded in the heat template.  Do not change the name here.  These images were created via disk image-builder (DIB) prior to the lab to save time.  For more information on how to create these images, please check the upstream README (will not be accessible in the summit lab becuase of network restrictions).
 
 https://github.com/openstack/heat-templates/blob/master/openshift-enterprise/README.rst
 
@@ -118,6 +118,7 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
     -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
     -e ~/openshift-environment.yaml
 
+The *-f* option tells heat which template to use.  The *-e* option tells heat which environment configuration file to use.
 
 ##**5.5 Monitor the stack**
 
