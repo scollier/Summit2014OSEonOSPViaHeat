@@ -131,7 +131,7 @@ To login to the horizon dashboard via CLI:
 
 Add the following line in the file
 
-    %user ALL=/usr/bin/ovs-vsctl, /sbin/service, /sbin/reboot, /sbin/iptables, /sbin/ip, /usr/bin/tail, /usr/bin/yum, /usr/bin/vim /etc/resolv.conf, /usr/bin/vim /etc/neutron/plugin.ini, /bin/rpm, /bin/ls
+    %user ALL=/usr/bin/ovs-vsctl, /sbin/service, /sbin/reboot, /sbin/iptables, /sbin/ip, /usr/bin/tail, /usr/bin/yum, /usr/bin/vim /etc/resolv.conf, /usr/bin/vim /etc/neutron/plugin.ini, /bin/rpm, /bin/ls, /usr/local/bin/convert-to-bridge
 
 # Give user read permissions to /etc/heat
 
@@ -163,42 +163,9 @@ Restart heat services
 
 #**Set up the interfaces on the server:**
 
-For this lab we will need to associate *em1* with the *br-ex* bridge. Ensure *ifcfg-em1* and *ifcfg-br-ex* files look as follows.  The *ifcfg-br-ex* file will have to be created.
+For this lab we will need to associate *em1* with the *br-ex* bridge. Create the following script to the user can execute */usr/local/bin/convert-to-bridge*:
 
-Create the file **/etc/sysconfig/network-scripts/ifcfg-br-ex** with the following contents. 
-
-    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-br-ex
-    DEVICE="br-ex"
-    ONBOOT="yes"
-    DEVICETYPE=ovs
-    TYPE="OVSBridge"
-    OVSBOOTPROTO="static"
-    IPADDR="172.16.0.1"
-    NETMASK="255.255.0.0"
-    EOF
-
-The configuration file for *em1* exists already, edit **/etc/sysconfig/network-scripts/ifcfg-em1** to contain the following contents.
-
-    cat << EOF > /etc/sysconfig/network-scripts/ifcfg-em1
-    DEVICE="em1"
-    ONBOOT="yes"
-    TYPE="OVSPort"
-    OVS_BRIDGE="br-ex"
-    PROMISC="yes"
-    DEVICETYPE="ovs"
-    EOF
-
-**Restart Networking and review the interface configuration:**
-
-Restart networking services
-
-    service network restart
-
-IP address should be on the *br-ex* interface.
-          
-    ip a show dev br-ex
-
-    ip a show dev em1
+    <insert script from lab systems>
 
 # END HOST SETUP
              
