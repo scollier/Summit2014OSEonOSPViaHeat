@@ -6,9 +6,13 @@ The server has a single network card. Configure both of the interface files at o
 
 **Explore the current network card interface setup:**
 
-For this lab we will need 2 interfaces. The DHCP interface was the single NIC *em1*. The bridge *br-public* will be created and used as the exsternal network, though this will only be simulated as it will not actually route anywhere. Run the following script to create the bridge:
+For this lab we will need 2 interfaces. The DHCP interface was the single NIC *em1*. The bridge *br-public* will be created and used as the exsternal network, though this will only be simulated as it will not actually route anywhere. View the script to see the changes that will be made:
 
-    /usr/local/bin/convert-to-bridge
+    cat /usr/local/bin/create-bridge-config
+
+Run the following script to create the bridge config:
+
+    /usr/local/bin/create-bridge-config
 
 Ensure the *ifcfg-br-public* file look as follows.  
 

@@ -26,6 +26,8 @@ There are two ways to pass parameters to the *heat* command.  The first is via t
 
 Review the provided environment file with placeholder text:
 
+    cat ~/openshift-environment.yaml
+
     parameters:
       key_name: adminkp
       prefix: summit2014.lab
