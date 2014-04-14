@@ -116,7 +116,7 @@ Now run the *heat* command and launch the stack. The -f option tells *heat* wher
 
 **Note: it can take up to 10 minutes for this to complete**
 
-    heat create openshift \
+    heat stack-create openshift \
     -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
     -e ~/openshift-environment.yaml
 
@@ -126,23 +126,18 @@ The *-f* option tells heat which template to use.  The *-e* option tells heat wh
 
 There are several ways to monitor the status of the deployment.  
 
-Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
+Open Firefox and login to the Horizon dashboard:
 
-    nova get-vnc-console broker_instance novnc
-    
-    nova get-vnc-console node_instance novnc
+* Open Firefox and browse to http://localhost
+* Login with *admin*:*password*
+* Select *Project* on the left
+* Under *Orchestration* select *Stacks*
+* Select *OpenShift* on the right pane
+* Enjoy the eye candy
 
-Alternatively, in Horizon:
+To use the CLI, open another terminal and tail the heat log:
 
-* Under *Project* select *Instances*
-* On the right pane select either *broker_instance* or *node_instance*
-* Select *Console*
-
-
-Open another terminal and tail the heat log:
-
-    sudo tail -f /var/log/heat/heat-engine.log &
-
+    sudo tail -f /var/log/heat/heat-engine.log
 
 List the *heat* stack
 
@@ -160,21 +155,24 @@ Once the instances are launched they can be view with:
 
     nova list
 
-
 Once the stack is successfully built the wait_condition states for both broker and node will change to CREATE_COMPLETE
 
     | broker_wait_condition               | 65 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:51:30Z |
     | node_wait_condition                 | 66 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:52:01Z |
 
-Alternatively open Firefox and login to the Horizon dashboard to watch the heat stack status:
+Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
 
-* Open Firefox and browse to http://localhost
-* Login with *admin*:*password*
-* Select *Project* on the left
-* Under *Orchestration* select *Stacks*
-* Select *OpenShift* on the right pane
-* Enjoy the eye candy
+    nova get-vnc-console broker_instance novnc
+    
+    nova get-vnc-console node_instance novnc
 
+Alternatively, in Horizon:
+
+* Under *Project* select *Instances*
+* On the right pane select either *broker_instance* or *node_instance*
+* Select *Console*
+
+*NOTE*: Do not use ALT+2 to switch windows (shortcut used in Firefox) as this will reboot your system!
 
 **Lab 5 Complete!**
 

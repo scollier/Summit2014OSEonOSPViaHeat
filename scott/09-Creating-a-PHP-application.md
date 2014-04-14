@@ -230,7 +230,7 @@ Notice that we stop the application runtime (Apache), deploy the code, and then 
 
 If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:
 
-	http://firstphp-ose.summit2014.lab
+	[http://firstphp-ose.summit2014.lab](http://firstphp-ose.summit2014.lab)
 	
 You should see the updated code for the application.
 
@@ -261,7 +261,7 @@ Once you have saved this file, the process for pushing the changes involves addi
 
 To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:
 
-	http://firstphp-ose.summit2014.lab/time.php
+	[http://firstphp-ose.summit2014.lab/time.php](http://firstphp-ose.summit2014.lab/time.php)
 	
 You should see the updated code for the application.
 
@@ -269,8 +269,8 @@ You should see the updated code for the application.
 
 Return to your previous directories
 
-    pushd
-    pushd
+    popd
+    popd
     
 **Lab 9 Complete!**
 
