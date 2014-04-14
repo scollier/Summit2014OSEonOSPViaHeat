@@ -13,14 +13,22 @@ Everything in the lab will be performed with the following user and password:
     user: user
     Password: password
 
+When you first boot the system up, you should see one user selectable for login with the description of "Deploying OSE on RHEL OSP via Heat Templates". If you see a list of mulitple users with *labX*, then you are booted into the wrong partition. If this is the case then reboot via the icon in the lower right with the password *redhat*
+
 Sudo access will be provided for certain commands.
 
 **System Partitions**
 
-**WARNING!!!** There are multiple partitions on this system. It is VITAL that you only ever boot into or modify partition <X NEED TO FILL THIS OUT>. Do not mount the other partition or make any changes to the boot loader. Doing so will violate the spirit of Summit and make the panda very sad.
+**WARNING!!!** There are multiple partitions on this system. It is VITAL that you only ever boot into or modify partition 3 "Deploying OSE on RHEL OSP via Heat Templates". Do not mount the other partition or make any changes to the boot loader. Doing so will violate the spirit of Summit and make the panda very sad.
 
-If you have to reboot the system, select partition X NEED TO FILL THIS OUT.
+The default partition table has the following 4 partitions selectable:
 
+* Red Hat Summit Labs
+* Installing & Administering Red Hat Enterprise Virtualization 3.3
+* Deploying OSE on RHEL OSP via Heat Templates
+* Red Hat Enterprise Linux
+
+Select *Deploying OSE on RHEL OSP via Heat Templates*
 
 **Look at the configuration options for Heat and Neutron:**
 
