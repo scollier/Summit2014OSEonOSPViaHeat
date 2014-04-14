@@ -121,6 +121,10 @@ Check node configuration
 
     oo-accept-node -v
 
+Logout of the node:
+
+    logout
+
 Note that this will fail because node2 does not have a fully qualified domain name. 
 
 ##**Add Node2 To Broker DNS**
