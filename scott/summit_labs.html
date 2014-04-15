@@ -14,681 +14,1672 @@
 <ol>
 <li><strong>Overview</strong></li>
 <li><strong>Lab Environment</strong></li>
-<li><strong>Getting to Know Docker</strong></li>
-<li><strong>Containers can Talk!</strong></li>
+<li><strong>Configure Host Networking</strong></li>
+<li><strong>Configure Neutron Networking</strong></li>
+<li><strong>Deploy Heat Stack</strong></li>
+<li><strong>Explore the OpenShift Environment</strong> </li>
+<li><strong>Installing RHC Tools</strong></li>
+<li><strong>Using *rhc setup</strong>*</li>
+<li><strong>Creating a PHP Application</strong></li>
+<li><strong>Deploy an Extra OpenShift Node</strong></li>
+<li><strong>Using Cartridges</strong></li>
+<li><strong>Gear Scavenger Hunt</strong></li>
 </ol>
 
 <!--BREAK-->
 
-<h1><strong>Overview of Docker on Red Hat Enterprise Linux lab</strong></h1>
+<h1><strong>Lab 1: Overview of Deploying OpenShift Enterprise 2.0 on Red Hat Enterprise Linux OpenStack Platform 4.0 via Heat Templates</strong></h1>
 
-<h2><strong>1.1 Overview of Docker on Red Hat Enterprise Linux</strong></h2>
-
-<p>The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.</p>
-
-<p>Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat&#39;s commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.</p>
-
-<h2><strong>1.2 Assumptions</strong></h2>
+<h2><strong>1.1 Assumptions</strong></h2>
 
 <p>This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.</p>
 
 <p>This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.</p>
 
-<p>A working knowledge of Linux-based tools and services such as telnet, Apache, etc... are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.</p>
+<p>A working knowledge of SSH, git, and yum, and familiarity with a Linux-based text editor are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.</p>
 
-<h2><strong>1.3 What you can expect to learn from this training class</strong></h2>
+<h2><strong>1.2 What you can expect to learn from this training class</strong></h2>
 
-<p>Topics covered:</p>
+<p>At the conclusion of this training class, you should have a solid understanding of how to configure Heat to deploy an OpenShift Enterprise 2.0 broker and node.  In addition, you will learn how to expand the OpenShift node environment.  You should also feel comfortable creating and deploying applications using the OpenShift Enterprise management console, using the OpenShift Enterprise administration console, as well as using the command line tools.</p>
 
-<p>Starting / stopping containers<br>
-Container / host exploration<br>
-External Logging<br>
-Saving Content <br>
-Starting containers on boot<br>
-Linking containers<br>
-Dockerfiles</p>
+<h2><strong>1.3 Overview of OpenShift Enterprise PaaS</strong></h2>
 
-<p><strong>End of Overview</strong></p>
+<p>Platform as a Service is changing the way developers approach developing software. Developers typically use a local sandbox with their preferred application server and only deploy locally on that instance. Developers typically start JBoss locally using the startup.sh command and drop their .war or .ear file in the deployment directory and they are done.  Developers have a hard time understanding why deploying to the production infrastructure is such a time consuming process, they just want to develop and test their applications.</p>
 
-<!--BREAK-->
+<p>System Administrators understand the complexity of not only deploying the code, but procuring, provisioning, and maintaining a production level system. They need to stay up to date on the latest security patches and errata, ensure the firewall is properly configured, maintain a consistent and reliable backup and restore plan, monitor the application and servers for CPU load, disk IO, HTTP requests, etc.</p>
 
-<h1><strong>Lab 1: Getting to Know Docker on RHEL</strong></h1>
+<p>OpenShift Enterprise provides developers and IT organizations an auto-scaling cloud application platform for quickly deploying new applications on secure and scalable resources with minimal configuration and management headaches. This means increased developer productivity and a faster pace with which IT can support innovation.</p>
 
-<p>Red Hat Enterprise Linux provides shared services for Docker. A couple of these shared services are systemd and selinux.  This lab will help to familiarize you with the common actions performed on Docker containers and images. The first part of the lab starts out on the host machine, the machine that runs all the containers.  Then we&#39;ll move on to container inspection.</p>
+<h2><strong>1.4 Overview of IaaS</strong></h2>
 
-<p><strong>Accessing the Environment:</strong><br>
-You will have a virtual machine running on this host.  You&#39;ll need to SSH into that virtual machine to complete the labs.  You can open <em>virt-manager</em> to get the IP Address, then SSH into it from the workstation.</p>
+<p>OpenShift Enterprise is infrastructure agnostic. OpenShift Enterprise can be installed on bare metal, virtualized instances, or on public/private cloud instances. At a basic level it requires Red Hat Enterprise Linux running on x86_64 architecture. Red Hat Enterprise Linux provides the advantage of SELinux and other enterprise features to ensure the installation is stable and secure.</p>
 
-<h2><strong>1.1 Run an Image and Look Inside</strong></h2>
+<p>This means that in order to take advantage of OpenShift Enterprise any existing resources from your hardware pool may be used. Infrastructure may be based on EC2, VMware, RHEV, Rackspace, OpenStack, CloudStack, or even bare metal: essentially any Red Hat Enterprise Linux operating system running on x86_64.</p>
 
-<p>All actions in this lab will performed by the user <em>root</em>.</p>
+<p>For this training class, Red Hat Enterprise Linux OpenStack Platform 4.0 is the Infrastructure as a Service layer. The OpenStack environment has been installed on a single server with all the necessary components required to complete the lab, but in a real production environment a deployment would consist of many servers.</p>
 
-<p>Check to ensure that SELinux is running on the host.</p>
+<h2><strong>1.5 Using the <em>openshift.sh</em> installation script</strong></h2>
 
-<pre><code>getenforce
-</code></pre>
-
-<p>Take a look at the documetation and general help as well as command specific help that is provide by the Docker package.</p>
-
-<pre><code>rpm -qd docker-io
-man docker
-man docker-run
-docker --help
-docker run --help
-</code></pre>
-
-<p>A Docker <em>image</em> is basically a layer.  A layer never changes.  To take a look a the images that are on this system.</p>
-
-<pre><code>docker images --help
-docker images
-</code></pre>
-
-<p>Docker provides the <em>run</em> option to run a image.  Check out the run options and then run the image.  The following command launches the image, executes the command &quot;echo hello&quot;, and then exits.  </p>
-
-<pre><code>docker run --help
-docker run rhel7 echo hello
-</code></pre>
-
-<p>You won&#39;t see any return value.  Where did it go?  Check the logs.  The following commands will list the last container that ran so you can get the UUID and check the logs.  This should return the output of &quot;echo hello&quot;.  Finally, run with the <em>-t</em> option to allocate a psuedo-tty.  Note that <em>-l</em> below is lowercase <em>L</em>.</p>
-
-<pre><code>docker ps -l    
-docker logs &lt;Container UUID&gt;
-docker run -t rhel7 echo hello
-</code></pre>
-
-<p>To run an interactive instance that you can look around in, pass the options <em>-i</em> and <em>-t</em>. The <em>-i</em> option starts an interactive terminal.  The <em>-t</em> option allocates a pseudo-tty. You should see different results than before.  </p>
-
-<pre><code>docker run -i -t rhel7 bash
-</code></pre>
-
-<p>Check out the IP address of the container and also look at the route.  You can see that the default route is that of the docker0 bridge on the host.</p>
-
-<pre><code>ip a
-ip r s
-</code></pre>
-
-<p>Grab the hostname of the container.  By default the hostname is set to the UUID of the container.  We will look at how to change that later.</p>
-
-<pre><code>hostname
-</code></pre>
-
-<p>What processes are running inside the container?</p>
-
-<pre><code>ps aux
-</code></pre>
-
-<p>What is the SELinux security label of the processes?</p>
-
-<pre><code>ps -Z
-</code></pre>
-
-<h2><strong>1.2 Saving Content</strong></h2>
-
-<p>Now that we have an idea of what&#39;s going on inside the container, let&#39;s take a look at the process required to save a file.</p>
-
-<p>Create a file inside the container and see if it persists the next time you run the container.</p>
-
-<pre><code>echo &quot;Hello World&quot; &gt;&gt; ~/file1
-ls ~/
-</code></pre>
-
-<p>Exit the container.</p>
-
-<pre><code>exit
-</code></pre>
-
-<p>Run the container again and check to see if the file exists.  The file should be gone.</p>
-
-<pre><code>docker run -i -t rhel7 bash
-ls ~/
-</code></pre>
-
-<p>Let&#39;s try this again and this time we&#39;ll commit the container.</p>
-
-<pre><code>echo &quot;Hello World&quot; &gt;&gt; /file2
-</code></pre>
-
-<p>Exit the container and commit the container.</p>
-
-<pre><code>exit
-docker ps -l
-docker commit &lt;Container UUID&gt; file2/container
-ae4b621fc73d0a66bf1e98657dee570043cb7f9910c0b96782a914fee85437f2
-</code></pre>
-
-<p>Now lets see if it saved the file.  Now <em>docker images</em> should show the newly commited container. Launch it again and check for the file.</p>
-
-<pre><code>docker images
-docker run -i -t file2/container bash
-ls ~/
-exit
-</code></pre>
-
-<h2><strong>1.3 Run an Image and Look Around</strong></h2>
-
-<p>Now that we have explored what&#39;s on the inside of a container, let&#39;s see what is going on outside of the container.</p>
-
-<p>Let&#39;s launch a container that will run for a long time then confirm it is running.  The <em>-d</em> option runs the container in daemon mode.  Remember, you can always get help with the options.  Run these commands on the host (you should not be inside a container at this time).</p>
-
-<pre><code>docker run --help
-docker run -d rhel7 sleep 999999
-</code></pre>
-
-<p>List the images that are currently running on the system.    </p>
-
-<pre><code>docker ps
-</code></pre>
-
-<p>Now, check out the networking on the host. You should see the docker0 bridge and a <em>veth</em> interface attached.  The <em>veth</em> interface is one end of a virtual device that connects the container to the host machine. </p>
-
-<pre><code>brctl show
-</code></pre>
-
-<p>Check out the bridge and you should see that the IP address of the bridge is used as the default gateway of the container that you saw earlier.</p>
-
-<pre><code>ip a s docker0
-</code></pre>
-
-<p>What are the firewall rules on the host?  You can see from the <em>nat</em> table that all the traffic is masqueraded so that you can reach the outside world from the containers.</p>
-
-<pre><code>iptables -nvL
-iptables -nvL -t nat
-</code></pre>
-
-<p>What is Docker putting on the file system?  Check <em>/var/lib/docker</em> to see what Docker actually puts down.</p>
-
-<pre><code>ls /var/lib/docker
-</code></pre>
-
-<p>The root filesystem for the container is in the devicemapper directory.  Grab the <em>Container ID</em> and complete the path below.  Replace &lt;Container UUID&gt; with the output from <em>docker ps -l</em> and use tab completion to complete the &lt;Container UUID&gt;.</p>
-
-<pre><code>docker ps -l
-cd /var/lib/docker/devicemapper/mnt/&lt;Container ID&gt;&lt;tab&gt;&lt;tab&gt;/rootfs
-</code></pre>
-
-<p>How do I get the IP address of a running container? Grab the &lt;Container UUID&gt; of a running container.</p>
-
-<pre><code>docker ps
-docker inspect &lt;Container UUID&gt;
-</code></pre>
-
-<p>That is quite a lot of output, let&#39;s add a filter.  Replace &lt;Container ID&gt; with the output of <em>docker ps</em>.</p>
-
-<pre><code>docker ps
-docker inspect --format &#39;{{ .NetworkSettings.IPAddress }}&#39; &lt;Container UUID&gt;
-</code></pre>
-
-<p>Stop the container and check out its status. The container will not be running anymore, so it is not visible with <em>docker ps</em>.  To see the &lt;Container ID&gt; of a stopped container, use the <em>-a</em> option.  The <em>-a</em> option shows all containers, started or stopped.</p>
-
-<pre><code>docker stop &lt;Container UUID&gt;
-docker ps
-docker ps -a
-</code></pre>
-
-<h2><strong>1.4 Where are my logs?</strong></h2>
-
-<p>The containers do not run syslog.  In order to get logs from the container, there are a couple of methods.  The first is to run the container with <em>/dev/log</em> socket bind mounted inside the container.  The other is to write to external volumes.  That&#39;s in a later lab.  Launch the container with an interactive shell.</p>
-
-<pre><code>file /dev/log
-docker run -v /dev/log:/dev/log -i -t rhel7 bash
-</code></pre>
-
-<p>Now that the container is running.  Open another terminal and inspect the bind mount.  Do not run this inside the container.</p>
-
-<pre><code>docker ps -l
-docker inspect --format &#39;{{.Volumes}}&#39; &lt;Container UUID&gt;
-</code></pre>
-
-<p>Go back to the original terminal. Generate a message with <em>logger</em> and exit the container.  This should write the message to the host journal.</p>
-
-<pre><code>logger &quot;This is a log from Summit&quot;
-exit
-</code></pre>
-
-<p>Check the logs on the host to ensure the bind mount was successful.</p>
-
-<pre><code>journalctl | grep -i &quot;This is a log from Summit&quot;
-</code></pre>
-
-<h2><strong>1.5 Control that Service!</strong></h2>
-
-<p>We can control services with systemd.  Systemd allows us to start, stop, and control which services are enabled on boot, among many other things.  In this section we will use systemd to enable the <em>nginx</em> service to start on boot.</p>
-
-<p>Have a look at the docker images.</p>
-
-<pre><code>docker images
-</code></pre>
-
-<p>You will notice a repository called <em>summit/nginx</em>, that is what will be used in this section. </p>
-
-<p>Here is the systemd unit file that needs to be created in order for this to work.  The content below needs to be placed in the <em>/etc/systemd/system/nginx.service</em> file.  This is a trivial file that does not provide full control of the service.</p>
-
-<pre><code>[Unit]
-Description=nginx server
-After=docker.service
-
-[Service]
-Type=simple
-ExecStart=/bin/bash -c &#39;/usr/bin/docker start nginx || /usr/bin/docker run --name nginx -p 80:80 summit/nginx&#39;
-
-[Install]
-WantedBy=multi-user.target
-</code></pre>
-
-<p>Now control the service.  Enable the service on reboot.</p>
-
-<pre><code>systemctl enable nginx.service
-systemctl is-enabled nginx.service
-</code></pre>
-
-<p>Start the service.  When starting this service, make sure there are no other containers using port 80 or it will fail.</p>
-
-<pre><code>docker ps
-systemctl start nginx.service
-docker ps
-</code></pre>
-
-<p>It&#39;s that easy!</p>
-
-<p>Before moving to the next lab, ensure that <em>nginx</em> is stopped, or else there will be a port conflict on port 80.</p>
-
-<pre><code>docker ps | grep -i nginx
-</code></pre>
-
-<p>If it is running:</p>
-
-<pre><code>docker stop nginx
-systemctl disable nginx.service
-</code></pre>
+<p>This training session will demonstrate the deployment mechanisms that Heat provides. Heat runs as a service on the OpenStack node in this environment. Heat also utilizes the <code>openshift.sh</code> installation script.  <code>openshift.sh</code> automates the deployment and initial configuration of OpenShift Enterprise platform.  For a deeper understanding of the internals of the platform refer to the official <a href="https://access.redhat.com/site/documentation/en-US/OpenShift_Enterprise/2/html-single/Deployment_Guide/index.html">OpenShift Enterprise Deployment Guide</a>. For details on Red Hat Enterprise Linux OpenStack Platform refer to <a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/">RHEL OSP Documentation</a>.</p>
 
 <p><strong>Lab 1 Complete!</strong></p>
 
 <!--BREAK-->
 
-<h1><strong>Lab 2: Containers can Talk</strong></h1>
+<h1><strong>Lab 2: Lab Environment</strong></h1>
 
-<p>Now that we have the fundamentals down, let&#39;s do something a bit more interesting with these containers.  This lab will cover launching a <em>MariaDB</em> and <em>Mediawiki</em> container.  The two will be tied together via the Docker <em>link</em> functionality.  This lab will build upon things we learned in lab 1 and expand on that.  We&#39;ll be looking at external volumes, links, and additional options to the Docker <em>run</em> command.</p>
+<h1><strong>2 Server Configuration</strong></h1>
 
-<p><strong>A bit about links</strong></p>
+<p>Each student will recieve their own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 installed as the base operating system.  The server was configured with OpenStack using packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.</p>
 
-<p>Straight from the Docker.io site:</p>
+<p><img src="http://summitimage-scollier1.rhcloud.com/summit_lab.png" alt="Lab Configuration"></p>
 
-<p>&quot;Links: service discovery for docker</p>
+<p><strong>Local User</strong>
+Everything in the lab will be performed with the following user and password:</p>
 
-<p>Links allow containers to discover and securely communicate with each other by using the flag -link name:alias  When two containers are linked together Docker creates a parent child relationship between the containers. The parent container will be able to access information via environment variables of the child such as name, exposed ports, IP and other selected environment variables.&quot;</p>
-
-<p><strong>Note</strong> <br>
-All images have been built before labtime.  If you would like to review what was used, all Dockerfiles are in <em>/root/summit_link_demo</em>.</p>
-
-<h2><strong>2.1 MariaDB</strong></h2>
-
-<p>This section shows how to set up an external volume and use hostnames when launching the MariaDB container.</p>
-
-<h2><strong>2.1.1 Review the MariaDB Environment</strong></h2>
-
-<p>Review the scripts and other content that are required to build and launch the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.</p>
-
-<pre><code>cd /root/summit_link_demo/mariadb; ls
+<pre><code>user: user
+Password: password
 </code></pre>
 
-<p><strong>Review the Dockerfile</strong></p>
+<p>Sudo access will be provided for certain commands.</p>
 
-<p>Look at the <em>Dockerfile</em>. From the contents below, you can see that the Dockerfile is starting with the RHEL7 base image and is maintained by Stephen Tweedie.  After the <em>FROM</em> and <em>MAINTAINER</em> commands are run, the commands to install software are run with <em>RUN</em>.  Think of the <em>RUN</em> command as executing a line in a shell script.  The remaining commands are <em>ADD</em>, which are used to add content to the image and finally <em>EXPOSE</em> and <em>CMD</em> which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the <em>Mediawiki</em> container when it is launched with the <em>-link</em> command.</p>
+<p><strong>System Partitions</strong></p>
 
-<pre><code># cat Dockerfile 
-FROM fedora:20
-MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
+<p><strong>WARNING!!!</strong> There are multiple partitions on this system. It is VITAL that you only ever boot into or modify partition <X NEED TO FILL THIS OUT>. Do not mount the other partition or make any changes to the boot loader. Doing so will violate the spirit of Summit and make the panda very sad.</p>
 
-RUN yum -y update; yum clean all
-RUN yum -y install mariadb-server pwgen supervisor psmisc net-tools; yum clean all
+<p>If you have to reboot the system, select partition X NEED TO FILL THIS OUT.</p>
 
-VOLUME [ &quot;/var/lib/mysql&quot; ]
+<p><strong>Look at the configuration options for Heat and Neutron:</strong></p>
 
-ADD ./start.sh /start.sh
-ADD ./supervisord.conf /etc/supervisord.conf
-
-RUN chmod 755 /start.sh
-
-EXPOSE 3306
-
-CMD [&quot;/bin/bash&quot;, &quot;/start.sh&quot;]
+<pre><code>vim ~/answer.txt
 </code></pre>
 
-<p><strong>Review the supervisord.conf file</strong></p>
+<p><strong>Each system has software repositories that are shared out via the local Apache web server:</strong></p>
 
-<p>Straight from the supervisord.org site:</p>
-
-<p>&quot;Supervisor: A Process Control System</p>
-
-<p>Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.&quot;</p>
-
-<p>There are a couple of reasons to use <em>supervisord</em> inside a container.  The first is that Docker really only wants to be in charge of one service.  So if you are running multiple services in a POC container such as MariaDB and Apache at the same time, you need a way to manage those. Present <em>supervisord</em> as the service that runs on launch and let it control the other services in the background. Also, supervisord can run services in foreground mode.  Docker likes that.</p>
-
-<p>The <em>supervisord.conf</em> file instructs the <em>supervisord</em> daemon as to which processes it is responsible for.  This <em>supervisord.conf</em> file has been pared down considerably.</p>
-
-<pre><code># cat supervisord.conf 
-[unix_http_server]
-file=/tmp/supervisor.sock   ; (the path to the socket file)
-
-[supervisord]
-logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
-logfile_maxbytes=50MB        ; (max main logfile bytes b4 rotation;default 50MB)
-logfile_backups=10           ; (num of main logfile rotation backups;default 10)
-loglevel=info                ; (log level;default info; others: debug,warn,trace)
-pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
-nodaemon=false               ; (start in foreground if true;default false)
-minfds=1024                  ; (min. avail startup file descriptors;default 1024)
-minprocs=200                 ; (min. avail process descriptors;default 200)
-
-[rpcinterface:supervisor]
-supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
-
-[supervisorctl]
-serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
-
-[program:mariadb]
-command=/usr/bin/mysqld_safe
-stdout_logfile=/var/log/supervisor/%(program_name)s.log
-stderr_logfile=/var/log/supervisor/%(program_name)s.log
-autorestart=true
+<pre><code>ll /var/www/html
 </code></pre>
 
-<p><strong>Review the start.sh script</strong>
-The <em>start.sh</em> script is called by the container to start the <em>supervisord</em> daemon.  The first thing the <em>start.sh</em> script does is checks to see if the database has been created yet.  If it has, just start the container, if not, create it.  The reason for this is this container uses a shared volume.  It only needs to create the database one time.  All other times the container starts, use existing data.</p>
+<p>These will be utilized by the <em>openshift.sh</em> file when it is called by heat.</p>
 
-<pre><code># cat start.sh 
-#!/bin/bash -x
+<p><strong>There are also local repositories for RHEL and RHEL OSP:</strong></p>
 
-__mysql_config() {
-
-if [ ! -f /mariadb/db/ibdata1 ]; then
-  echo
-  echo &quot;Database does not exist, creating now.&quot;
-  echo
-  sleep 2
-  mysql_install_db
-  chown -R mysql:mysql /var/lib/mysql
-  /usr/bin/mysqld_safe &amp; 
-  sleep 10
-
-  echo &quot;Running the start_mysql function.&quot;
-  mysqladmin -u root password mysqlPassword
-  mysql -uroot -pmysqlPassword -e &quot;CREATE DATABASE testdb&quot;
-
-  mysql -uroot -pmysqlPassword -e &quot;GRANT ALL PRIVILEGES ON testdb.* \
-  TO &#39;testdb&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;mysqlPassword&#39;; FLUSH PRIVILEGES;&quot;
-
-  mysql -uroot -pmysqlPassword -e &quot;GRANT ALL PRIVILEGES ON *.* \
-  TO &#39;testdb&#39;@&#39;%&#39; IDENTIFIED BY &#39;mysqlPassword&#39; WITH GRANT OPTION; FLUSH PRIVILEGES;&quot;
-
-  mysql -uroot -pmysqlPassword -e &quot;GRANT ALL PRIVILEGES ON *.* \
-  TO &#39;root&#39;@&#39;%&#39; IDENTIFIED BY &#39;mysqlPassword&#39; WITH GRANT OPTION; FLUSH PRIVILEGES;&quot;
-
-  mysql -uroot -pmysqlPassword -e &quot;select user, host FROM mysql.user;&quot;
-  killall mysqld
-  sleep 10
-fi
-}
-
-__run_supervisor() {
-echo &quot;Running the run_supervisor function.&quot;
-supervisord -n
-}
-
-# Call all functions
-__mysql_config
-__run_supervisor
+<pre><code>ll /var/www/html/repos/
 </code></pre>
 
-<h2><strong>2.1.1 Launch the MariaDB Container</strong></h2>
+<p><strong>Explore the Heat template:</strong></p>
 
-<p>Either tail the audit log from your current terminal by placing the tail command in the background:</p>
-
-<pre><code>tail -f /var/log/audit/audit.log | grep -i avc &amp;
+<pre><code>egrep -i &#39;curl|wget&#39; /home/user/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml
 </code></pre>
 
-<p>Or open another terminal and watch for AVCs in the foreground:</p>
+<p>Here you can see that the Heat template was originally making calls to github for the <em>enterprise-2.0</em> and <em>openshift.sh</em> files. These lines were modified to point to local repositories for the purposes of this lab.</p>
 
-<pre><code>tail -f /var/log/audit/audit.log | grep -i avc
+<p><strong>Look a the images that were pre-built for this lab:</strong></p>
+
+<pre><code>ls /home/images/RHEL*
 </code></pre>
 
-<p>Launch the container.  The /mariadb/db directory already exists and has database content inside.</p>
+<p>These two images were pre-built using disk image builder(DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT></p>
 
-<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb summit/mariadb
+<p><strong>Check out the software repositories:</strong></p>
+
+<pre><code>yum repolist
 </code></pre>
 
-<p>Did the container start as expected?  You should see some AVC&#39;s.  Look at the logs on the container and see the <em>permission denied</em> messages.</p>
+<p><strong>View OpenStack services</strong></p>
 
-<pre><code>docker logs mariadb
+<p>Load the keystonerc_admin file which contains the authentication token information:</p>
+
+<pre><code>source ~/keystonerc_admin
 </code></pre>
 
-<p>You will need to allow the proper SELinux permissions on the local <em>/mariadb/db</em> directory so <em>MariaDB</em> can access the directory.  Right now it&#39;s at <em>default_t</em>, this needs to be changed per below.</p>
+<p>List OpenStack services running on this system:</p>
 
-<pre><code>ls -lZd /mariadb/db
-
-chcon -Rvt svirt_sandbox_file_t /mariadb/db/
+<pre><code>nova service-list
 </code></pre>
-
-<p>Now launch the container again.  First the container will have to be removed because of a naming conflict.</p>
-
-<pre><code>docker ps -a
-docker stop mariadb &amp;&amp; docker rm mariadb
-</code></pre>
-
-<p>Launch the container again.    </p>
-
-<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb summit/mariadb
-docker ps -l
-docker logs mariadb
-</code></pre>
-
-<p>The container should be running at this time.</p>
-
-<h2><strong>2.2 Mediawiki</strong></h2>
-
-<p>This section shows how to launch the <em>Mediawiki</em> container and link it back to the <em>MariaDB</em> container.</p>
-
-<h2><strong>2.2.1 Review the Mediawiki Environment</strong></h2>
-
-<p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/summit_link_demo</em></p>
-
-<p><strong>Review the Dockerfile</strong></p>
-
-<pre><code>cat Dockerfile 
-FROM scollier/apache
-MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
-
-# Basic RPM install...
-RUN yum -y update; yum clean all
-
-# Install:
-#  Mediawiki, obviously
-#  php, because mediawiki doesn&#39;t by itself install php into apache
-#  php-mysqlnd: this image will be configured to run against the 
-#               Fedora-Dockerfiles mariadb image so we need the mysqld
-#               client support for php
-RUN yum -y install mediawiki php php-mysqlnd; yum clean all
-
-# Now wiki data.  We&#39;ll expose the wiki at $host/wiki, so the html root will be
-# at /var/www/html/wiki; to allow this to be used as a data volume we keep the
-# initialisation in a separate script.
-
-ADD ./config.sh /config.sh
-ADD ./run-apache.sh /run-apache.sh
-ADD ./LocalSettings.php /var/www/html/wiki/
-RUN chmod +x /run-apache.sh
-RUN chmod +x /config.sh
-RUN /config.sh
-
-# localhost:/wiki/mw-config should now be available to configure mediawiki.
-
-# Add script to update the IP address of a linked mariadb container if
-# needed:
-
-ADD run-mw.sh /run-mw.sh
-RUN chmod +x /run-mw.sh
-CMD [&quot;/run-mw.sh&quot;]
-</code></pre>
-
-<p><strong>Review the config.sh script</strong></p>
-
-<pre><code># cat config.sh 
-#!/bin/bash
-#
-# The mediawiki rpm installs into /var/www/wiki.  We need to symlink this into
-# the served /var/www/html/ tree to make them visible.
-#
-# Standard config will put these in /var/www/html/wiki (ie. visible at
-# http://$HOSTNAME/wiki )
-
-mkdir -p /var/www/html/wiki
-
-cd /var/www/html/wiki
-ln -sf ../../wiki/* .
-
-# We want /var/www/html/wiki to be usable as a data volume, so it&#39;s
-# important that persistent data lives here, not in /var/www/wiki.
-
-chmod 711 .
-rm -f images
-mkdir images
-chown apache.apache images
-</code></pre>
-
-<p><strong>Review the run-mw.sh script</strong></p>
-
-<pre><code># cat run-mw.sh 
-#!/bin/bash
-#
-# Run mediawiki in a docker container environment.
-
-function edit_in_place () {
-    tmp=`mktemp`
-    sed -e &quot;$2&quot; &lt; &quot;$1&quot; &gt; $tmp
-    cat $tmp &gt; &quot;$1&quot;
-    rm $tmp
-}
-
-# If we are talking to a mariadb/mysql instance in a linked container
-# (aliased &quot;db&quot; on port 3306), then we need to dynamically update the
-# MW config to refer to the correct DB server IP address.
-#
-# Docker will set the DB_PORT_3306_TCP_ADDR env variable to the right
-# IP in this case.
-#
-# We&#39;ll update lines like
-#   $wgDBserver = &quot;localhost&quot;;
-# to point to the correct location.
-
-if [ &quot;x$DB_PORT_3306_TCP_ADDR&quot; != &quot;x&quot; ] ; then
-    # For initial configuration, it&#39;s also considerate to update the
-    # default settings that drive the config screen defaults
-    edit_in_place /usr/share/mediawiki/includes/DefaultSettings.php &#39;s/^\$wgDBserver =.*$/\$wgDBserver = &quot;&#39;$DB_PORT_3306_TCP_ADDR&#39;&quot;;/&#39;
-
-    # Only update LocalSettings if they already exist; on initial
-    # setup they will not yet be here
-    if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
-        edit_in_place /var/www/html/wiki/LocalSettings.php &#39;s/^\$wgDBserver =.*$/\$wgDBserver = &quot;&#39;$DB_PORT_3306_TCP_ADDR&#39;&quot;;/&#39;
-        sed -i &#39;s/^\$wgServer =.*$/\$wgServer = &quot;http:\/\/&#39;$HOST_IP&#39;&quot;;/&#39; /var/www/html/wiki/LocalSettings.php
-    fi
-fi
-
-
-# Finally fall through to the apache startup script that the apache
-# Dockerfile (which we build on top of here) sets up
-exec /run-apache.sh
-</code></pre>
-
-<h2><strong>2.2.2 Launch the Mediawiki Container</strong></h2>
-
-<p>This section show&#39;s how to use hostnames and link to an existing container.  Issue the <em>docker run</em> command and link to the <em>mariadb</em> container.</p>
-
-<p>Run the container.  The command below is taking the enviroment variable <em>HOST_IP</em> and will inject that into the <em>run-mw.sh</em> script when the container is launched. The <em>HOST_IP</em> is the IP address of the virtual machine that is hosting the container.  Replace IP_OF_VIRTUAL_MACHINE with the IP address of the virtual machine running the container.</p>
-
-<pre><code>ip a
-
-docker run -d -e=HOST_IP=IP_OF_VIRTUAL_MACHINE --link mariadb:db  -v /var/www/html/ -p 80:80 --name mediawiki summit/mediawiki
-</code></pre>
-
-<p>Explore the link that was made.</p>
-
-<pre><code>docker ps | grep media
-</code></pre>
-
-<p>Notice in the <em>NAMES</em> column on the mariadb container and how the link is represented.</p>
-
-<p>Inspect the container and get volume information:</p>
-
-<pre><code>docker inspect --format &#39;{{ .Volumes }}&#39; mediawiki
-</code></pre>
-
-<p>Now take the output of the <em>docker inspect</em> command and use the UUID from that in the next command.  Explore the mediawiki content.  This directory is mapped to <em>/var/www/html/wiki</em> inside the container.</p>
-
-<pre><code>ls /var/lib/docker/vfs/dir/&lt;UUID Listed from Prior Query&gt;/wiki
-</code></pre>
-
-<p>For example:</p>
-
-<pre><code>ls /var/lib/docker/vfs/dir/1c8c23c24ebaea8e00fb8639e545c662516445faee7dcd5d89882fdbf1fd638d/wiki
-</code></pre>
-
-<p>Take a look at the logs for the container and notice how the IP substitutions were done.  One IP address is for the MariaDB host and one IP address is the virtual machine IP address.  It&#39;s the same IP address that was passed via the <em>docker run</em> command.</p>
-
-<pre><code>docker logs mediawiki
-</code></pre>
-
-<p>Open browser on the host running the VM and confirm the configuration is complte.</p>
-
-<pre><code>firefox &amp;
-</code></pre>
-
-<p>Go to the <em>Mediawiki</em> home page. Use the IP address of the virtual machine.  The same IP address that was passed in as the HOST_IP in the docker run command.</p>
-
-<pre><code>http://ip.address.here/wiki    
-</code></pre>
-
-<p>Thats it.  Now you can start using your wiki. You can click on <em>Create Account</em> in the top right and test it out, or log in with:</p>
-
-<p>Username: admin<br>
-Passwrod: redhat</p>
-
-<p>Now, how did this work?  The way this works is that the Dockerfile <em>CMD</em> command tells the container to launch with the <em>run-mw.sh</em> script.  Here&#39;s the key thing about what that script is doing, let&#39;s review:</p>
-
-<pre><code>if [ &quot;x$DB_PORT_3306_TCP_ADDR&quot; != &quot;x&quot; ] ; then
-    # For initial configuration, it&#39;s also considerate to update the
-    # default settings that drive the config screen defaults
-    edit_in_place /usr/share/mediawiki/includes/DefaultSettings.php &#39;s/^\$wgDBserver =.*$/\$wgDBserver = &quot;&#39;$DB_PORT_3306_TCP_ADDR&#39;&quot;;/&#39;
-
-    # Only update LocalSettings if they already exist; on initial
-    # setup they will not yet be here
-    if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
-        edit_in_place /var/www/html/wiki/LocalSettings.php &#39;s/^\$wgDBserver =.*$/\$wgDBserver = &quot;&#39;$DB_PORT_3306_TCP_ADDR&#39;&quot;;/&#39;
-        sed -i &#39;s/^\$wgServer =.*$/\$wgServer = &quot;http:\/\/&#39;$HOST_IP&#39;&quot;;/&#39; /var/www/html/wiki/LocalSettings.php
-    fi
-</code></pre>
-
-<p>It&#39;s doing a check for an existing LocalSettings.php file.  We added that file during the Docker build process.  That file was copied to /var/www/html/wiki.  So, the script runs, sees that the file exists and points the <em>$wbDBserver</em> variable to the MariaDB container.  So, no matter if these containers get shut down and have new IP addresses, the Mediawiki container will always be able to find the MariaDB container because of the <em>link</em>.  In addition, it&#39;s using the <em>-e</em> option to pass environment variables, in this case, $HOST_IP to the <em>run-mw.sh</em> script to complete the configuration.  </p>
 
 <p><strong>Lab 2 Complete!</strong></p>
 
 <!--BREAK-->
 
-<h1><strong>Continue your Learning</strong></h1>
+<h1><strong>Lab 3: Configure Host Networking</strong></h1>
 
-<h2><strong>3.1 How to Install</strong></h2>
+<h2><strong>3.1 Verify Interfaces</strong></h2>
 
-<p>On a Fedora host</p>
+<p>The server has a single network card. Configure both of the interface files at one time and then restart networking.</p>
 
-<pre><code>yum install fedora-dockerfiles docker-io
+<p><strong>Explore the current network card interface setup:</strong></p>
+
+<p>For this lab we will need 2 interfaces. The DHCP interface was the single NIC <em>em1</em>. The bridge <em>br-public</em> will be created and used as the exsternal network, though this will only be simulated as it will not actually route anywhere. Run the following script to create the bridge:</p>
+
+<pre><code>/usr/local/bin/convert-to-bridge
 </code></pre>
 
-<h2><strong>3.2 More Information</strong></h2>
+<p>Ensure the <em>ifcfg-br-public</em> file look as follows.  </p>
 
-<p>Project Atomic site:</p>
+<pre><code>cat /etc/sysconfig/network-scripts/ifcfg-br-ex
+DEVICE=&quot;br-ex&quot;
+ONBOOT=&quot;yes&quot;
+DEVICETYPE=ovs
+TYPE=&quot;OVSBridge&quot;
+OVSBOOTPROTO=&quot;static&quot;
+IPADDR=&quot;172.16.0.1&quot;
+NETMASK=&quot;255.255.0.0&quot;
+</code></pre>
 
-<p><a href="http://projectatomic.io">http://projectatomic.io</a></p>
+<p>Packstack does not configure the interfaces but in this lab they have already been configured for you.  In the original state, the single Ethernet interface had an IP address from the classroom DHCP server.  We needed to migrate that IP address to the <em>br-public</em> interface.</p>
 
-<p><strong>End of Chapter 4</strong></p>
+<p>Confirm the <em>172.16.0.1</em> IP address is assigned to the bridge interface <em>br-public</em>;</p>
+
+<pre><code>sudo ovs-vsctl show
+ip a
+</code></pre>
+
+<p><strong>Lab 3 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 4: Configure Neutron Networking</strong></h1>
+
+<h2><strong>4.1 Create Keypair</strong></h2>
+
+<p>All actions in this lab will performed by the <em>admin</em> tenant in this lab.  In a production enviroinment there will likely be many tenants.</p>
+
+<pre><code>source ~/keystonerc_admin
+</code></pre>
+
+<p>Keypairs are SSH credentials that are injected into images when they are launched. Create a keypair and then list the key.</p>
+
+<pre><code>nova keypair-add adminkp &gt; ~/adminkp.pem &amp;&amp; chmod 400 ~/adminkp.pem
+nova keypair-list
+</code></pre>
+
+<h2><strong>4.2 Set up Neutron Networking</strong></h2>
+
+<p><strong>Set up neutron networking</strong></p>
+
+<h3><strong>Network Configuration Background</strong></h3>
+
+<p>In this lab there is an existing network, much as there would be in a production environment. This is a real, physical network with a gateway and DHCP server somewhere on the network that we do not have control over. Therefore we decided to use the a private network to represent our public network. This network will be setup on a brige called <em>br-ex</em> which is defined in the packstack answer file with the following option:</p>
+
+<pre><code>CONFIG_NEUTRON_L3_EXT_BRIDGE=br-ex
+</code></pre>
+
+<p>This bridge was mapped to the physical interface <em>em1</em> in the following option:</p>
+
+<pre><code>CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:em1
+</code></pre>
+
+<h3><strong>Create the <em>Public</em> Network</strong></h3>
+
+<p>Create a public network with the --router:external=True option to designate it as an external network:</p>
+
+<pre><code>neutron net-create public --router:external=True
+</code></pre>
+
+<p>List networks after creation:</p>
+
+<pre><code>neutron net-list
+</code></pre>
+
+<p>More detail is available with the <em>net-show</em> command.  If you have multiple networks with identical names, you must specify the UUID for the network instead of the name.</p>
+
+<pre><code>neutron net-show public
+</code></pre>
+
+<p>Create the <em>public</em> subnet. Also specify an allocation pool from which floating IPs can be assigned. Without this option the entire subnet range will be used. Also specify the gateway here:</p>
+
+<pre><code>neutron subnet-create public --allocation-pool start=172.16.1.1,end=172.16.1.20 \
+    --gateway 172.16.0.1 --enable_dhcp=False 172.16.0.0/16 --name public    
+</code></pre>
+
+<p>List the subnets:</p>
+
+<pre><code>neutron subnet-list
+</code></pre>
+
+<p>Show more details about the <em>public</em> subnet:</p>
+
+<pre><code>neutron subnet-show public
+</code></pre>
+
+<h3><strong>Create Private Network</strong></h3>
+
+<p>Create a <em>private</em> network that the virtual machines will be attached to. As this is an all-in-one configuration, use <em>network_type local</em>. A real production environment would use VLAN or tunnel technology such as GRE or VXLAN.</p>
+
+<pre><code>neutron net-create private --provider:network_type local
+</code></pre>
+
+<p>List networks after creation.  This time you should see both <strong>public</strong> and <strong>private</strong>:</p>
+
+<pre><code>neutron net-list
+</code></pre>
+
+<p>Show more details about the private network:</p>
+
+<pre><code>neutron net-show private
+</code></pre>
+
+<p>Create a private subnet:</p>
+
+<pre><code>neutron subnet-create private --gateway 192.168.0.1 192.168.0.0/24 --name private
+</code></pre>
+
+<p>List the subnets</p>
+
+<pre><code>neutron subnet-list
+</code></pre>
+
+<p>Show more details about the <em>pivate</em> subnet:</p>
+
+<pre><code>neutron subnet-show private
+</code></pre>
+
+<p>Create a router. This is a neutron router that will route traffic from the private network to the public network:</p>
+
+<pre><code>neutron router-create router1
+</code></pre>
+
+<p>Set the gateway for the router to reside on the <em>public</em> subnet.</p>
+
+<pre><code>neutron router-gateway-set router1 public
+</code></pre>
+
+<p>List the router:</p>
+
+<pre><code>neutron router-list
+</code></pre>
+
+<p>Add an interface for the private subnet to the router:</p>
+
+<pre><code>neutron router-interface-add router1 private
+</code></pre>
+
+<p>Display router1 configuration:</p>
+
+<pre><code>neutron router-show router1
+</code></pre>
+
+<p><strong>Lab 4 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 5: Deploy Heat Stack</strong></h1>
+
+<h2><strong>5.1 Import the Images into Glance</strong></h2>
+
+<p>All actions in this lab will performed by the <em>admin</em> tenant in this lab.  In a production enviroinment there will likely be many tenants.</p>
+
+<pre><code>source ~/keystonerc_admin
+</code></pre>
+
+<p>The names of these images are hard coded in the heat template.  Do not change the name here.  These images were created via disk image-builder (DIB) prior to the lab to save time.  For more information on how to create these images, please check the upstream README (will not be accessible in the summit lab becuase of network restrictions).</p>
+
+<p><a href="https://github.com/openstack/heat-templates/blob/master/openshift-enterprise/README.rst">https://github.com/openstack/heat-templates/blob/master/openshift-enterprise/README.rst</a></p>
+
+<pre><code>glance image-create --name RHEL65-x86_64-broker --is-public true --disk-format qcow2 \
+    --container-format bare --file /home/images/RHEL65-x86_64-broker-v2.qcow2
+glance image-create --name RHEL65-x86_64-node --is-public true --disk-format qcow2 \
+    --container-format bare --file /home/images/RHEL65-x86_64-node-v2.qcow2
+glance image-list
+</code></pre>
+
+<h2><strong>5.2 Modify the openshift-environment file</strong></h2>
+
+<p>There are two ways to pass parameters to the <em>heat</em> command.  The first is via the <em>heat</em> CLI.  The second is to via an environment file.  This lab uses the environment file method because it makes it easier to organize the parameters. </p>
+
+<p>Review the provided environment file with placeholder text:</p>
+
+<pre><code>parameters:
+  key_name: adminkp
+  prefix: summit2014.lab
+  broker_hostname: broker.summit2014.lab
+  node_hostname: node1.summit2014.lab
+  conf_install_method: yum
+  conf_rhel_repo_base: http://172.16.0.1/rhel6.5
+  conf_jboss_repo_base: http://172.16.0.1
+  conf_ose_repo_base: http://172.16.0.1/ose-latest
+  conf_rhscl_repo_base: http://172.16.0.1
+  private_net_id: PRIVATE_NET_ID_HERE
+  public_net_id: PUBLIC_NET_ID_HERE
+  private_subnet_id: PRIVATE_SUBNET_ID_HERE
+  yum_validator_version: &quot;2.0&quot;
+  ose_version: &quot;2.0&quot;
+</code></pre>
+
+<p>Run the following three commands to replace the placeholder text in the file with the correct IDs. For a full explanation and detailed manual steps see the next section:</p>
+
+<pre><code>sed -i &quot;s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk &#39;/private/ {print $2}&#39;)/&quot;  ~/openshift-environment.yaml
+sed -i &quot;s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk &#39;/public/ {print $2}&#39;)/&quot;  ~/openshift-environment.yaml
+sed -i &quot;s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk &#39;/private/ {print $2}&#39;)/&quot;  ~/openshift-environment.yaml
+</code></pre>
+
+<p>The scripts in the previous section should have added the correct network IDs to the yaml file. Run the following two commands to list the configured networks and subnets. </p>
+
+<pre><code>neutron net-list
+neutron subnet-list
+</code></pre>
+
+<p>Inspect the <em>~/openshift-environment.yaml</em> file and verify the placeholder text PUBLC_NET_ID_HERE, PRIVATE_NET_ID_HERE, and PRIVATE_SUBNET_ID_HERE were replaced with the actual UUID from the output of the previous commands.</p>
+
+<pre><code>cat ~/openshift-environment.yaml
+</code></pre>
+
+<p>Contents should resemble the following (the IDs will be different):</p>
+
+<pre><code>parameters:
+  key_name: adminkp
+  prefix: summit2014.lab
+  broker_hostname: broker.summit2014.lab
+  node_hostname: node1.summit2014.lab
+  conf_install_method: yum
+  conf_rhel_repo_base: http://172.16.0.1/rhel6.5
+  conf_jboss_repo_base: http://172.16.0.1
+  conf_ose_repo_base: http://172.16.0.1/ose-latest
+  conf_rhscl_repo_base: http://172.16.0.1
+  private_net_id: 9eb390d1-a1ad-4545-82db-a16f18fac959
+  public_net_id: 84078660-baf4-4b51-a790-759fb897a5f5
+  private_subnet_id: bbd59b2e-0eee-4e3d-8bae-85cc91201ecd
+  yum_validator_version: &quot;2.0&quot;
+  ose_version: &quot;2.0&quot;
+</code></pre>
+
+<h2><strong>5.3 Open the port for Return Signals</strong></h2>
+
+<p>Once the <em>heat</em> stack launches, several steps are performed, such as:</p>
+
+<ul>
+<li>Configuring security groups for the broker and the node</li>
+<li>Setting up the <em>broker</em> and <em>node</em> ports</li>
+<li>Setting up the floating IPs</li>
+<li>Installing any neccessary packages</li>
+<li>Configuring OpenShift</li>
+</ul>
+
+<p>When these tasks are finished, the <em>broker</em> and <em>node</em> VMs need to be able to deliver a completed signal to the metadata service.</p>
+
+<p>Open the correct port to allow the signal to pass.</p>
+
+<p><strong>WARNING</strong>: Do NOT use <em>lokkit</em> as it will overwrite the custom iptables rules created by packstack</p>
+
+<pre><code>sudo iptables -I INPUT -p tcp --dport 8000 -j ACCEPT
+</code></pre>
+
+<p>Save the new rule:</p>
+
+<pre><code>sudo service iptables save
+</code></pre>
+
+<h2><strong>5.4 Launch the stack</strong></h2>
+
+<p>Get a feel for the options that <em>heat</em> supports.</p>
+
+<pre><code>heat --help
+which heat
+sudo rpm -qa | grep heat
+sudo rpm -qc openstack-heat-common
+sudo rpm -qf $(which heat)
+</code></pre>
+
+<p>Now run the <em>heat</em> command and launch the stack. The -f option tells <em>heat</em> where the template file resides.  The -e option points <em>heat</em> to the environment file that was created in the previous section.</p>
+
+<pre><code>. ~/keystone_admin
+</code></pre>
+
+<p><strong>Note: it can take up to 10 minutes for this to complete</strong></p>
+
+<pre><code>heat create openshift \
+-f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
+-e ~/openshift-environment.yaml
+</code></pre>
+
+<p>The <em>-f</em> option tells heat which template to use.  The <em>-e</em> option tells heat which environment configuration file to use.</p>
+
+<h2><strong>5.5 Monitor the stack</strong></h2>
+
+<p>There are several ways to monitor the status of the deployment.  </p>
+
+<p>Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM&#39;s.</p>
+
+<pre><code>nova get-vnc-console broker_instance novnc
+
+nova get-vnc-console node_instance novnc
+</code></pre>
+
+<p>Alternatively, in Horizon:</p>
+
+<ul>
+<li>Under <em>Project</em> select <em>Instances</em></li>
+<li>On the right pane select either <em>broker_instance</em> or <em>node_instance</em></li>
+<li>Select <em>Console</em></li>
+</ul>
+
+<p>Open another terminal and tail the heat log:</p>
+
+<pre><code>sudo tail -f /var/log/heat/heat-engine.log &amp;
+</code></pre>
+
+<p>List the <em>heat</em> stack</p>
+
+<pre><code>heat stack-list
+</code></pre>
+
+<p>Watch the heat events with the following command:</p>
+
+<pre><code>heat event-list openshift
+</code></pre>
+
+<p>Each resouce can also be monitored with:</p>
+
+<pre><code>heat resource-list openshift
+</code></pre>
+
+<p>Once the instances are launched they can be view with:</p>
+
+<pre><code>nova list
+</code></pre>
+
+<p>Once the stack is successfully built the wait_condition states for both broker and node will change to CREATE_COMPLETE</p>
+
+<pre><code>| broker_wait_condition               | 65 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:51:30Z |
+| node_wait_condition                 | 66 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:52:01Z |
+</code></pre>
+
+<p>Alternatively open Firefox and login to the Horizon dashboard to watch the heat stack status:</p>
+
+<ul>
+<li>Open Firefox and browse to http://localhost</li>
+<li>Login with <em>admin</em>:<em>password</em></li>
+<li>Select <em>Project</em> on the left</li>
+<li>Under <em>Orchestration</em> select <em>Stacks</em></li>
+<li>Select <em>OpenShift</em> on the right pane</li>
+<li>Enjoy the eye candy</li>
+</ul>
+
+<p><strong>Lab 5 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 6: Explore the OpenShift Environment</strong></h1>
+
+<h2><strong>6.1 List the Instances and Connect</strong></h2>
+
+<p>Confirm which IP address belongs to the broker and to the node.</p>
+
+<pre><code>nova list
+</code></pre>
+
+<h3><strong>6.2 Explore the OpenShift Broker</strong></h3>
+
+<p>Ping the public IP of the instance.  Get the public IP by running <em>nova list</em> on the controller.  The public IP will start with 172.</p>
+
+<pre><code>ping 172.16.1.BROKER_IP
+</code></pre>
+
+<p>SSH into the broker instance.  This may take a minute or two while they are spawning.  Use the key that was created with <em>nova keypair</em> earlier and the username of <em>ec2-user</em>:</p>
+
+<pre><code>ssh -i ~/adminkp.pem ec2-user@172.16.1.BROKER_IP
+</code></pre>
+
+<p>Once logged in, gain root access and explore the environment.</p>
+
+<pre><code>sudo -i
+</code></pre>
+
+<p>Check the OpenShift install output.  At the end of hte file, you shuold see &quot;Installation and configuration is complete&quot;.  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files. Ignore any notices about NTP, it is because the lab does not have network connectivity.</p>
+
+<pre><code>view /tmp/openshift.out
+
+view /var/log/cfn-signal.log
+
+view /var/log/cloud-init.log
+
+view /var/log/cloud-init-output.log
+</code></pre>
+
+<p>Now confirm OpenShift functionality. See what tools are available by tabbing out the oo-    command.</p>
+
+<pre><code>oo-&lt;tab&gt;&lt;tab&gt;
+</code></pre>
+
+<p>Check mcollective traffic.  You should get a response from the node that was deployed as part of the stack.</p>
+
+<pre><code>oo-mco ping
+</code></pre>
+
+<p>Run some diagnostics to confirm functionality.  You should get a PASS and NO ERRORS on each of these.</p>
+
+<pre><code>oo-diagnostics -v
+</code></pre>
+
+<p>Look for the output: <strong>NO ERRORS</strong></p>
+
+<pre><code>oo-accept-broker -v
+</code></pre>
+
+<p>Look for the output: <strong>PASS</strong></p>
+
+<h3><strong>6.2 Explore the OpenShift Node</strong></h3>
+
+<p>SSH into the node, using the IP that was obtained above.</p>
+
+<pre><code>ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE_IP
+sudo -i
+</code></pre>
+
+<p>Once logged in, gain root access and explore the environment.</p>
+
+<pre><code>view /tmp/openshift.out
+
+view /var/log/cfn-signal.log
+
+view /var/log/cloud-init.log
+
+view /var/log/cloud-init-output.log
+</code></pre>
+
+<p>Check node configuration</p>
+
+<pre><code>oo-accept-node
+</code></pre>
+
+<p>Look for the output: <strong>PASS</strong></p>
+
+<h2><strong>6.3 Connect to OpenShift Console</strong></h2>
+
+<p>Confirm Console Access by opening a browser and putting in the IP address of the broker.</p>
+
+<p><a href="http://172.16.1.BROKER_IP/console">http://172.16.1.BROKER_IP/console</a></p>
+
+<p>username: demo
+password: changeme</p>
+
+<p><strong>Lab 6 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 7: Installing the RHC client tools</strong></h1>
+
+<p>The OpenShift Client tools, known as <strong>rhc</strong>, are built and packaged using the Ruby programming language.  OpenShift Enterprise integrates with the Git version control system to provide powerful, decentralized version control for your application source code.</p>
+
+<p>OpenShift Enterprise client tools can be installed on any operating system with Ruby 1.8.7 or higher.  Instructions for specific operating systems are provided below. It is assumed that you are running the commands from a command line window, such as Command Prompt, or Terminal. If you are using Ruby Version Manager (rvm) see the instructions below.</p>
+
+<h2><strong>Red Hat Enterprise Linux 6 with OpenShift entitlement</strong></h2>
+
+<p>The most recent version of the OpenShift Enterprise client tools are available as a RPM from the OpenShift Enterprise hosted Yum repository. We recommend this version to remain up to date, although a version of the OpenShift Enterprise client tools RPM is also available through EPEL.</p>
+
+<p>With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:</p>
+
+<pre><code>sudo yum install rhc
+</code></pre>
+
+<p><strong>Lab 7 Complete!</strong></p>
+
+<hr>
+
+<h2><strong>NOTE</strong>: The following section includes commands for additional Operating Systems</h2>
+
+<h2><strong>Microsoft Windows</strong></h2>
+
+<h3><strong>Installing Ruby for Windows</strong></h3>
+
+<p><a href="http://rubyinstaller.org/">RubyInstaller 1.9</a> provides the best experience for installing Ruby on Windows XP, Vista, and Windows 7. Download the latest 1.9 version from the <a href="http://rubyinstaller.org/downloads/">download page</a> and launch the installer.</p>
+
+<p><strong>Important</strong>: During the installation, you should accept all of the defaults.  It is mandatory that you select the &quot;Add Ruby executables to your PATH&quot; check box in order to run Ruby from the command line.</p>
+
+<p>After the installation is complete, to verify that the installation is working, run:</p>
+
+<pre><code>C:\Program Files\&gt; ruby -e &#39;puts &quot;Welcome to Ruby&quot;&#39;
+Welcome to Ruby
+</code></pre>
+
+<p>If the &#39;Welcome to Ruby&#39; message does not display, the Ruby executable may not have been added to the path. Restart the installation process and ensure the &quot;Add Ruby executables to your PATH&quot; check box is selected.</p>
+
+<h3><strong>Installing Git for Windows</strong></h3>
+
+<p>The next step is to install <a href="http://msysgit.github.com/">Git for Windows</a> so that you can synchronize your local application source and your OpenShift application. Git for Windows offers the easiest Git experience on the Windows operating system and is the recommended default - if you use another version of Git, please ensure it can be executed from the command line, and continue to the next section.</p>
+
+<p>Download and install the <a href="http://code.google.com/p/msysgit/downloads/list?q=full+installer+official+git">latest version of Git for Windows</a>. Ensure that Git is added to your PATH so that it can be run from the command line. After the installation has completed, verify that Git is correctly configured by runing:</p>
+
+<pre><code>C:\Program Files\&gt; git --version
+git version 1.7.11.msysgit.1
+</code></pre>
+
+<h3><strong>Installing RHC for Windows</strong></h3>
+
+<p>After Ruby and Git are correctly installed, use the RubyGems package manager (included in Ruby) to install the OpenShift Enterprise client tools. Run:</p>
+
+<pre><code>C:\Program Files\&gt; gem install rhc
+</code></pre>
+
+<p>RubyGems downloads and installs the rhc gem from <a href="http://www.rubygems.org/gems/rhc">www.rubygems.org/gems/rhc</a>. The installation typically proceeds without errors. After the installation has completed, run:</p>
+
+<pre><code>C:\Program Files\&gt; rhc
+</code></pre>
+
+<h2><strong>Mac OS X</strong></h2>
+
+<h3><strong>Installing Ruby for OS X</strong></h3>
+
+<p>From OS X Lion onwards, Ruby 1.8.7 is installed by default. On older Mac systems, Ruby is shipped as part of the <a href="https://developer.apple.com/xcode/">Xcode development suite</a> and can be installed from your installation CD. If you are familiar with Mac development, you can also use <a href="http://macruby.org/">MacRuby</a> or see the Ruby installation page for <a href="http://www.ruby-lang.org/en/downloads/">help installing with homebrew</a>.</p>
+
+<p>To verify that Ruby is correctly installed run:</p>
+
+<pre><code>$ ruby -e &#39;puts &quot;Welcome to Ruby&quot;&#39;
+Welcome to Ruby
+</code></pre>
+
+<h3><strong>Installing Git for OS X</strong></h3>
+
+<p>There are a number of options on Mac OS X for Git. We recommend the Git for OS X installer - download and run the latest version of the dmg file on your system. To verify the <a href="http://code.google.com/p/git-osx-installer/">Git for OS X installation</a>, run:</p>
+
+<pre><code>$ git --version
+git version 1.7.11.1
+</code></pre>
+
+<h3><strong>Installing RHC for OS X</strong></h3>
+
+<p>With Ruby and Git installed, use the RubyGems library system to install and run the OpenShift Enterprise gem. Run:</p>
+
+<pre><code>$ sudo gem install rhc
+</code></pre>
+
+<p>After the installation has completed, run:</p>
+
+<pre><code>$ rhc -v
+</code></pre>
+
+<h2><strong>Fedora 16 or later</strong></h2>
+
+<p>To install from yum on Fedora, run:</p>
+
+<pre><code>$ sudo yum install rubygem-rhc
+</code></pre>
+
+<p>This installs Ruby, Git, and the other dependencies required to run the OpenShift Enterprise client tools.</p>
+
+<p>After the OpenShift Enterprise client tools have been installed, run:</p>
+
+<pre><code>$ rhc -v
+</code></pre>
+
+<h2><strong>Ubuntu</strong></h2>
+
+<p>Use the apt-get command line package manager to install Ruby and Git before you install the OpenShift Enterprise command line tools. Run:</p>
+
+<pre><code>$ sudo apt-get install ruby-full rubygems git-core
+</code></pre>
+
+<p>After you install both Ruby and Git, verify they can be accessed via the command line:</p>
+
+<pre><code>$ ruby -e &#39;puts &quot;Welcome to Ruby&quot;&#39;
+$ git --version
+</code></pre>
+
+<p>If either program is not available from the command line, please add them to your PATH environment variable.</p>
+
+<p>With Ruby and Git correctly installed, you can now use the RubyGems package manager to install the OpenShift Enterprise client tools. From a command line, run:</p>
+
+<pre><code>$ sudo gem install rhc
+</code></pre>
+
+<!--BREAK-->
+
+<h1><strong>Lab 8: Using *rhc setup</strong>*</h1>
+
+<h2><strong>Configure DNS</strong></h2>
+
+<p>The broker instance is running a Bind DNS server to serve dynamic DNS for OpenShift. Add the broker&#39;s public IP to the system&#39;s <em>/etc/resolv.conf</em>. First determine the Broker&#39;s IP.</p>
+
+<p>Collect the Broker&#39;s IP from <em>nova list</em></p>
+
+<pre><code>nova list
+</code></pre>
+
+<p>Once the IP is determined add it to <em>/etc/resolv.conf</em>:</p>
+
+<pre><code>sudo vim /etc/resolv.conf
+</code></pre>
+
+<p>Add it as the first nameserver</p>
+
+<pre><code>nameserver 172.16.1.BROKER_IP
+</code></pre>
+
+<p>Test hostname resolution</p>
+
+<pre><code>host broker.summit2014.lab
+</code></pre>
+
+<h2><strong>Configuring RHC setup</strong></h2>
+
+<p>By default, the RHC command line tool will default to use the publicly hosted OpenShift environment.  Since we are using our own enterprise environment, we need to tell <em>rhc</em> to use our broker.summit2014.lab server instead of openshift.com.  In order to accomplish this, the first thing we need to do is run the <em>rhc setup</em> command using the optional <em>--server</em> parameter.</p>
+
+<pre><code>rhc setup --server broker.summit2014.lab
+</code></pre>
+
+<p>Once you enter in that command, you will be prompted for the username that you would like to authenticate with.  For this training class, use the <em>demo</em> user account.  </p>
+
+<p>The first thing that you will be prompted with will look like the following:</p>
+
+<pre><code>The server&#39;s certificate is self-signed, which means that a secure connection can&#39;t be established to
+&#39;broker.summit2014.lab&#39;.
+
+You may bypass this check, but any data you send to the server could be intercepted by others.
+Connect without checking the certificate? (yes|no):
+</code></pre>
+
+<p>Since we are using a self signed certificate, go ahead and select <em>yes</em> here and press the enter key. </p>
+
+<p>At this point, you will be prompted for the username.  Enter in <strong>demo</strong> and specify the password <strong>changeme</strong>.</p>
+
+<p>After authenticating, OpenShift Enterprise will prompt if you want to create a authentication token for your system.  This will allow you to execute command on the PaaS as a developer without having to authenticate.  It is suggested that you generate a token to speed up the other labs in this training class.</p>
+
+<p>The next step in the setup process is to create and upload our SSH key to the broker server.  This is required for pushing your source code, via Git, up to the OpenShift Enterprise server.</p>
+
+<p>Finally, you will be asked to create a namespace for the provided user account.  The namespace is a unique name which becomes part of your application URL. It is also commonly referred to as the user&#39;s domain. The namespace can be at most 16 characters long and can only contain alphanumeric characters. There is currently a 1:1 relationship between usernames and namespaces.  For this lab, create the following namespace:</p>
+
+<pre><code>ose
+</code></pre>
+
+<h2><strong>Under the covers</strong></h2>
+
+<p>The <em>rhc setup</em> tool is a convenient command line utility to ensure that the user&#39;s operating system is configured properly to create and manage applications from the command line.  After this command has been executed, a <em>.openshift</em> directory will have been created in the user&#39;s home directory with some basic configuration items specified in the <em>express.conf</em> file.  </p>
+
+<pre><code>cat ~/.openshift/express.conf
+</code></pre>
+
+<p>The contents of that file are as follows:</p>
+
+<pre><code># Default user login
+default_rhlogin=‘demo’
+
+# Server API
+libra_server = &#39;broker.summit2014.lab&#39;
+</code></pre>
+
+<p>This information will be read by the <em>rhc</em> command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the <em>-l</em> switch to the <em>rhc</em> command.</p>
+
+<p><strong>Lab 8 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 9: Create a PHP Application</strong></h1>
+
+<p>In this lab, we are ready to start using OpenShift Enterprise to create our
+first application.  To create an application, we will be using the <em>rhc app</em>
+command.  In order to view all of the switches available for the <em>rhc app</em>
+command, enter the following command:</p>
+
+<pre><code>rhc app -h
+</code></pre>
+
+<p>This will provide you with the following output:</p>
+
+<pre><code>List of Actions
+  configure     Configure several properties that apply to an application
+  create        Create an application
+  delete        Delete an application from the server
+  deploy        Deploy a git reference or binary file of an application
+  force-stop    Stops all application processes
+  reload        Reload the application&#39;s configuration
+  restart       Restart the application
+  show          Show information about an application
+  start         Start the application
+  stop          Stop the application
+  tidy          Clean out the application&#39;s logs and tmp directories and tidy up the git repo on the
+                server
+</code></pre>
+
+<h2><strong>Create a new application</strong></h2>
+
+<p>It is very easy to create an OpenShift Enterprise application using <em>rhc</em>. The command to create an application is <em>rhc app create</em>, and it requires two mandatory arguments:</p>
+
+<ul>
+<li><p><strong>Application Name</strong> : The name of the application. The application name can only contain alpha-numeric characters and at max contain only 32 characters.</p></li>
+<li><p><strong>Type</strong>: The type is used to specify which language runtime to use.  </p></li>
+</ul>
+
+<p>Create a directory to hold your OpenShift Enterprise code projects:</p>
+
+<pre><code>mkdir ~/ose
+pushd ~/ose
+</code></pre>
+
+<p>To create an application that uses the <em>php</em> runtime, issue the following command:</p>
+
+<pre><code>rhc app create firstphp php-5.3
+</code></pre>
+
+<p>After entering that command, you should see output that resembles the following:</p>
+
+<pre><code>Application Options
+-------------------
+  Domain:     gshipley
+  Cartridges: php-5.3
+  Gear Size:  default
+  Scaling:    no
+
+Creating application &#39;firstphp&#39; ... done
+
+
+Waiting for your DNS name to be available ... done
+
+Cloning into &#39;firstphp&#39;...
+The authenticity of host &#39;firstphp-ose.summit2014.lab (209.132.178.87)&#39; can&#39;t be established.
+RSA key fingerprint is e8:e2:6b:9d:77:e2:ed:a2:94:54:17:72:af:71:28:04.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added &#39;firstphp-ose.summit2014.lab&#39; (RSA) to the list of known hosts.
+Checking connectivity... done
+
+Your application &#39;firstphp&#39; is now available. OpenShift should
+return a URL that you can visit with your web browser.
+</code></pre>
+
+<p>You should see the default template that OpenShift Enterprise uses for a new application.</p>
+
+<pre><code>Run &#39;rhc show-app firstphp&#39; for more details about your app.
+</code></pre>
+
+<h2><strong>What just happened?</strong></h2>
+
+<p>After you entered the command to create a new PHP application, a lot of things happened under the covers:</p>
+
+<ul>
+<li>A request was made to the broker application host to create a new php application.</li>
+<li>A message was broadcast using MCollective and ActiveMQ to find a node host to handle the application creation request.</li>
+<li>A node host responded to the request and created an application / gear for you.</li>
+<li>SELinux and cgroup policies were enabled for your application gear.</li>
+<li>A userid was created for your application gear.</li>
+<li>A private Git repository was created for your gear on the node host.</li>
+<li>The Git repository was cloned onto your local machine.</li>
+<li>BIND was updated on the broker host to include an entry for your application.</li>
+</ul>
+
+<h2><strong>Understanding directory structure on the localhost</strong></h2>
+
+<p>When you created the PHP application using the <em>rhc app create</em> command, the private git repository that was created on your node host was cloned to your local machine.</p>
+
+<pre><code>pushd firstphp
+ls -al
+</code></pre>
+
+<p>You should see the following information:</p>
+
+<pre><code>total 8
+drwxr-xr-x   9 gshipley  staff   306 Jan 21 13:48 .
+drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 ..
+drwxr-xr-x  13 gshipley  staff   442 Jan 21 13:48 .git
+drwxr-xr-x   5 gshipley  staff   170 Jan 21 13:48 .openshift
+-rw-r--r--   1 gshipley  staff  2715 Jan 21 13:48 README.md
+-rw-r--r--   1 gshipley  staff     0 Jan 21 13:48 deplist.txt
+drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 libs
+drwxr-xr-x   3 gshipley  staff   102 Jan 21 13:48 misc
+drwxr-xr-x   4 gshipley  staff   136 Jan 21 13:48 php
+</code></pre>
+
+<h3><strong>.git directory</strong></h3>
+
+<p>If you are not familiar with the Git revision control system, this is where information about the git repositories that you will be interacting with is stored.  For instance, to list all of the repositories that you are currently setup to use for this project, issue the following command:</p>
+
+<pre><code>cat .git/config
+</code></pre>
+
+<p>You should see the following information, which specifies the URL for our repository that is hosted on the OpenShift Enterprise node host:</p>
+
+<pre><code>[core]
+    repositoryformatversion = 0
+    filemode = true
+    bare = false
+    logallrefupdates = true
+    ignorecase = true
+[remote &quot;origin&quot;]
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    url = ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.summit2014.lab/~/git/firstphp.git/
+[branch &quot;master&quot;]
+    remote = origin
+    merge = refs/heads/master
+[rhc]
+    app-uuid = e9e92282a16b49e7b78d69822ac53e1d
+</code></pre>
+
+<p><strong>Note:</strong> You are also able to add other remote repositories.  This is useful for developers who also use Github or have private git repositories for an existing code base.</p>
+
+<h3><strong>.openshift directory</strong></h3>
+
+<p>The .openshift directory is a hidden directory where a user can create action hooks, set markers, and create cron jobs.  </p>
+
+<p>Action hooks are scripts that are executed directly, so they can be written in Python, PHP, Ruby, shell, etc.  OpenShift Enterprise supports the following action hooks:</p>
+
+<table><thead>
+<tr>
+<th align="left">Action Hook</th>
+<th align="left">Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td align="left">build</td>
+<td align="left">Executed on your CI system if available.  Otherwise, executed before the deploy step</td>
+</tr>
+<tr>
+<td align="left">deploy</td>
+<td align="left">Executed after dependencies are resolved but before application has started</td>
+</tr>
+<tr>
+<td align="left">post_deploy</td>
+<td align="left">Executed after application has been deployed and started</td>
+</tr>
+<tr>
+<td align="left">pre_build</td>
+<td align="left">Executed on your CI system if available.  Otherwise, executed before the build step</td>
+</tr>
+</tbody></table>
+
+<p>OpenShift Enterprise also supports the ability for a user to schedule jobs to be ran based upon the familiar cron functionality of Linux.  To enable this functionality, you need to add the cron cartridge to your application.  Once you have done so, any scripts or jobs added to the minutely, hourly, daily, weekly or monthly directories will be run on a scheduled basis (frequency is as indicated by the name of the directory) using run-parts.  OpenShift supports the following schedule for cron jobs:</p>
+
+<ul>
+<li>daily</li>
+<li>hourly</li>
+<li>minutely</li>
+<li>monthly</li>
+<li>weekly</li>
+</ul>
+
+<p>The markers directory will allow the user to specify settings such as enabling hot deployments or which version of Java to use.</p>
+
+<h3><strong>libs directory</strong></h3>
+
+<p>The libs directory is a location where the developer can provide any dependencies that are not able to be deployed using the standard dependency resolution system for the selected runtime.  In the case of PHP, the standard convention that OpenShift Enterprise uses is providing <em>PEAR</em> modules in the deplist.txt file.</p>
+
+<h3><strong>misc directory</strong></h3>
+
+<p>The misc directory is a location provided to the developer to store any application code that they do not want exposed publicly.</p>
+
+<h3><strong>php directory</strong></h3>
+
+<p>The php directory is where all of the application code that the developer writes should be created.  By default, two files are created in this directory:</p>
+
+<ul>
+<li>health_check.php - A simple file to determine if the application is responding to requests</li>
+<li>index.php - The OpenShift template that we saw after application creation in the web browser.</li>
+</ul>
+
+<h2><strong>Make a change to the PHP application and deploy updated code</strong></h2>
+
+<p>To get a good understanding of the development workflow for a user, let&#39;s change the contents of the <em>index.php</em> template that is provided on the newly created gear.  Edit the following file:</p>
+
+<pre><code>vim php/index.php
+</code></pre>
+
+<p>Look for the following code block:</p>
+
+<pre><code>&lt;h1&gt;
+    Welcome to OpenShift
+&lt;/h1&gt;
+</code></pre>
+
+<p>Update this code block to the following and then save your changes:</p>
+
+<pre><code>&lt;h1&gt;
+    Welcome to OpenShift Enterprise on OpenStack
+&lt;/h1&gt;
+</code></pre>
+
+<p><strong>Note:</strong> Make sure you are updating the &lt;h1&gt; tag and not the &lt;title&gt; tag.</p>
+
+<p>Once the code has been changed, we need to commit our change to the local Git repository.  This is accomplished with the <em>git commit</em> command:</p>
+
+<pre><code>git commit -am &quot;Changed welcome message.&quot;
+</code></pre>
+
+<p>Now that our code has been committed to our local repository, we need to push those changes up to our repository that is located on the node host.  </p>
+
+<pre><code>git push
+</code></pre>
+
+<p>You should see the following output:</p>
+
+<pre><code>Counting objects: 7, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 395 bytes, done.
+Total 4 (delta 2), reused 0 (delta 0)
+remote: restart_on_add=false
+remote: httpd: Could not reliably determine the server&#39;s fully qualified domain name, using node.summit2014.lab for ServerName
+remote: Waiting for stop to finish
+remote: Done
+remote: restart_on_add=false
+remote: ~/git/firstphp.git ~/git/firstphp.git
+remote: ~/git/firstphp.git
+remote: Running .openshift/action_hooks/pre_build
+remote: Running .openshift/action_hooks/build
+remote: Running .openshift/action_hooks/deploy
+remote: hot_deploy_added=false
+remote: httpd: Could not reliably determine the server&#39;s fully qualified domain name, using node.summit2014.lab for ServerName
+remote: Done
+remote: Running .openshift/action_hooks/post_deploy
+To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.summit2014.lab/~/git/firstphp.git/
+   3edf63b..edc0805  master -&gt; master
+</code></pre>
+
+<p>Notice that we stop the application runtime (Apache), deploy the code, and then run any action hooks that may have been specified in the .openshift directory.  </p>
+
+<h2><strong>Verify code change</strong></h2>
+
+<p>If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:</p>
+
+<pre><code>http://firstphp-ose.summit2014.lab
+</code></pre>
+
+<p>You should see the updated code for the application.</p>
+
+<p><img src="http://training.runcloudrun.com/images/firstphpOSE.png" alt=""></p>
+
+<h2><strong>Adding a new PHP file</strong></h2>
+
+<p>Adding a new source code file to your OpenShift Enterprise application is an easy and straightforward process.  For instance, to create a PHP source code file that displays the server date and time: </p>
+
+<p>Create a new file located in <em>php</em> directory and name it <em>time.php</em>:</p>
+
+<pre><code>vim php/time.php
+</code></pre>
+
+<p>Add the following contents:</p>
+
+<pre><code>&lt;?php
+// Print the date and time
+echo date(&#39;l jS \of F Y h:i:s A&#39;);
+?&gt;
+</code></pre>
+
+<p>Once you have saved this file, the process for pushing the changes involves adding the new file to your git repository, committing the change, and then pushing the code to your OpenShift Enterprise gear:</p>
+
+<pre><code>git add .
+git commit -am &quot;Adding time.php&quot;
+git push
+</code></pre>
+
+<h2><strong>Verify code change</strong></h2>
+
+<p>To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:</p>
+
+<pre><code>http://firstphp-ose.summit2014.lab/time.php
+</code></pre>
+
+<p>You should see the updated code for the application.</p>
+
+<p><img src="http://training.runcloudrun.com/images/firstphpTime.png" alt=""></p>
+
+<p>Return to your previous directories</p>
+
+<pre><code>pushd
+pushd
+</code></pre>
+
+<p><strong>Lab 9 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 10: Extending the OpenShift Environment</strong></h1>
+
+<p>As applications are added additional node hosts may be added to extend the capacity of the OpenShift Enterprise environment.</p>
+
+<h2>10.1 Create the node environment file</h2>
+
+<p>A separate heat template to launch a single node host is provided. A heat environment file will be used to simplify the heat deployment.</p>
+
+<p>Review the <em>~/node2-environment.yaml</em> file and and notice the placeholder text included. This environment file instructs <em>heat</em> on which SSH key to use, domain, floating IP, and several other items.  Please take a minute to read through this and get a good handle on what we are passing to <em>heat</em>.</p>
+
+<p>Review the file:</p>
+
+<pre><code>view ~/node2-environment.yaml
+</code></pre>
+
+<p>The default contents will be:</p>
+
+<pre><code>parameters:
+  key_name: adminkp
+  domain: summit2014.lab
+  broker1_floating_ip: 172.16.1.3
+  load_bal_hostname: broker.summit2014.lab
+  node_hostname: node2.summit2014.lab
+  node_image: RHEL65-x86_64-node
+  hosts_domain: summit2014.lab
+  replicants: broker.summit2014.lab
+  install_method: yum
+  rhel_repo_base: http://172.16.0.1/rhel6.5
+  jboss_repo_base: http://172.16.0.1
+  openshift_repo_base: http://172.16.0.1/ose-latest
+  rhscl_repo_base: http://172.16.0.1
+  activemq_admin_pass: password
+  activemq_user_pass: password
+  mcollective_pass: marionette
+  private_net_id: PRIVATE_NET_ID_HERE
+  public_net_id: PUBLIC_NET_ID_HERE
+  private_subnet_id: PRIVATE_SUBNET_ID_HERE
+</code></pre>
+
+<p>Run the following four commands to replace the placeholder text in the file with the correct data:</p>
+
+<pre><code>sed -i &quot;s/BROKER_IP/$(nova list | awk &#39;/broker_instance/ {print $13 }&#39;)/&quot; node2-environment.yaml
+sed -i &quot;s/PRIVATE_NET_ID_HERE/$(neutron net-list | awk &#39;/private/ {print $2}&#39;)/&quot;  ~/node2-environment.yaml
+sed -i &quot;s/PUBLIC_NET_ID_HERE/$(neutron net-list | awk &#39;/public/ {print $2}&#39;)/&quot;  ~/node2-environment.yaml
+sed -i &quot;s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk &#39;/private/ {print $2}&#39;)/&quot;  ~/node2-environment.yaml
+</code></pre>
+
+<p>Confirm the changes.</p>
+
+<pre><code>cat ~/node2-environment.yaml
+</code></pre>
+
+<p>Verify the value of BROKER_IP matches the Broker&#39;s ip from <strong>nova list</strong></p>
+
+<p>Verify the network and subnet IDs match the output from <strong>neutron net-list</strong> and <strong>neutron subnet-list</strong></p>
+
+<p>The file should now resemble the following, with the correct IP and IDs:</p>
+
+<pre><code>parameters:
+  key_name: adminkp
+  domain: summit2014.lab
+  broker1_floating_ip: 172.16.1.2
+  load_bal_hostname: broker.summit2014.lab
+  node_hostname: node2.summit2014.lab
+  node_image: RHEL65-x86_64-node
+  hosts_domain: summit2014.lab
+  replicants: broker.summit2014.lab
+  install_method: yum
+  rhel_repo_base: http://172.16.0.1/rhel6.5
+  jboss_repo_base: http://172.16.0.1
+  openshift_repo_base: http://172.16.0.1/ose-latest
+  rhscl_repo_base: http://172.16.0.1
+  activemq_admin_pass: password
+  activemq_user_pass: password
+  mcollective_pass: marionette
+  private_net_id: 9eb390d1-a1ad-4545-82db-a16f18fac959
+  public_net_id: 84078660-baf4-4b51-a790-759fb897a5f5
+  private_subnet_id: bbd59b2e-0eee-4e3d-8bae-85cc91201ecd
+</code></pre>
+
+<h2>10.2 Launch the node heat stack</h2>
+
+<p>Now run the <em>heat</em> command and launch the stack. The -f option tells <em>heat</em> where the template file resides. The -e option points <em>heat</em> to the environment file that was created in the previous section.</p>
+
+<pre><code>heat stack-create add_node2 \
+-f  ~/heat-templates/openshift-enterprise/heat/neutron/highly-available/ose_node_stack.yaml \
+-e ~/node2-environment.yaml
+</code></pre>
+
+<h2><strong>10.3 Monitor the stack</strong></h2>
+
+<p>List the <em>heat</em> stack</p>
+
+<pre><code>heat stack-list
+</code></pre>
+
+<p>Watch the heat events.</p>
+
+<pre><code>heat event-list add_node2
+
+heat resource-list add_node2
+
+nova list
+</code></pre>
+
+<h2><strong>10.4 Confirm Node2 Connectivity</strong></h2>
+
+<p>Ping the public IP of node 2</p>
+
+<pre><code>ping 172.16.1.NODE2_IP
+</code></pre>
+
+<p><em>Note the IP address of node 2. The address will be needed later in this lab.</em></p>
+
+<p>SSH into the node2 instance.  This may take a minute or two while they are spawning.  This will use the key that was created with <em>nova keypair</em> earlier.</p>
+
+<p>SSH into the node</p>
+
+<pre><code>ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE2_IP
+</code></pre>
+
+<p>Once logged in, gain root access and explore the environment.</p>
+
+<pre><code>sudo -i
+</code></pre>
+
+<p>Check the OpenShift install output.</p>
+
+<pre><code>view /tmp/openshift.out
+</code></pre>
+
+<p>Check node configuration</p>
+
+<pre><code>oo-accept-node -v
+</code></pre>
+
+<p>Note that this will fail because node2 does not have a fully qualified domain name. </p>
+
+<h2><strong>Add Node2 To Broker DNS</strong></h2>
+
+<p>SSH into the broker instance to update the DNS zone file.</p>
+
+<pre><code>ssh -i ~/adminkp.pem ec2-user@172.16.1.BROKER_IP
+</code></pre>
+
+<p>Once logged in, gain root access.</p>
+
+<pre><code>sudo -i
+</code></pre>
+
+<p>Add node 2 instance <em>A</em> record to the zone file so node 2 hostname resolves. Verify the IP address matches the IP from <strong>nova list</strong>.</p>
+
+<pre><code>oo-register-dns \
+--with-node-hostname node2 \
+--with-node-ip 172.16.1.4 \
+--domain summit2014.lab \
+--dns-server broker.summit2014.lab
+service named reload
+</code></pre>
+
+<p>Check hostname resolution</p>
+
+<pre><code>host node2.summit2014.lab
+</code></pre>
+
+<p>Check mcollective traffic.  You should get a response from node 2 that was deployed as part of the stack.</p>
+
+<pre><code>oo-mco ping
+</code></pre>
+
+<h2><strong>Verify Node2</strong></h2>
+
+<p>SSH into the node</p>
+
+<pre><code>ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE2_IP
+</code></pre>
+
+<p>Once logged in, gain root access and explore the environment.</p>
+
+<pre><code>sudo -i
+</code></pre>
+
+<p>Check the OpenShift install output.</p>
+
+<pre><code>view /tmp/openshift.out
+</code></pre>
+
+<p>Check node configuration</p>
+
+<pre><code>oo-accept-node -v
+</code></pre>
+
+<p>This time it should succeed.</p>
+
+<pre><code>PASS
+</code></pre>
+
+<p><strong>Lab 10 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 11: Using cartridges</strong></h1>
+
+<p>Cartridges provide the actual functionality necessary to run applications. There are several cartridges available to support different programming languages, databases, monitoring, and management. Cartridges are designed to be extensible so the community can add support for any programming language, database, or any management tool not officially supported by OpenShift Enterprise. Please refer to the official OpenShift Enterprise documentation for how you can <a href="https://openshift.redhat.com/community/wiki/introduction-to-cartridge-building">write your own cartridge</a>.</p>
+
+<pre><code>https://www.openshift.com/wiki/introduction-to-cartridge-building
+</code></pre>
+
+<h2><strong>Viewing available cartridges</strong></h2>
+
+<p>To view all of the available commands for working with cartridges on OpenShift Enterprise, enter the following command:</p>
+
+<pre><code>$ rhc cartridge -h
+</code></pre>
+
+<h2><strong>List available cartridges</strong></h2>
+
+<p>To see a list of all available cartridges to users of this OpenShift Enterprise deployment, issue the following command:</p>
+
+<pre><code>$ rhc cartridge list
+</code></pre>
+
+<p>You should see the following output depending on which cartridges you have installed:</p>
+
+<p>jbosseap-6       JBoss Enterprise Application Platform 6.1.0 web
+  jenkins-1        Jenkins Server                              web
+  nodejs-0.10      Node.js 0.10                                web
+  perl-5.10        Perl 5.10                                   web
+  php-5.3          PHP 5.3                                     web
+  python-2.6       Python 2.6                                  web
+  python-2.7       Python 2.7                                  web
+  ruby-1.8         Ruby 1.8                                    web
+  ruby-1.9         Ruby 1.9                                    web
+  jbossews-1.0     Tomcat 6 (JBoss EWS 1.0)                    web
+  jbossews-2.0     Tomcat 7 (JBoss EWS 2.0)                    web
+  diy-0.1          Do-It-Yourself 0.1                          web
+  cron-1.4         Cron 1.4                                    addon
+  jenkins-client-1 Jenkins Client                              addon
+  mysql-5.1        MySQL 5.1                                   addon
+  postgresql-8.4   PostgreSQL 8.4                              addon
+  postgresql-9.2   PostgreSQL 9.2                              addon
+  haproxy-1.4      Web Load Balancer                           addon</p>
+
+<p>Note: Web cartridges can only be added to new applications.</p>
+
+<h2><strong>Add the MySQL cartridge</strong></h2>
+
+<p>In order to use a cartridge, we need to embed it into our existing application.  OpenShift Enterprise provides support for version 5.1 of this popular open source database.  To enable MySQL support for the <em>firstphp</em> application, issue the following command:</p>
+
+<pre><code>$ rhc cartridge-add mysql-5.1 -a firstphp
+
+You should see the following output:
+
+Adding mysql-5.1 to application &#39;firstphp&#39; ... done
+
+mysql-5.1 (MySQL 5.1)
+---------------------
+  Gears:          Located with php-5.3
+  Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+  Database Name:  firstphp
+  Password:       9svQXLVtv89Y
+  Username:       adminxzGaLVm
+
+MySQL 5.1 database added.  Please make note of these credentials:
+
+       Root User: adminxzGaLVm
+   Root Password: 9svQXLVtv89Y
+   Database Name: firstphp
+
+Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+</code></pre>
+
+<h2><strong>Using MySQL</strong></h2>
+
+<p>Developers will typically interact with MySQL by using the mysql shell command
+on OpenShift Enterprise.  In order to use the mysql shell, you will need to use
+ssh to login to your application gear.  </p>
+
+<p>$ rhc ssh firstphp</p>
+
+<pre><code>[firstphp-ose.summit2014.lab ~]\&gt; mysql
+</code></pre>
+
+<p>You will notice that you did not have to authenticate to the MySQL database.  This is because OpenShift Enterprise sets environment variables that contains the connection information for the database. </p>
+
+<p>When embedding the MySQL database, OpenShift Enterprise creates a default database based upon the application name.  That being said, the user has full permissions to create new databases inside of MySQL.  Let&#39;s use the default database that was created for us and create a <em>users</em> table:</p>
+
+<pre><code>mysql&gt; use firstphp;
+Database changed
+
+mysql&gt; create table users (user_id int not null auto_increment, username varchar(200), PRIMARY KEY(user_id));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql&gt; insert into users values (null, &#39;gshipley@redhat.com&#39;);
+Query OK, 1 row affected (0.00 sec)
+</code></pre>
+
+<p>Verify that the user record has been added by selecting all rows from the <em>users</em> table:</p>
+
+<pre><code>mysql&gt; select * from users;
++---------+---------------------+
+| user_id | username            |
++---------+---------------------+
+|       1 | gshipley@redhat.com |
++---------+---------------------+
+1 row in set (0.00 sec)
+</code></pre>
+
+<p>To exit out of the MySQL session, simply enter the <em>exit</em> command:</p>
+
+<pre><code>mysql&gt; exit
+</code></pre>
+
+<h2><strong>MySQL environment variables</strong></h2>
+
+<p>As mentioned earlier in this lab, OpenShift Enterprise creates environment variables that contain the connection information for your MySQL database.  If a user forgets their connection information, they can always retrieve the authentication information by viewing these environment variables:</p>
+
+<p><strong>Note:  Execute the following on the application gear</strong></p>
+
+<pre><code>[firstphp-ose.summit2014.lab ~]\&gt; env |grep MYSQL
+</code></pre>
+
+<p>You should see the following information return from the command:</p>
+
+<pre><code>OPENSHIFT_MYSQL_DIR=/var/lib/openshift/52afd7bc3a0fb277cf000070/mysql/
+OPENSHIFT_MYSQL_DB_PORT=3306
+OPENSHIFT_MYSQL_DB_HOST=127.10.134.130
+OPENSHIFT_MYSQL_DB_PASSWORD=9svQXLVtv89Y
+OPENSHIFT_MYSQL_IDENT=redhat:mysql:5.1:0.2.6
+OPENSHIFT_MYSQL_DB_USERNAME=adminxzGaLVm
+OPENSHIFT_MYSQL_DB_SOCKET=/var/lib/openshift/52afd7bc3a0fb277cf000070/mysql//socket/mysql.sock
+OPENSHIFT_MYSQL_DB_URL=mysql://adminxzGaLVm:9svQXLVtv89Y@127.10.134.130:3306/
+OPENSHIFT_MYSQL_DB_LOG_DIR=/var/lib/openshift/52afd7bc3a0fb277cf000070/mysql//log/
+</code></pre>
+
+<p>To view a list of all <em>OPENSHIFT</em> environment variables, you can use the following command:</p>
+
+<pre><code>[firstphp-ose.summit2014.lab ~]\&gt; env | grep OPENSHIFT
+</code></pre>
+
+<h2><strong>Viewing MySQL logs</strong></h2>
+
+<p>Given the above information, you can see that the log file directory for MySQL is specified with the <em>OPENSHIFT_MYSQL_DB_LOG_DIR</em> environment variable.  To view these log files, simply use the tail command:</p>
+
+<pre><code>[firstphp-ose.summit2014.lab ~]\&gt; tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
+</code></pre>
+
+<h2><strong>Connecting to the MySQL cartridge from PHP</strong></h2>
+
+<p>Now that we have verified that our MySQL database has been created correctly, and have created a database table with some user information, let&#39;s connect to the database from PHP in order to verify that our application code can communicate to the newly embedded MySQL cartridge.  Create a new file in the <em>php</em> directory of your <em>firstphp</em> application named <em>dbtest.php</em>.  Add the following source code to the <em>dbtest.php</em> file:</p>
+
+<pre><code>&lt;?php
+$dbhost = getenv(&quot;OPENSHIFT_MYSQL_DB_HOST&quot;);
+$dbport = getenv(&quot;OPENSHIFT_MYSQL_DB_PORT&quot;);
+$dbuser = getenv(&quot;OPENSHIFT_MYSQL_DB_USERNAME&quot;);
+$dbpwd = getenv(&quot;OPENSHIFT_MYSQL_DB_PASSWORD&quot;);
+$dbname = getenv(&quot;OPENSHIFT_APP_NAME&quot;);
+
+$connection = mysql_connect($dbhost, $dbuser, $dbpwd);
+
+if (!$connection) {
+        echo &quot;Could not connect to database&quot;;
+} else {
+        echo &quot;Connected to database.&lt;br&gt;&quot;;
+}
+
+$dbconnection = mysql_select_db($dbname);
+
+$query = &quot;SELECT * from users&quot;;
+
+$rs = mysql_query($query);
+while ($row = mysql_fetch_assoc($rs)) {
+    echo $row[&#39;user_id&#39;] . &quot; &quot; . $row[&#39;username&#39;] . &quot;\n&quot;;
+}
+
+mysql_close();
+
+?&gt;
+</code></pre>
+
+<p>Once you have created the source file, add the file to your git repository, commit the change, and push the change to your OpenShift Enterprise gear.</p>
+
+<pre><code>$ git add .
+$ git commit -am “Adding dbtest.php”
+$ git push
+</code></pre>
+
+<p>After the code has been deployed to your application gear, open up a web browser and enter the following URL:</p>
+
+<pre><code>http://firstphp-ose.apps.summit2014.lab/dbtest.php
+</code></pre>
+
+<p>You should see a screen with the following information:</p>
+
+<pre><code>Connected to database.
+1 gshipley@redhat.com 
+</code></pre>
+
+<h2><strong>Managing cartridges</strong></h2>
+
+<p>OpenShift Enterprise provides the ability to embed multiple cartridges in an application.  For instance, even though we are using MySQL for our <em>firstphp</em> application, we could also embed the cron cartridge as well.  It may be useful to stop, restart, or even check the status of a cartridge.  To check the status of our MySQL database, use the following command:</p>
+
+<pre><code>$ rhc cartridge-status mysql -a firstphp
+</code></pre>
+
+<p>To stop the cartridge, enter the following command:</p>
+
+<pre><code>$ rhc cartridge-stop mysql -a firstphp
+</code></pre>
+
+<p>Verify that the MySQL database has been stopped by either checking the status again or viewing the following URL in your browser:</p>
+
+<pre><code>http://firstphp-ose.summit2014.lab/dbtest.php
+</code></pre>
+
+<p>You should see the following message returned to your browser:</p>
+
+<pre><code>Could not connect to database
+</code></pre>
+
+<p>Start the database back up using the <em>cartridge-start</em> command.</p>
+
+<pre><code>$ rhc cartridge-start mysql -a firstphp
+</code></pre>
+
+<p>Verify that the database has been restarted by opening up a web browser and entering in the following URL:</p>
+
+<pre><code>http://firstphp-ose.apps.summit2014.lab/dbtest.php
+</code></pre>
+
+<p>You should see a screen with the following information:</p>
+
+<pre><code>Connected to database.
+1 gshipley@redhat.com 
+</code></pre>
+
+<p>OpenShift Enterprise also provides the ability to list important information about a cartridge by using the <em>cartridge-show</em> command.  For example, if a user has forgotten their MySQL connection information, they can display this information with the following command:</p>
+
+<pre><code>$ rhc cartridge-show mysql -a firstphp
+</code></pre>
+
+<p>The user will then be presented with the following output:</p>
+
+<pre><code>Password: ****
+
+mysql-5.1 (MySQL 5.1)
+---------------------
+  Gears:          Located with php-5.3
+  Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+  Database Name:  firstphp
+  Password:       9svQXLVtv89Y
+  Username:       adminxzGaLVm
+</code></pre>
+
+<h2><strong>Using port forwarding</strong></h2>
+
+<p>At this point, you may have noticed that the database cartridge is only accessible via a 127.x.x.x private address.  This ensures that only the application gear can communicate with the database.</p>
+
+<p>With OpenShift Enterprise port-forwarding, developers can connect to remote services with local client tools.  This allows the developer to focus on code without having to worry about the details of configuring complicated firewall rules or SSH tunnels. To connect to the MySQL database running on our OpenShift Enterprise gear, you have to first forward all the ports to your local machine. This can be done using the <em>rhc port-forward</em> command.  This command is a wrapper that configures SSH port forwarding. Once the command is executed, you should see a list of services that are being forwarded and the associated IP address and port to use for connections as shown below:</p>
+
+<pre><code>$ rhc port-forward firstphp
+
+To connect to a service running on OpenShift, use the Local address
+
+Service Local               OpenShift
+------- -------------- ---- -------------------
+httpd   127.0.0.1:8080  =&gt;  127.10.134.129:8080
+mysql   127.0.0.1:3307  =&gt;  127.10.134.130:3306
+
+Press CTRL-C to terminate port forwarding
+</code></pre>
+
+<p>In the above snippet, you can see that mysql database, which we added to the <em>firstphp</em> gear, is forwarded to our local machine. If you open <a href="http://127.0.0.1:8080">http://127.0.0.1:8080</a> in your browser, you will see the application.</p>
+
+<p><strong>Note:</strong> At the time of this writing, there is an extra step to enable port forwarding on Mac OS X based systems.  You will need to create an alias on your loopback device for the IP address listed in output shown above.  </p>
+
+<pre><code>sudo ifconfig lo0 alias 127.0.0.1
+</code></pre>
+
+<p>Now that you have your services forward, you can connect to them using local client tools. To connect to the MySQL database running on the OpenShift Enterprise gear, run the <em>mysql</em> command as shown below:</p>
+
+<pre><code>$ mysql -uadmin -p -h 127.0.0.1
+</code></pre>
+
+<p><strong>Note:</strong> The above command assumes that you have the MySQL client installed locally.</p>
+
+<h2><strong>Enable *hot_deploy</strong>*</h2>
+
+<p>If you are familiar with PHP, you will probably be wondering why we stop and start Apache on each code deployment.  Fortunately, we provide a way for developers to signal to OpenShift Enterprise that they do not want to restart the application runtime for each deployment.  This is accomplished by creating a hot_deploy marker in the correct directory.  Change to your application root directory, for example ~/code/ose/firstphp, and issue the following commands:</p>
+
+<pre><code>$ touch .openshift/markers/hot_deploy
+$ git add .
+$ git commit -am “Adding hot_deploy marker”
+$ git push
+</code></pre>
+
+<p>Pay attention to the output:</p>
+
+<pre><code>Counting objects: 7, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 403 bytes, done.
+Total 4 (delta 2), reused 0 (delta 0)
+remote: restart_on_add=false
+remote: Will add new hot deploy marker
+remote: App will not be stopped due to presence of hot_deploy marker
+remote: restart_on_add=false
+remote: ~/git/firstphp.git ~/git/firstphp.git
+remote: ~/git/firstphp.git
+remote: Running .openshift/action_hooks/pre_build
+remote: Running .openshift/action_hooks/build
+remote: Running .openshift/action_hooks/deploy
+remote: hot_deploy_added=false
+remote: App will not be started due to presence of hot_deploy marker
+remote: Running .openshift/action_hooks/post_deploy
+To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.summit2014.lab/~/git/firstphp.git/
+   4fbda99..fdbd056  master -&gt; master
+</code></pre>
+
+<p>The two lines of importance are:</p>
+
+<pre><code>remote: Will add new hot deploy marker
+remote: App will not be stopped due to presence of hot_deploy marker
+</code></pre>
+
+<p>Adding a hot_deploy marker will significantly increase the speed of application deployments while developing an application.</p>
+
+<p><strong>Lab 11 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 12: Gear Scavenger Hunt</strong></h1>
+
+<h3><strong>Steps</strong></h3>
+
+<p>Choose an app that you have created and find out what public IP address it is
+using? (hint: use the <code>host</code> or <code>dig</code> command) </p>
+
+<p>Using the web console or CLI tools, find out the ssh login string for an
+application. (hint: <code>rhc domain show</code>)</p>
+
+<p>Now, <code>ssh</code> into the application.</p>
+
+<p>What is your home directory? (hint: <code>pwd</code>)</p>
+
+<p>Try to list all home directories. (hint: <code>ls</code>)</p>
+
+<p>What private IP addresses is your app using? (hint: <code>env</code>)</p>
+
+<p>How much memory is this app using? (hint: <code>oo-cgroup-read
+memory.usage_in_bytes</code>)</p>
+
+<p>Stop your app and check the memory usage (hint: <code>ctl_app
+graceful-stop</code>)</p>
+
+<p>Restart your app (hint: <code>ctl_app start</code>)</p>
+
+<p>What is the total memory available for your app? (hint: <code>oo-cgroup-read
+memory.limit_in_bytes</code>)</p>
+
+<p><strong>Lab 12 Complete!</strong></p>
 
 <!--BREAK-->
 
