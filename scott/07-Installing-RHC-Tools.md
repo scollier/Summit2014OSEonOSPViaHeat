@@ -11,6 +11,8 @@ The most recent version of the OpenShift Enterprise client tools are available a
 
 With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:
 
+*NOTE*: Run the following command on a client system, in this case the bare-metal student workstation:
+
 	sudo yum install rhc
 	
 

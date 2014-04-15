@@ -44,11 +44,7 @@ Run some diagnostics to confirm functionality.  You should get a PASS and NO ERR
 
 Look for the output: **NO ERRORS**
     
-    oo-accept-broker -v
-
-Look for the output: **PASS**
-
-###**6.2 Explore the OpenShift Node**
+###**6.3 Explore the OpenShift Node**
 
 SSH into the node, using the IP that was obtained above.
 
@@ -71,10 +67,14 @@ Check node configuration
 
 Look for the output: **PASS**
 
-##**6.3 Connect to OpenShift Console**
+Logout of the node:
+
+    logout
+
+##**6.4 Connect to OpenShift Console**
 Confirm Console Access by opening a browser and putting in the IP address of the broker.
 
-http://172.16.1.BROKER_IP/console
+    [http://172.16.1.BROKER_IP/console](http://172.16.1.BROKER_IP/console)
 
 username: demo
 password: changeme
