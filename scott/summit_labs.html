@@ -1,0 +1,696 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+   <style type="text/css">
+   /*CSS stylesheet is based on killwing's flavored markdown style:https://gist.github.com/2937864*/body{    margin: 0 auto;    font: 13px/1.231 Helvetica, Arial, sans-serif;    color: #444444;    line-height: 1;    max-width: 960px;    padding: 5px;}h1, h2, h3, h4 {    color: #111111;    font-weight: 400;}h1, h2, h3, h4, h5, p {    margin-bottom: 16px;    padding: 0;}h1 {    font-size: 28px;}h2 {    font-size: 22px;    margin: 20px 0 6px;}h3 {    font-size: 21px;}h4 {    font-size: 18px;}h5 {    font-size: 16px;}a {    color: #0099ff;    margin: 0;    padding: 0;    vertical-align: baseline;}a:link,a:visited{ text-decoration:none;}a:hover{ text-decoration:underline;}ul, ol {    padding: 0;    margin: 0;}li {    line-height: 24px;    margin-left: 44px;}li ul, li ul {    margin-left: 24px;}ul, ol {    font-size: 14px;    line-height: 20px;    max-width: 540px;}p {    font-size: 14px;    line-height: 20px;    max-width: 540px;    margin-top: 3px;}pre {    padding: 0px 4px;    max-width: 800px;    white-space: pre-wrap;    font-family: Consolas, Monaco, Andale Mono, monospace;    line-height: 1.5;    font-size: 13px;    border: 1px solid #ddd;    background-color: #f7f7f7;    border-radius: 3px;}code {    font-family: Consolas, Monaco, Andale Mono, monospace;    line-height: 1.5;    font-size: 13px;    border: 1px solid #ddd;    background-color: #f7f7f7;    border-radius: 3px;}pre code {    border: 0px;}aside {    display: block;    float: right;    width: 390px;}blockquote {    border-left:.5em solid #40AA53;    padding: 0 2em;    margin-left:0;    max-width: 476px;}blockquote  cite {    font-size:14px;    line-height:20px;    color:#bfbfbf;}blockquote cite:before {    content: '\2014 \00A0';}blockquote p {      color: #666;    max-width: 460px;}hr {    height: 1px;    border: none;    border-top: 1px dashed #0066CC}button,input,select,textarea {  font-size: 100%;  margin: 0;  vertical-align: baseline;  *vertical-align: middle;}button, input {  line-height: normal;  *overflow: visible;}button::-moz-focus-inner, input::-moz-focus-inner {  border: 0;  padding: 0;}button,input[type="button"],input[type="reset"],input[type="submit"] {  cursor: pointer;  -webkit-appearance: button;}input[type=checkbox], input[type=radio] {  cursor: pointer;}/* override default chrome & firefox settings */input:not([type="image"]), textarea {  -webkit-box-sizing: content-box;  -moz-box-sizing: content-box;  box-sizing: content-box;}input[type="search"] {  -webkit-appearance: textfield;  -webkit-box-sizing: content-box;  -moz-box-sizing: content-box;  box-sizing: content-box;}input[type="search"]::-webkit-search-decoration {  -webkit-appearance: none;}label,input,select,textarea {  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  font-size: 13px;  font-weight: normal;  line-height: normal;  margin-bottom: 18px;}input[type=checkbox], input[type=radio] {  cursor: pointer;  margin-bottom: 0;}input[type=text],input[type=password],textarea,select {  display: inline-block;  width: 210px;  padding: 4px;  font-size: 13px;  font-weight: normal;  line-height: 18px;  height: 18px;  color: #808080;  border: 1px solid #ccc;  -webkit-border-radius: 3px;  -moz-border-radius: 3px;  border-radius: 3px;}select, input[type=file] {  height: 27px;  line-height: 27px;}textarea {  height: auto;}/* grey out placeholders */:-moz-placeholder {  color: #bfbfbf;}::-webkit-input-placeholder {  color: #bfbfbf;}input[type=text],input[type=password],select,textarea {  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;  transition: border linear 0.2s, box-shadow linear 0.2s;  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);}input[type=text]:focus, input[type=password]:focus, textarea:focus {  outline: none;  border-color: rgba(82, 168, 236, 0.8);  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);  -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 8px rgba(82, 168, 236, 0.6);}/* buttons */button {  display: inline-block;  padding: 4px 14px;  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;  font-size: 13px;  line-height: 18px;  -webkit-border-radius: 4px;  -moz-border-radius: 4px;  border-radius: 4px;  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);  background-color: #0064cd;  background-repeat: repeat-x;  background-image: -khtml-gradient(linear, left top, left bottom, from(#049cdb), to(#0064cd));  background-image: -moz-linear-gradient(top, #049cdb, #0064cd);  background-image: -ms-linear-gradient(top, #049cdb, #0064cd);  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #049cdb), color-stop(100%, #0064cd));  background-image: -webkit-linear-gradient(top, #049cdb, #0064cd);  background-image: -o-linear-gradient(top, #049cdb, #0064cd);  background-image: linear-gradient(top, #049cdb, #0064cd);  color: #fff;  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);  border: 1px solid #004b9a;  border-bottom-color: #003f81;  -webkit-transition: 0.1s linear all;  -moz-transition: 0.1s linear all;  transition: 0.1s linear all;  border-color: #0064cd #0064cd #003f81;  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);}button:hover {  color: #fff;  background-position: 0 -15px;  text-decoration: none;}button:active {  -webkit-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);  -moz-box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);  box-shadow: inset 0 3px 7px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);}button::-moz-focus-inner {  padding: 0;  border: 0;}/* table  */table {    border-spacing: 0;    border: 1px solid #ccc;}td, th{    border: 1px solid #ccc;    padding: 5px;}/* code syntax highlight.Documentation: http://www.mdcharm.com/documentation/code_syntax_highlighting.html#custom_your_own */pre .literal,pre .comment,pre .template_comment,pre .diff .header,pre .javadoc {    color: #008000;}pre .keyword,pre .css .rule .keyword,pre .winutils,pre .javascript .title,pre .nginx .title,pre .subst,pre .request,pre .status {    color: #0000FF;    font-weight: bold}pre .number,pre .hexcolor,pre .python .decorator,pre .ruby .constant {    color: #0000FF;}pre .string,pre .tag .value,pre .phpdoc,pre .tex .formula {    color: #D14}pre .title,pre .id {    color: #900;    font-weight: bold}pre .javascript .title,pre .lisp .title,pre .clojure .title,pre .subst {    font-weight: normal}pre .class .title,pre .haskell .type,pre .vhdl .literal,pre .tex .command {    color: #458;    font-weight: bold}pre .tag,pre .tag .title,pre .rules .property,pre .django .tag .keyword {    color: #000080;    font-weight: normal}pre .attribute,pre .variable,pre .lisp .body {    color: #008080}pre .regexp {    color: #009926}pre .class {    color: #458;    font-weight: bold}pre .symbol,pre .ruby .symbol .string,pre .lisp .keyword,pre .tex .special,pre .prompt {    color: #990073}pre .built_in,pre .lisp .title,pre .clojure .built_in {    color: #0086b3}pre .preprocessor,pre .pi,pre .doctype,pre .shebang,pre .cdata {    color: #999;    font-weight: bold}pre .deletion {    background: #fdd}pre .addition {    background: #dfd}pre .diff .change {    background: #0086b3}pre .chunk {    color: #aaa}pre .markdown .header {    color: #800;    font-weight: bold;}pre .markdown .blockquote {    color: #888;}pre .markdown .link_label {    color: #88F;}pre .markdown .strong {    font-weight: bold;}pre .markdown .emphasis {    font-style: italic;}
+   </style>
+   
+   
+</head>
+<body>
+    <h1><strong>Contents</strong></h1>
+
+<ol>
+<li><strong>Overview</strong></li>
+<li><strong>Lab Environment</strong></li>
+<li><strong>Getting to Know Docker</strong></li>
+<li><strong>Containers can Talk!</strong></li>
+</ol>
+
+<!--BREAK-->
+
+<h1><strong>Overview of Docker on Red Hat Enterprise Linux lab</strong></h1>
+
+<h2><strong>1.1 Overview of Docker on Red Hat Enterprise Linux</strong></h2>
+
+<p>The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.</p>
+
+<p>Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat&#39;s commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.</p>
+
+<h2><strong>1.2 Assumptions</strong></h2>
+
+<p>This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.</p>
+
+<p>This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.</p>
+
+<p>A working knowledge of Linux-based tools and services such as telnet, Apache, etc... are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.</p>
+
+<h2><strong>1.3 What you can expect to learn from this training class</strong></h2>
+
+<p>Topics covered:</p>
+
+<p>Starting / stopping containers<br>
+Container / host exploration<br>
+External Logging<br>
+Saving Content <br>
+Starting containers on boot<br>
+Linking containers<br>
+Dockerfiles</p>
+
+<p><strong>End of Overview</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 1: Getting to Know Docker on RHEL</strong></h1>
+
+<p>Red Hat Enterprise Linux provides shared services for Docker. A couple of these shared services are systemd and selinux.  This lab will help to familiarize you with the common actions performed on Docker containers and images. The first part of the lab starts out on the host machine, the machine that runs all the containers.  Then we&#39;ll move on to container inspection.</p>
+
+<p><strong>Accessing the Environment:</strong><br>
+You will have a virtual machine running on this host.  You&#39;ll need to SSH into that virtual machine to complete the labs.  You can open <em>virt-manager</em> to get the IP Address, then SSH into it from the workstation.</p>
+
+<h2><strong>1.1 Run an Image and Look Inside</strong></h2>
+
+<p>All actions in this lab will performed by the user <em>root</em>.</p>
+
+<p>Check to ensure that SELinux is running on the host.</p>
+
+<pre><code>getenforce
+</code></pre>
+
+<p>Take a look at the documetation and general help as well as command specific help that is provide by the Docker package.</p>
+
+<pre><code>rpm -qd docker-io
+man docker
+man docker-run
+docker --help
+docker run --help
+</code></pre>
+
+<p>A Docker <em>image</em> is basically a layer.  A layer never changes.  To take a look a the images that are on this system.</p>
+
+<pre><code>docker images --help
+docker images
+</code></pre>
+
+<p>Docker provides the <em>run</em> option to run a image.  Check out the run options and then run the image.  The following command launches the image, executes the command &quot;echo hello&quot;, and then exits.  </p>
+
+<pre><code>docker run --help
+docker run rhel7 echo hello
+</code></pre>
+
+<p>You won&#39;t see any return value.  Where did it go?  Check the logs.  The following commands will list the last container that ran so you can get the UUID and check the logs.  This should return the output of &quot;echo hello&quot;.  Finally, run with the <em>-t</em> option to allocate a psuedo-tty.  Note that <em>-l</em> below is lowercase <em>L</em>.</p>
+
+<pre><code>docker ps -l    
+docker logs &lt;Container UUID&gt;
+docker run -t rhel7 echo hello
+</code></pre>
+
+<p>To run an interactive instance that you can look around in, pass the options <em>-i</em> and <em>-t</em>. The <em>-i</em> option starts an interactive terminal.  The <em>-t</em> option allocates a pseudo-tty. You should see different results than before.  </p>
+
+<pre><code>docker run -i -t rhel7 bash
+</code></pre>
+
+<p>Check out the IP address of the container and also look at the route.  You can see that the default route is that of the docker0 bridge on the host.</p>
+
+<pre><code>ip a
+ip r s
+</code></pre>
+
+<p>Grab the hostname of the container.  By default the hostname is set to the UUID of the container.  We will look at how to change that later.</p>
+
+<pre><code>hostname
+</code></pre>
+
+<p>What processes are running inside the container?</p>
+
+<pre><code>ps aux
+</code></pre>
+
+<p>What is the SELinux security label of the processes?</p>
+
+<pre><code>ps -Z
+</code></pre>
+
+<h2><strong>1.2 Saving Content</strong></h2>
+
+<p>Now that we have an idea of what&#39;s going on inside the container, let&#39;s take a look at the process required to save a file.</p>
+
+<p>Create a file inside the container and see if it persists the next time you run the container.</p>
+
+<pre><code>echo &quot;Hello World&quot; &gt;&gt; ~/file1
+ls ~/
+</code></pre>
+
+<p>Exit the container.</p>
+
+<pre><code>exit
+</code></pre>
+
+<p>Run the container again and check to see if the file exists.  The file should be gone.</p>
+
+<pre><code>docker run -i -t rhel7 bash
+ls ~/
+</code></pre>
+
+<p>Let&#39;s try this again and this time we&#39;ll commit the container.</p>
+
+<pre><code>echo &quot;Hello World&quot; &gt;&gt; /file2
+</code></pre>
+
+<p>Exit the container and commit the container.</p>
+
+<pre><code>exit
+docker ps -l
+docker commit &lt;Container UUID&gt; file2/container
+ae4b621fc73d0a66bf1e98657dee570043cb7f9910c0b96782a914fee85437f2
+</code></pre>
+
+<p>Now lets see if it saved the file.  Now <em>docker images</em> should show the newly commited container. Launch it again and check for the file.</p>
+
+<pre><code>docker images
+docker run -i -t file2/container bash
+ls ~/
+exit
+</code></pre>
+
+<h2><strong>1.3 Run an Image and Look Around</strong></h2>
+
+<p>Now that we have explored what&#39;s on the inside of a container, let&#39;s see what is going on outside of the container.</p>
+
+<p>Let&#39;s launch a container that will run for a long time then confirm it is running.  The <em>-d</em> option runs the container in daemon mode.  Remember, you can always get help with the options.  Run these commands on the host (you should not be inside a container at this time).</p>
+
+<pre><code>docker run --help
+docker run -d rhel7 sleep 999999
+</code></pre>
+
+<p>List the images that are currently running on the system.    </p>
+
+<pre><code>docker ps
+</code></pre>
+
+<p>Now, check out the networking on the host. You should see the docker0 bridge and a <em>veth</em> interface attached.  The <em>veth</em> interface is one end of a virtual device that connects the container to the host machine. </p>
+
+<pre><code>brctl show
+</code></pre>
+
+<p>Check out the bridge and you should see that the IP address of the bridge is used as the default gateway of the container that you saw earlier.</p>
+
+<pre><code>ip a s docker0
+</code></pre>
+
+<p>What are the firewall rules on the host?  You can see from the <em>nat</em> table that all the traffic is masqueraded so that you can reach the outside world from the containers.</p>
+
+<pre><code>iptables -nvL
+iptables -nvL -t nat
+</code></pre>
+
+<p>What is Docker putting on the file system?  Check <em>/var/lib/docker</em> to see what Docker actually puts down.</p>
+
+<pre><code>ls /var/lib/docker
+</code></pre>
+
+<p>The root filesystem for the container is in the devicemapper directory.  Grab the <em>Container ID</em> and complete the path below.  Replace &lt;Container UUID&gt; with the output from <em>docker ps -l</em> and use tab completion to complete the &lt;Container UUID&gt;.</p>
+
+<pre><code>docker ps -l
+cd /var/lib/docker/devicemapper/mnt/&lt;Container ID&gt;&lt;tab&gt;&lt;tab&gt;/rootfs
+</code></pre>
+
+<p>How do I get the IP address of a running container? Grab the &lt;Container UUID&gt; of a running container.</p>
+
+<pre><code>docker ps
+docker inspect &lt;Container UUID&gt;
+</code></pre>
+
+<p>That is quite a lot of output, let&#39;s add a filter.  Replace &lt;Container ID&gt; with the output of <em>docker ps</em>.</p>
+
+<pre><code>docker ps
+docker inspect --format &#39;{{ .NetworkSettings.IPAddress }}&#39; &lt;Container UUID&gt;
+</code></pre>
+
+<p>Stop the container and check out its status. The container will not be running anymore, so it is not visible with <em>docker ps</em>.  To see the &lt;Container ID&gt; of a stopped container, use the <em>-a</em> option.  The <em>-a</em> option shows all containers, started or stopped.</p>
+
+<pre><code>docker stop &lt;Container UUID&gt;
+docker ps
+docker ps -a
+</code></pre>
+
+<h2><strong>1.4 Where are my logs?</strong></h2>
+
+<p>The containers do not run syslog.  In order to get logs from the container, there are a couple of methods.  The first is to run the container with <em>/dev/log</em> socket bind mounted inside the container.  The other is to write to external volumes.  That&#39;s in a later lab.  Launch the container with an interactive shell.</p>
+
+<pre><code>file /dev/log
+docker run -v /dev/log:/dev/log -i -t rhel7 bash
+</code></pre>
+
+<p>Now that the container is running.  Open another terminal and inspect the bind mount.  Do not run this inside the container.</p>
+
+<pre><code>docker ps -l
+docker inspect --format &#39;{{.Volumes}}&#39; &lt;Container UUID&gt;
+</code></pre>
+
+<p>Go back to the original terminal. Generate a message with <em>logger</em> and exit the container.  This should write the message to the host journal.</p>
+
+<pre><code>logger &quot;This is a log from Summit&quot;
+exit
+</code></pre>
+
+<p>Check the logs on the host to ensure the bind mount was successful.</p>
+
+<pre><code>journalctl | grep -i &quot;This is a log from Summit&quot;
+</code></pre>
+
+<h2><strong>1.5 Control that Service!</strong></h2>
+
+<p>We can control services with systemd.  Systemd allows us to start, stop, and control which services are enabled on boot, among many other things.  In this section we will use systemd to enable the <em>nginx</em> service to start on boot.</p>
+
+<p>Have a look at the docker images.</p>
+
+<pre><code>docker images
+</code></pre>
+
+<p>You will notice a repository called <em>summit/nginx</em>, that is what will be used in this section. </p>
+
+<p>Here is the systemd unit file that needs to be created in order for this to work.  The content below needs to be placed in the <em>/etc/systemd/system/nginx.service</em> file.  This is a trivial file that does not provide full control of the service.</p>
+
+<pre><code>[Unit]
+Description=nginx server
+After=docker.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c &#39;/usr/bin/docker start nginx || /usr/bin/docker run --name nginx -p 80:80 summit/nginx&#39;
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>Now control the service.  Enable the service on reboot.</p>
+
+<pre><code>systemctl enable nginx.service
+systemctl is-enabled nginx.service
+</code></pre>
+
+<p>Start the service.  When starting this service, make sure there are no other containers using port 80 or it will fail.</p>
+
+<pre><code>docker ps
+systemctl start nginx.service
+docker ps
+</code></pre>
+
+<p>It&#39;s that easy!</p>
+
+<p>Before moving to the next lab, ensure that <em>nginx</em> is stopped, or else there will be a port conflict on port 80.</p>
+
+<pre><code>docker ps | grep -i nginx
+</code></pre>
+
+<p>If it is running:</p>
+
+<pre><code>docker stop nginx
+systemctl disable nginx.service
+</code></pre>
+
+<p><strong>Lab 1 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Lab 2: Containers can Talk</strong></h1>
+
+<p>Now that we have the fundamentals down, let&#39;s do something a bit more interesting with these containers.  This lab will cover launching a <em>MariaDB</em> and <em>Mediawiki</em> container.  The two will be tied together via the Docker <em>link</em> functionality.  This lab will build upon things we learned in lab 1 and expand on that.  We&#39;ll be looking at external volumes, links, and additional options to the Docker <em>run</em> command.</p>
+
+<p><strong>A bit about links</strong></p>
+
+<p>Straight from the Docker.io site:</p>
+
+<p>&quot;Links: service discovery for docker</p>
+
+<p>Links allow containers to discover and securely communicate with each other by using the flag -link name:alias  When two containers are linked together Docker creates a parent child relationship between the containers. The parent container will be able to access information via environment variables of the child such as name, exposed ports, IP and other selected environment variables.&quot;</p>
+
+<p><strong>Note</strong> <br>
+All images have been built before labtime.  If you would like to review what was used, all Dockerfiles are in <em>/root/summit_link_demo</em>.</p>
+
+<h2><strong>2.1 MariaDB</strong></h2>
+
+<p>This section shows how to set up an external volume and use hostnames when launching the MariaDB container.</p>
+
+<h2><strong>2.1.1 Review the MariaDB Environment</strong></h2>
+
+<p>Review the scripts and other content that are required to build and launch the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.</p>
+
+<pre><code>cd /root/summit_link_demo/mariadb; ls
+</code></pre>
+
+<p><strong>Review the Dockerfile</strong></p>
+
+<p>Look at the <em>Dockerfile</em>. From the contents below, you can see that the Dockerfile is starting with the RHEL7 base image and is maintained by Stephen Tweedie.  After the <em>FROM</em> and <em>MAINTAINER</em> commands are run, the commands to install software are run with <em>RUN</em>.  Think of the <em>RUN</em> command as executing a line in a shell script.  The remaining commands are <em>ADD</em>, which are used to add content to the image and finally <em>EXPOSE</em> and <em>CMD</em> which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the <em>Mediawiki</em> container when it is launched with the <em>-link</em> command.</p>
+
+<pre><code># cat Dockerfile 
+FROM fedora:20
+MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
+
+RUN yum -y update; yum clean all
+RUN yum -y install mariadb-server pwgen supervisor psmisc net-tools; yum clean all
+
+VOLUME [ &quot;/var/lib/mysql&quot; ]
+
+ADD ./start.sh /start.sh
+ADD ./supervisord.conf /etc/supervisord.conf
+
+RUN chmod 755 /start.sh
+
+EXPOSE 3306
+
+CMD [&quot;/bin/bash&quot;, &quot;/start.sh&quot;]
+</code></pre>
+
+<p><strong>Review the supervisord.conf file</strong></p>
+
+<p>Straight from the supervisord.org site:</p>
+
+<p>&quot;Supervisor: A Process Control System</p>
+
+<p>Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems.&quot;</p>
+
+<p>There are a couple of reasons to use <em>supervisord</em> inside a container.  The first is that Docker really only wants to be in charge of one service.  So if you are running multiple services in a POC container such as MariaDB and Apache at the same time, you need a way to manage those. Present <em>supervisord</em> as the service that runs on launch and let it control the other services in the background. Also, supervisord can run services in foreground mode.  Docker likes that.</p>
+
+<p>The <em>supervisord.conf</em> file instructs the <em>supervisord</em> daemon as to which processes it is responsible for.  This <em>supervisord.conf</em> file has been pared down considerably.</p>
+
+<pre><code># cat supervisord.conf 
+[unix_http_server]
+file=/tmp/supervisor.sock   ; (the path to the socket file)
+
+[supervisord]
+logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
+logfile_maxbytes=50MB        ; (max main logfile bytes b4 rotation;default 50MB)
+logfile_backups=10           ; (num of main logfile rotation backups;default 10)
+loglevel=info                ; (log level;default info; others: debug,warn,trace)
+pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
+nodaemon=false               ; (start in foreground if true;default false)
+minfds=1024                  ; (min. avail startup file descriptors;default 1024)
+minprocs=200                 ; (min. avail process descriptors;default 200)
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
+
+[program:mariadb]
+command=/usr/bin/mysqld_safe
+stdout_logfile=/var/log/supervisor/%(program_name)s.log
+stderr_logfile=/var/log/supervisor/%(program_name)s.log
+autorestart=true
+</code></pre>
+
+<p><strong>Review the start.sh script</strong>
+The <em>start.sh</em> script is called by the container to start the <em>supervisord</em> daemon.  The first thing the <em>start.sh</em> script does is checks to see if the database has been created yet.  If it has, just start the container, if not, create it.  The reason for this is this container uses a shared volume.  It only needs to create the database one time.  All other times the container starts, use existing data.</p>
+
+<pre><code># cat start.sh 
+#!/bin/bash -x
+
+__mysql_config() {
+
+if [ ! -f /mariadb/db/ibdata1 ]; then
+  echo
+  echo &quot;Database does not exist, creating now.&quot;
+  echo
+  sleep 2
+  mysql_install_db
+  chown -R mysql:mysql /var/lib/mysql
+  /usr/bin/mysqld_safe &amp; 
+  sleep 10
+
+  echo &quot;Running the start_mysql function.&quot;
+  mysqladmin -u root password mysqlPassword
+  mysql -uroot -pmysqlPassword -e &quot;CREATE DATABASE testdb&quot;
+
+  mysql -uroot -pmysqlPassword -e &quot;GRANT ALL PRIVILEGES ON testdb.* \
+  TO &#39;testdb&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;mysqlPassword&#39;; FLUSH PRIVILEGES;&quot;
+
+  mysql -uroot -pmysqlPassword -e &quot;GRANT ALL PRIVILEGES ON *.* \
+  TO &#39;testdb&#39;@&#39;%&#39; IDENTIFIED BY &#39;mysqlPassword&#39; WITH GRANT OPTION; FLUSH PRIVILEGES;&quot;
+
+  mysql -uroot -pmysqlPassword -e &quot;GRANT ALL PRIVILEGES ON *.* \
+  TO &#39;root&#39;@&#39;%&#39; IDENTIFIED BY &#39;mysqlPassword&#39; WITH GRANT OPTION; FLUSH PRIVILEGES;&quot;
+
+  mysql -uroot -pmysqlPassword -e &quot;select user, host FROM mysql.user;&quot;
+  killall mysqld
+  sleep 10
+fi
+}
+
+__run_supervisor() {
+echo &quot;Running the run_supervisor function.&quot;
+supervisord -n
+}
+
+# Call all functions
+__mysql_config
+__run_supervisor
+</code></pre>
+
+<h2><strong>2.1.1 Launch the MariaDB Container</strong></h2>
+
+<p>Either tail the audit log from your current terminal by placing the tail command in the background:</p>
+
+<pre><code>tail -f /var/log/audit/audit.log | grep -i avc &amp;
+</code></pre>
+
+<p>Or open another terminal and watch for AVCs in the foreground:</p>
+
+<pre><code>tail -f /var/log/audit/audit.log | grep -i avc
+</code></pre>
+
+<p>Launch the container.  The /mariadb/db directory already exists and has database content inside.</p>
+
+<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb summit/mariadb
+</code></pre>
+
+<p>Did the container start as expected?  You should see some AVC&#39;s.  Look at the logs on the container and see the <em>permission denied</em> messages.</p>
+
+<pre><code>docker logs mariadb
+</code></pre>
+
+<p>You will need to allow the proper SELinux permissions on the local <em>/mariadb/db</em> directory so <em>MariaDB</em> can access the directory.  Right now it&#39;s at <em>default_t</em>, this needs to be changed per below.</p>
+
+<pre><code>ls -lZd /mariadb/db
+
+chcon -Rvt svirt_sandbox_file_t /mariadb/db/
+</code></pre>
+
+<p>Now launch the container again.  First the container will have to be removed because of a naming conflict.</p>
+
+<pre><code>docker ps -a
+docker stop mariadb &amp;&amp; docker rm mariadb
+</code></pre>
+
+<p>Launch the container again.    </p>
+
+<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb summit/mariadb
+docker ps -l
+docker logs mariadb
+</code></pre>
+
+<p>The container should be running at this time.</p>
+
+<h2><strong>2.2 Mediawiki</strong></h2>
+
+<p>This section shows how to launch the <em>Mediawiki</em> container and link it back to the <em>MariaDB</em> container.</p>
+
+<h2><strong>2.2.1 Review the Mediawiki Environment</strong></h2>
+
+<p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/summit_link_demo</em></p>
+
+<p><strong>Review the Dockerfile</strong></p>
+
+<pre><code>cat Dockerfile 
+FROM scollier/apache
+MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
+
+# Basic RPM install...
+RUN yum -y update; yum clean all
+
+# Install:
+#  Mediawiki, obviously
+#  php, because mediawiki doesn&#39;t by itself install php into apache
+#  php-mysqlnd: this image will be configured to run against the 
+#               Fedora-Dockerfiles mariadb image so we need the mysqld
+#               client support for php
+RUN yum -y install mediawiki php php-mysqlnd; yum clean all
+
+# Now wiki data.  We&#39;ll expose the wiki at $host/wiki, so the html root will be
+# at /var/www/html/wiki; to allow this to be used as a data volume we keep the
+# initialisation in a separate script.
+
+ADD ./config.sh /config.sh
+ADD ./run-apache.sh /run-apache.sh
+ADD ./LocalSettings.php /var/www/html/wiki/
+RUN chmod +x /run-apache.sh
+RUN chmod +x /config.sh
+RUN /config.sh
+
+# localhost:/wiki/mw-config should now be available to configure mediawiki.
+
+# Add script to update the IP address of a linked mariadb container if
+# needed:
+
+ADD run-mw.sh /run-mw.sh
+RUN chmod +x /run-mw.sh
+CMD [&quot;/run-mw.sh&quot;]
+</code></pre>
+
+<p><strong>Review the config.sh script</strong></p>
+
+<pre><code># cat config.sh 
+#!/bin/bash
+#
+# The mediawiki rpm installs into /var/www/wiki.  We need to symlink this into
+# the served /var/www/html/ tree to make them visible.
+#
+# Standard config will put these in /var/www/html/wiki (ie. visible at
+# http://$HOSTNAME/wiki )
+
+mkdir -p /var/www/html/wiki
+
+cd /var/www/html/wiki
+ln -sf ../../wiki/* .
+
+# We want /var/www/html/wiki to be usable as a data volume, so it&#39;s
+# important that persistent data lives here, not in /var/www/wiki.
+
+chmod 711 .
+rm -f images
+mkdir images
+chown apache.apache images
+</code></pre>
+
+<p><strong>Review the run-mw.sh script</strong></p>
+
+<pre><code># cat run-mw.sh 
+#!/bin/bash
+#
+# Run mediawiki in a docker container environment.
+
+function edit_in_place () {
+    tmp=`mktemp`
+    sed -e &quot;$2&quot; &lt; &quot;$1&quot; &gt; $tmp
+    cat $tmp &gt; &quot;$1&quot;
+    rm $tmp
+}
+
+# If we are talking to a mariadb/mysql instance in a linked container
+# (aliased &quot;db&quot; on port 3306), then we need to dynamically update the
+# MW config to refer to the correct DB server IP address.
+#
+# Docker will set the DB_PORT_3306_TCP_ADDR env variable to the right
+# IP in this case.
+#
+# We&#39;ll update lines like
+#   $wgDBserver = &quot;localhost&quot;;
+# to point to the correct location.
+
+if [ &quot;x$DB_PORT_3306_TCP_ADDR&quot; != &quot;x&quot; ] ; then
+    # For initial configuration, it&#39;s also considerate to update the
+    # default settings that drive the config screen defaults
+    edit_in_place /usr/share/mediawiki/includes/DefaultSettings.php &#39;s/^\$wgDBserver =.*$/\$wgDBserver = &quot;&#39;$DB_PORT_3306_TCP_ADDR&#39;&quot;;/&#39;
+
+    # Only update LocalSettings if they already exist; on initial
+    # setup they will not yet be here
+    if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
+        edit_in_place /var/www/html/wiki/LocalSettings.php &#39;s/^\$wgDBserver =.*$/\$wgDBserver = &quot;&#39;$DB_PORT_3306_TCP_ADDR&#39;&quot;;/&#39;
+        sed -i &#39;s/^\$wgServer =.*$/\$wgServer = &quot;http:\/\/&#39;$HOST_IP&#39;&quot;;/&#39; /var/www/html/wiki/LocalSettings.php
+    fi
+fi
+
+
+# Finally fall through to the apache startup script that the apache
+# Dockerfile (which we build on top of here) sets up
+exec /run-apache.sh
+</code></pre>
+
+<h2><strong>2.2.2 Launch the Mediawiki Container</strong></h2>
+
+<p>This section show&#39;s how to use hostnames and link to an existing container.  Issue the <em>docker run</em> command and link to the <em>mariadb</em> container.</p>
+
+<p>Run the container.  The command below is taking the enviroment variable <em>HOST_IP</em> and will inject that into the <em>run-mw.sh</em> script when the container is launched. The <em>HOST_IP</em> is the IP address of the virtual machine that is hosting the container.  Replace IP_OF_VIRTUAL_MACHINE with the IP address of the virtual machine running the container.</p>
+
+<pre><code>ip a
+
+docker run -d -e=HOST_IP=IP_OF_VIRTUAL_MACHINE --link mariadb:db  -v /var/www/html/ -p 80:80 --name mediawiki summit/mediawiki
+</code></pre>
+
+<p>Explore the link that was made.</p>
+
+<pre><code>docker ps | grep media
+</code></pre>
+
+<p>Notice in the <em>NAMES</em> column on the mariadb container and how the link is represented.</p>
+
+<p>Inspect the container and get volume information:</p>
+
+<pre><code>docker inspect --format &#39;{{ .Volumes }}&#39; mediawiki
+</code></pre>
+
+<p>Now take the output of the <em>docker inspect</em> command and use the UUID from that in the next command.  Explore the mediawiki content.  This directory is mapped to <em>/var/www/html/wiki</em> inside the container.</p>
+
+<pre><code>ls /var/lib/docker/vfs/dir/&lt;UUID Listed from Prior Query&gt;/wiki
+</code></pre>
+
+<p>For example:</p>
+
+<pre><code>ls /var/lib/docker/vfs/dir/1c8c23c24ebaea8e00fb8639e545c662516445faee7dcd5d89882fdbf1fd638d/wiki
+</code></pre>
+
+<p>Take a look at the logs for the container and notice how the IP substitutions were done.  One IP address is for the MariaDB host and one IP address is the virtual machine IP address.  It&#39;s the same IP address that was passed via the <em>docker run</em> command.</p>
+
+<pre><code>docker logs mediawiki
+</code></pre>
+
+<p>Open browser on the host running the VM and confirm the configuration is complte.</p>
+
+<pre><code>firefox &amp;
+</code></pre>
+
+<p>Go to the <em>Mediawiki</em> home page. Use the IP address of the virtual machine.  The same IP address that was passed in as the HOST_IP in the docker run command.</p>
+
+<pre><code>http://ip.address.here/wiki    
+</code></pre>
+
+<p>Thats it.  Now you can start using your wiki. You can click on <em>Create Account</em> in the top right and test it out, or log in with:</p>
+
+<p>Username: admin<br>
+Passwrod: redhat</p>
+
+<p>Now, how did this work?  The way this works is that the Dockerfile <em>CMD</em> command tells the container to launch with the <em>run-mw.sh</em> script.  Here&#39;s the key thing about what that script is doing, let&#39;s review:</p>
+
+<pre><code>if [ &quot;x$DB_PORT_3306_TCP_ADDR&quot; != &quot;x&quot; ] ; then
+    # For initial configuration, it&#39;s also considerate to update the
+    # default settings that drive the config screen defaults
+    edit_in_place /usr/share/mediawiki/includes/DefaultSettings.php &#39;s/^\$wgDBserver =.*$/\$wgDBserver = &quot;&#39;$DB_PORT_3306_TCP_ADDR&#39;&quot;;/&#39;
+
+    # Only update LocalSettings if they already exist; on initial
+    # setup they will not yet be here
+    if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
+        edit_in_place /var/www/html/wiki/LocalSettings.php &#39;s/^\$wgDBserver =.*$/\$wgDBserver = &quot;&#39;$DB_PORT_3306_TCP_ADDR&#39;&quot;;/&#39;
+        sed -i &#39;s/^\$wgServer =.*$/\$wgServer = &quot;http:\/\/&#39;$HOST_IP&#39;&quot;;/&#39; /var/www/html/wiki/LocalSettings.php
+    fi
+</code></pre>
+
+<p>It&#39;s doing a check for an existing LocalSettings.php file.  We added that file during the Docker build process.  That file was copied to /var/www/html/wiki.  So, the script runs, sees that the file exists and points the <em>$wbDBserver</em> variable to the MariaDB container.  So, no matter if these containers get shut down and have new IP addresses, the Mediawiki container will always be able to find the MariaDB container because of the <em>link</em>.  In addition, it&#39;s using the <em>-e</em> option to pass environment variables, in this case, $HOST_IP to the <em>run-mw.sh</em> script to complete the configuration.  </p>
+
+<p><strong>Lab 2 Complete!</strong></p>
+
+<!--BREAK-->
+
+<h1><strong>Continue your Learning</strong></h1>
+
+<h2><strong>3.1 How to Install</strong></h2>
+
+<p>On a Fedora host</p>
+
+<pre><code>yum install fedora-dockerfiles docker-io
+</code></pre>
+
+<h2><strong>3.2 More Information</strong></h2>
+
+<p>Project Atomic site:</p>
+
+<p><a href="http://projectatomic.io">http://projectatomic.io</a></p>
+
+<p><strong>End of Chapter 4</strong></p>
+
+<!--BREAK-->
+
+</body>
+</html>
