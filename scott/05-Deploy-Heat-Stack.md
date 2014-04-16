@@ -8,7 +8,7 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
     source ~/keystonerc_admin
 
 
-The names of these images are hard coded in the heat template.  Do not change the name here.  These images were created via disk image-builder (DIB) prior to the lab to save time.  For more information on how to create these images, please check the upstream README (will not be accessible in the summit lab becuase of network restrictions).
+The names of these images are hard coded in the heat template.  Do not change the name here.  These images were created via disk image-builder (DIB) prior to the lab to save time.  For more information on how to create these images, please check the upstream README.
 
 https://github.com/openstack/heat-templates/blob/master/openshift-enterprise/README.rst
 
@@ -109,18 +109,17 @@ Get a feel for the options that *heat* supports.
     sudo rpm -qa | grep heat
     sudo rpm -qc openstack-heat-common
     sudo rpm -qf $(which heat)
+    source ~/keystone_admin
+
 
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
-    . ~/keystone_admin
 
 **Note: it can take up to 10 minutes for this to complete**
 
     heat stack-create openshift \
     -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
     -e ~/openshift-environment.yaml
-
-The *-f* option tells heat which template to use.  The *-e* option tells heat which environment configuration file to use.
 
 ##**5.5 Monitor the stack**
 
@@ -163,7 +162,6 @@ Once the stack is successfully built the wait_condition states for both broker a
 Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
 
     nova get-vnc-console broker_instance novnc
-    
     nova get-vnc-console node_instance novnc
 
 Alternatively, in Horizon:

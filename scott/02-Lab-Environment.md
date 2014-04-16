@@ -54,7 +54,7 @@ Here you can see that the Heat template was originally making calls to github fo
 
     ls /home/images/RHEL*
     
-These two images were pre-built using disk image builder(DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT>
+These two images were pre-built using disk image builder (DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT>
 
 **Check out the software repositories:**
 

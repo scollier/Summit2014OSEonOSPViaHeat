@@ -112,7 +112,7 @@ Here you can see that the Heat template was originally making calls to github fo
 
     ls /home/images/RHEL*
     
-These two images were pre-built using disk image builder(DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT>
+These two images were pre-built using disk image builder (DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT>
 
 **Check out the software repositories:**
 
@@ -137,11 +137,9 @@ List OpenStack services running on this system:
 
 ##**3.1 Verify Interfaces**
 
-The server has a single network card. Configure both of the interface files at one time and then restart networking.
+The server has a single network card. Run the script to create the bridge configuration.
 
 **Explore the current network card interface setup:**
-
-For this lab we will need 2 interfaces. The DHCP interface was the single NIC *em1*. The bridge *br-public* will be created and used as the exsternal network, though this will only be simulated as it will not actually route anywhere. View the script to see the changes that will be made:
 
     cat /usr/local/bin/create-bridge-config
 
@@ -160,9 +158,7 @@ Ensure the *ifcfg-br-public* file look as follows.
     IPADDR="172.16.0.1"
     NETMASK="255.255.0.0"
 
-Packstack does not configure the interfaces but in this lab they have already been configured for you.  In the original state, the single Ethernet interface had an IP address from the classroom DHCP server.  We needed to migrate that IP address to the *br-public* interface.
-
-Confirm the *172.16.0.1* IP address is assigned to the bridge interface *br-public*;
+Packstack does not configure the interfaces but in this lab they have already been configured for you.  In the original state, the single Ethernet interface has an IP address from the classroom DHCP server.  
 
     sudo ovs-vsctl show
     ip a
@@ -196,9 +192,6 @@ In this lab there is an existing network, much as there would be in a production
 
     CONFIG_NEUTRON_L3_EXT_BRIDGE=br-ex
 
-This bridge was mapped to the physical interface *em1* in the following option:
-
-    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:em1
 
 ###**Create the *Public* Network**
 
@@ -288,7 +281,7 @@ All actions in this lab will performed by the *admin* tenant in this lab.  In a 
     source ~/keystonerc_admin
 
 
-The names of these images are hard coded in the heat template.  Do not change the name here.  These images were created via disk image-builder (DIB) prior to the lab to save time.  For more information on how to create these images, please check the upstream README (will not be accessible in the summit lab becuase of network restrictions).
+The names of these images are hard coded in the heat template.  Do not change the name here.  These images were created via disk image-builder (DIB) prior to the lab to save time.  For more information on how to create these images, please check the upstream README.
 
 https://github.com/openstack/heat-templates/blob/master/openshift-enterprise/README.rst
 
@@ -389,18 +382,17 @@ Get a feel for the options that *heat* supports.
     sudo rpm -qa | grep heat
     sudo rpm -qc openstack-heat-common
     sudo rpm -qf $(which heat)
+    source ~/keystone_admin
+
 
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
 
-    . ~/keystone_admin
 
 **Note: it can take up to 10 minutes for this to complete**
 
     heat stack-create openshift \
     -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
     -e ~/openshift-environment.yaml
-
-The *-f* option tells heat which template to use.  The *-e* option tells heat which environment configuration file to use.
 
 ##**5.5 Monitor the stack**
 
@@ -443,7 +435,6 @@ Once the stack is successfully built the wait_condition states for both broker a
 Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM's.
 
     nova get-vnc-console broker_instance novnc
-    
     nova get-vnc-console node_instance novnc
 
 Alternatively, in Horizon:
@@ -663,7 +654,7 @@ With Ruby and Git correctly installed, you can now use the RubyGems package mana
 
 <!--BREAK-->
 
-#**Lab 8: Using *rhc setup***
+#**Lab 8: Using rhc setup**
 
 
 
@@ -1456,7 +1447,7 @@ Now that you have your services forward, you can connect to them using local cli
 	
 **Note:** The above command assumes that you have the MySQL client installed locally.
 
-##**Enable *hot_deploy***
+##**Enable hot_deploy**
 
 If you are familiar with PHP, you will probably be wondering why we stop and start Apache on each code deployment.  Fortunately, we provide a way for developers to signal to OpenShift Enterprise that they do not want to restart the application runtime for each deployment.  This is accomplished by creating a hot_deploy marker in the correct directory.  Change to your application root directory, for example ~/code/ose/firstphp, and issue the following commands:
 

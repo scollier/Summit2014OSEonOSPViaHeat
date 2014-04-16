@@ -23,9 +23,6 @@ In this lab there is an existing network, much as there would be in a production
 
     CONFIG_NEUTRON_L3_EXT_BRIDGE=br-ex
 
-This bridge was mapped to the physical interface *em1* in the following option:
-
-    CONFIG_NEUTRON_OVS_BRIDGE_IFACES=br-ex:em1
 
 ###**Create the *Public* Network**
 
