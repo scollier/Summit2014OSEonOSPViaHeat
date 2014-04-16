@@ -12,7 +12,7 @@ For this lab we will need 2 interfaces. The DHCP interface was the single NIC *e
 
 Run the following script to create the bridge config:
 
-    /usr/local/bin/create-bridge-config
+    sudo /usr/local/bin/create-bridge-config
 
 Ensure the *ifcfg-br-public* file look as follows.  
 
