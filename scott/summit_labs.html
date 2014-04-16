@@ -81,13 +81,24 @@ Everything in the lab will be performed with the following user and password:</p
 Password: password
 </code></pre>
 
+<p>When you first boot the system up, you should see one user selectable for login with the description of &quot;Deploying OSE on RHEL OSP via Heat Templates&quot;. If you see a list of mulitple users with <em>labX</em>, then you are booted into the wrong partition. If this is the case then reboot via the icon in the lower right with the password <em>redhat</em></p>
+
 <p>Sudo access will be provided for certain commands.</p>
 
 <p><strong>System Partitions</strong></p>
 
-<p><strong>WARNING!!!</strong> There are multiple partitions on this system. It is VITAL that you only ever boot into or modify partition <X NEED TO FILL THIS OUT>. Do not mount the other partition or make any changes to the boot loader. Doing so will violate the spirit of Summit and make the panda very sad.</p>
+<p><strong>WARNING!!!</strong> There are multiple partitions on this system. It is VITAL that you only ever boot into or modify partition 3 &quot;Deploying OSE on RHEL OSP via Heat Templates&quot;. Do not mount the other partition or make any changes to the boot loader. Doing so will violate the spirit of Summit and make the panda very sad.</p>
 
-<p>If you have to reboot the system, select partition X NEED TO FILL THIS OUT.</p>
+<p>The default partition table has the following 4 partitions selectable:</p>
+
+<ul>
+<li>Red Hat Summit Labs</li>
+<li>Installing &amp; Administering Red Hat Enterprise Virtualization 3.3</li>
+<li>Deploying OSE on RHEL OSP via Heat Templates</li>
+<li>Red Hat Enterprise Linux</li>
+</ul>
+
+<p>Select <em>Deploying OSE on RHEL OSP via Heat Templates</em></p>
 
 <p><strong>Look at the configuration options for Heat and Neutron:</strong></p>
 
@@ -149,9 +160,14 @@ Password: password
 
 <p><strong>Explore the current network card interface setup:</strong></p>
 
-<p>For this lab we will need 2 interfaces. The DHCP interface was the single NIC <em>em1</em>. The bridge <em>br-public</em> will be created and used as the exsternal network, though this will only be simulated as it will not actually route anywhere. Run the following script to create the bridge:</p>
+<p>For this lab we will need 2 interfaces. The DHCP interface was the single NIC <em>em1</em>. The bridge <em>br-public</em> will be created and used as the exsternal network, though this will only be simulated as it will not actually route anywhere. View the script to see the changes that will be made:</p>
 
-<pre><code>/usr/local/bin/convert-to-bridge
+<pre><code>cat /usr/local/bin/create-bridge-config
+</code></pre>
+
+<p>Run the following script to create the bridge config:</p>
+
+<pre><code>sudo /usr/local/bin/create-bridge-config
 </code></pre>
 
 <p>Ensure the <em>ifcfg-br-public</em> file look as follows.  </p>
@@ -329,7 +345,9 @@ glance image-list
 
 <p>Review the provided environment file with placeholder text:</p>
 
-<pre><code>parameters:
+<pre><code>cat ~/openshift-environment.yaml
+
+parameters:
   key_name: adminkp
   prefix: summit2014.lab
   broker_hostname: broker.summit2014.lab
@@ -427,7 +445,7 @@ sudo rpm -qf $(which heat)
 
 <p><strong>Note: it can take up to 10 minutes for this to complete</strong></p>
 
-<pre><code>heat create openshift \
+<pre><code>heat stack-create openshift \
 -f ~/heat-templates/openshift-enterprise/heat/neutron/OpenShift-1B1N-neutron.yaml \
 -e ~/openshift-environment.yaml
 </code></pre>
@@ -438,24 +456,20 @@ sudo rpm -qf $(which heat)
 
 <p>There are several ways to monitor the status of the deployment.  </p>
 
-<p>Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM&#39;s.</p>
-
-<pre><code>nova get-vnc-console broker_instance novnc
-
-nova get-vnc-console node_instance novnc
-</code></pre>
-
-<p>Alternatively, in Horizon:</p>
+<p>Open Firefox and login to the Horizon dashboard:</p>
 
 <ul>
-<li>Under <em>Project</em> select <em>Instances</em></li>
-<li>On the right pane select either <em>broker_instance</em> or <em>node_instance</em></li>
-<li>Select <em>Console</em></li>
+<li>Open Firefox and browse to http://localhost</li>
+<li>Login with <em>admin</em>:<em>password</em></li>
+<li>Select <em>Project</em> on the left</li>
+<li>Under <em>Orchestration</em> select <em>Stacks</em></li>
+<li>Select <em>OpenShift</em> on the right pane</li>
+<li>Enjoy the eye candy</li>
 </ul>
 
-<p>Open another terminal and tail the heat log:</p>
+<p>To use the CLI, open another terminal and tail the heat log:</p>
 
-<pre><code>sudo tail -f /var/log/heat/heat-engine.log &amp;
+<pre><code>sudo tail -f /var/log/heat/heat-engine.log
 </code></pre>
 
 <p>List the <em>heat</em> stack</p>
@@ -484,16 +498,22 @@ nova get-vnc-console node_instance novnc
 | node_wait_condition                 | 66 | state changed          | CREATE_COMPLETE    | 2014-03-19T21:52:01Z |
 </code></pre>
 
-<p>Alternatively open Firefox and login to the Horizon dashboard to watch the heat stack status:</p>
+<p>Get a VNC console address and open it in the browser.  Firefox must be launched from the hypervisor host, the host that is running the VM&#39;s.</p>
+
+<pre><code>nova get-vnc-console broker_instance novnc
+
+nova get-vnc-console node_instance novnc
+</code></pre>
+
+<p>Alternatively, in Horizon:</p>
 
 <ul>
-<li>Open Firefox and browse to http://localhost</li>
-<li>Login with <em>admin</em>:<em>password</em></li>
-<li>Select <em>Project</em> on the left</li>
-<li>Under <em>Orchestration</em> select <em>Stacks</em></li>
-<li>Select <em>OpenShift</em> on the right pane</li>
-<li>Enjoy the eye candy</li>
+<li>Under <em>Project</em> select <em>Instances</em></li>
+<li>On the right pane select either <em>broker_instance</em> or <em>node_instance</em></li>
+<li>Select <em>Console</em></li>
 </ul>
+
+<p><em>NOTE</em>: Do not use ALT+2 to switch windows (shortcut used in Firefox) as this will reboot your system!</p>
 
 <p><strong>Lab 5 Complete!</strong></p>
 
@@ -553,12 +573,7 @@ view /var/log/cloud-init-output.log
 
 <p>Look for the output: <strong>NO ERRORS</strong></p>
 
-<pre><code>oo-accept-broker -v
-</code></pre>
-
-<p>Look for the output: <strong>PASS</strong></p>
-
-<h3><strong>6.2 Explore the OpenShift Node</strong></h3>
+<h3><strong>6.3 Explore the OpenShift Node</strong></h3>
 
 <p>SSH into the node, using the IP that was obtained above.</p>
 
@@ -584,11 +599,17 @@ view /var/log/cloud-init-output.log
 
 <p>Look for the output: <strong>PASS</strong></p>
 
-<h2><strong>6.3 Connect to OpenShift Console</strong></h2>
+<p>Logout of the node:</p>
+
+<pre><code>logout
+</code></pre>
+
+<h2><strong>6.4 Connect to OpenShift Console</strong></h2>
 
 <p>Confirm Console Access by opening a browser and putting in the IP address of the broker.</p>
 
-<p><a href="http://172.16.1.BROKER_IP/console">http://172.16.1.BROKER_IP/console</a></p>
+<pre><code>[http://172.16.1.BROKER_IP/console](http://172.16.1.BROKER_IP/console)
+</code></pre>
 
 <p>username: demo
 password: changeme</p>
@@ -608,6 +629,8 @@ password: changeme</p>
 <p>The most recent version of the OpenShift Enterprise client tools are available as a RPM from the OpenShift Enterprise hosted Yum repository. We recommend this version to remain up to date, although a version of the OpenShift Enterprise client tools RPM is also available through EPEL.</p>
 
 <p>With the correct entitlements in place, you can now install the OpenShift Enterprise 2.0 client tools by running the following command:</p>
+
+<p><em>NOTE</em>: Run the following command on a client system, in this case the bare-metal student workstation:</p>
 
 <pre><code>sudo yum install rhc
 </code></pre>
@@ -1067,7 +1090,7 @@ To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.summit2014.lab/~/git/firs
 
 <p>If you completed all of the steps in Lab 16 correctly, you should be able to verify that your application was deployed correctly by opening up a web browser and entering the following URL:</p>
 
-<pre><code>http://firstphp-ose.summit2014.lab
+<pre><code>[http://firstphp-ose.summit2014.lab](http://firstphp-ose.summit2014.lab)
 </code></pre>
 
 <p>You should see the updated code for the application.</p>
@@ -1102,7 +1125,7 @@ git push
 
 <p>To verify that we have created and deployed the new PHP source file correctly, open up a web browser and enter the following URL:</p>
 
-<pre><code>http://firstphp-ose.summit2014.lab/time.php
+<pre><code>[http://firstphp-ose.summit2014.lab/time.php](http://firstphp-ose.summit2014.lab/time.php)
 </code></pre>
 
 <p>You should see the updated code for the application.</p>
@@ -1111,8 +1134,8 @@ git push
 
 <p>Return to your previous directories</p>
 
-<pre><code>pushd
-pushd
+<pre><code>popd
+popd
 </code></pre>
 
 <p><strong>Lab 9 Complete!</strong></p>
@@ -1253,6 +1276,11 @@ nova list
 <p>Check node configuration</p>
 
 <pre><code>oo-accept-node -v
+</code></pre>
+
+<p>Logout of the node:</p>
+
+<pre><code>logout
 </code></pre>
 
 <p>Note that this will fail because node2 does not have a fully qualified domain name. </p>
