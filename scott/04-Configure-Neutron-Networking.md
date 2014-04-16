@@ -74,7 +74,7 @@ List the subnets
 
     neutron subnet-list
 
-Show more details about the *pivate* subnet:
+Show more details about the *private* subnet:
 
     neutron subnet-show private
 

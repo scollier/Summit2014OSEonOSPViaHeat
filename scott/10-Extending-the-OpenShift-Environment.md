@@ -90,9 +90,7 @@ List the *heat* stack
 Watch the heat events.
 
     heat event-list add_node2
-
     heat resource-list add_node2
-
     nova list
 
 ##**10.4 Confirm Node2 Connectivity**
@@ -103,7 +101,7 @@ Ping the public IP of node 2
 
 *Note the IP address of node 2. The address will be needed later in this lab.*
 
-SSH into the node2 instance.  This may take a minute or two while they are spawning.  This will use the key that was created with *nova keypair* earlier.
+SSH into the node2 instance.  This may take a minute or two while the instance is spawning.  This will use the key that was created with *nova keypair* earlier.
 
 SSH into the node
 
@@ -125,7 +123,7 @@ Logout of the node:
 
     logout
 
-Note that this will fail because node2 does not have a fully qualified domain name. 
+**Note that this will fail because node2 does not have a fully qualified domain name.**
 
 ##**Add Node2 To Broker DNS**
 
@@ -137,11 +135,14 @@ Once logged in, gain root access.
 
     sudo -i
 
-Add node 2 instance _A_ record to the zone file so node 2 hostname resolves. Verify the IP address matches the IP from **nova list**.
+Add node 2 instance _A_ record to the zone file so node 2 hostname resolves. Verify the IP address matches the IP from **nova list**. 
+
+**Note**
+Replace NODE_2_IP with the last octet from node 2.
 
     oo-register-dns \
     --with-node-hostname node2 \
-    --with-node-ip 172.16.1.4 \
+    --with-node-ip 172.16.1.NODE_2_IP \
     --domain summit2014.lab \
     --dns-server broker.summit2014.lab
     service named reload
@@ -163,10 +164,6 @@ SSH into the node
 Once logged in, gain root access and explore the environment.
 
     sudo -i
-
-Check the OpenShift install output.
-
-    view /tmp/openshift.out
 
 Check node configuration
 

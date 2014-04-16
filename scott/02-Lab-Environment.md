@@ -2,7 +2,7 @@
 
 #**2 Server Configuration**
 
-Each student will recieve their own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 installed as the base operating system.  The server was configured with OpenStack using packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.
+Each student will receive their own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 installed as the base operating system.  The server was configured with OpenStack using packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.
 
 ![Lab Configuration](http://summitimage-scollier1.rhcloud.com/summit_lab.png)
 
@@ -32,6 +32,8 @@ Select *Deploying OSE on RHEL OSP via Heat Templates*
 
 **Look at the configuration options for Heat and Neutron:**
 
+Open a terminal and explore the file.
+
     vim ~/answer.txt
 
 **Each system has software repositories that are shared out via the local Apache web server:**
@@ -54,7 +56,7 @@ Here you can see that the Heat template was originally making calls to github fo
 
     ls /home/images/RHEL*
     
-These two images were pre-built using disk image builder (DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT>
+These two images were pre-built using disk image builder (DIB) for the purpose of saving time in the lab.
 
 **Check out the software repositories:**
 

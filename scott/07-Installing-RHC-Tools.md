@@ -82,7 +82,7 @@ With Ruby and Git installed, use the RubyGems library system to install and run 
 
 After the installation has completed, run:
 
-	$ rhc -v
+	$ rhc --version
 
 ##**Fedora 16 or later**
 
@@ -94,7 +94,7 @@ This installs Ruby, Git, and the other dependencies required to run the OpenShif
 
 After the OpenShift Enterprise client tools have been installed, run:
 
-	$ rhc -v
+	$ rhc --version
 
 ##**Ubuntu**
 

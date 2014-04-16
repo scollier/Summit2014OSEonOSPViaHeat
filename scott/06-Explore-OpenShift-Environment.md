@@ -20,14 +20,11 @@ Once logged in, gain root access and explore the environment.
 
     sudo -i
 
-Check the OpenShift install output.  At the end of hte file, you shuold see "Installation and configuration is complete".  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files. Ignore any notices about NTP, it is because the lab does not have network connectivity.
+Check the OpenShift install output.  At the end of the file, you should see "Installation and configuration is complete".  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files. Ignore any notices about NTP, it is because the lab does not have network connectivity.
 
     view /tmp/openshift.out
-    
     view /var/log/cfn-signal.log
-    
     view /var/log/cloud-init.log
-    
     view /var/log/cloud-init-output.log
 
 Now confirm OpenShift functionality. See what tools are available by tabbing out the oo-    command.
@@ -38,7 +35,7 @@ Check mcollective traffic.  You should get a response from the node that was dep
 
     oo-mco ping
     
-Run some diagnostics to confirm functionality.  You should get a PASS and NO ERRORS on each of these.
+Run some diagnostics to confirm functionality.  You should get a PASS and NO ERRORS on each of these.  Warnings can be ignored.
     
     oo-diagnostics -v
 
@@ -51,7 +48,7 @@ SSH into the node, using the IP that was obtained above.
     ssh -i ~/adminkp.pem ec2-user@172.16.1.NODE_IP
     sudo -i
 
-Once logged in, gain root access and explore the environment.
+Once logged in, gain root access and explore the environment one file at a time.
     
     view /tmp/openshift.out
     
@@ -63,7 +60,7 @@ Once logged in, gain root access and explore the environment.
 
 Check node configuration
 
-    oo-accept-node
+    oo-accept-node -v
 
 Look for the output: **PASS**
 
@@ -72,7 +69,7 @@ Logout of the node:
     logout
 
 ##**6.4 Connect to OpenShift Console**
-Confirm Console Access by opening a browser and putting in the IP address of the broker.
+Confirm Console Access by opening a browser and putting in the IP address of the broker.  Accept the self-signed cert.
 
     [http://172.16.1.BROKER_IP/console](http://172.16.1.BROKER_IP/console)
 

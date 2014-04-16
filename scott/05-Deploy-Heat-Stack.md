@@ -3,7 +3,7 @@
 ##**5.1 Import the Images into Glance**
 
 
-All actions in this lab will performed by the *admin* tenant in this lab.  In a production enviroinment there will likely be many tenants.
+All actions in this lab will performed by the *admin* tenant in this lab.  In a production environment there will likely be many tenants.
 
     source ~/keystonerc_admin
 
@@ -109,7 +109,7 @@ Get a feel for the options that *heat* supports.
     sudo rpm -qa | grep heat
     sudo rpm -qc openstack-heat-common
     sudo rpm -qf $(which heat)
-    source ~/keystone_admin
+    source ~/keystonerc_admin
 
 
 Now run the *heat* command and launch the stack. The -f option tells *heat* where the template file resides.  The -e option points *heat* to the environment file that was created in the previous section.
@@ -146,7 +146,7 @@ Watch the heat events with the following command:
 
     heat event-list openshift
 
-Each resouce can also be monitored with:
+Each resource can also be monitored with:
 
     heat resource-list openshift
 
@@ -164,7 +164,7 @@ Get a VNC console address and open it in the browser.  Firefox must be launched 
     nova get-vnc-console broker_instance novnc
     nova get-vnc-console node_instance novnc
 
-Alternatively, in Horizon:
+Alternatively, in Horizon [dashboard thingy]:
 
 * Under *Project* select *Instances*
 * On the right pane select either *broker_instance* or *node_instance*

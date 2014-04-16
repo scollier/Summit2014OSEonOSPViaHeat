@@ -37,7 +37,7 @@ It is very easy to create an OpenShift Enterprise application using *rhc*. The c
 Create a directory to hold your OpenShift Enterprise code projects:
 
     mkdir ~/ose
-    pushd ~/ose
+    cd ~/ose
 	
 To create an application that uses the *php* runtime, issue the following command:
 
@@ -47,7 +47,7 @@ After entering that command, you should see output that resembles the following:
 
 	Application Options
 	-------------------
-	  Domain:     gshipley
+	  Domain:     ose
 	  Cartridges: php-5.3
 	  Gear Size:  default
 	  Scaling:    no
@@ -88,7 +88,7 @@ After you entered the command to create a new PHP application, a lot of things h
 
 When you created the PHP application using the *rhc app create* command, the private git repository that was created on your node host was cloned to your local machine.
 
-    pushd firstphp
+    cd firstphp
     ls -al
 	
 You should see the following information:
@@ -185,7 +185,7 @@ Look for the following code block:
 Update this code block to the following and then save your changes:
 
     <h1>
-        Welcome to OpenShift Enterprise on OpenStack
+        Welcome to OpenShift Enterprise
     </h1>
 
 **Note:** Make sure you are updating the \<h1> tag and not the \<title> tag.
@@ -269,8 +269,7 @@ You should see the updated code for the application.
 
 Return to your previous directories
 
-    popd
-    popd
+    cd
     
 **Lab 9 Complete!**
 

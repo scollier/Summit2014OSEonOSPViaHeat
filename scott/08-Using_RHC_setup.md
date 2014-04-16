@@ -7,7 +7,7 @@
 The broker instance is running a Bind DNS server to serve dynamic DNS for OpenShift. Add the broker's public IP to the system's */etc/resolv.conf*. First determine the Broker's IP.
 
 Collect the Broker's IP from *nova list*
-
+    source ~/keystonerc_admin
     nova list
 
 Once the IP is determined add it to */etc/resolv.conf*:
@@ -58,11 +58,13 @@ The *rhc setup* tool is a convenient command line utility to ensure that the use
 
 The contents of that file are as follows:
 
-    # Default user login
+    # Your OpenShift login name
     default_rhlogin=‘demo’
 
-	# Server API
-	libra_server = 'broker.summit2014.lab'
+	# The OpenShift server Connected to
+	libra_server=broker.summit2014.lab
+	
+    <snip>
 	
 This information will be read by the *rhc* command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the *-l* switch to the *rhc* command.
 

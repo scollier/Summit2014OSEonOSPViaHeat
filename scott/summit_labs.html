@@ -70,7 +70,7 @@
 
 <h1><strong>2 Server Configuration</strong></h1>
 
-<p>Each student will recieve their own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 installed as the base operating system.  The server was configured with OpenStack using packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.</p>
+<p>Each student will receive their own server or will share with another student. The server has Red Hat Enterprise Linux 6.5 installed as the base operating system.  The server was configured with OpenStack using packstack.  Explore the environment to see what was pre-configured. The end result will consist of a Controller host (hypervisor) and 3 virtual machines: 1 OpenShift broker and 2 OpenShift nodes.</p>
 
 <p><img src="http://summitimage-scollier1.rhcloud.com/summit_lab.png" alt="Lab Configuration"></p>
 
@@ -102,6 +102,8 @@ Password: password
 
 <p><strong>Look at the configuration options for Heat and Neutron:</strong></p>
 
+<p>Open a terminal and explore the file.</p>
+
 <pre><code>vim ~/answer.txt
 </code></pre>
 
@@ -129,7 +131,7 @@ Password: password
 <pre><code>ls /home/images/RHEL*
 </code></pre>
 
-<p>These two images were pre-built using disk image builder (DIB) for the purpose of saving time in the lab. The commands used to build these images will be inserted here. <SCOLLIER TO INSERT></p>
+<p>These two images were pre-built using disk image builder (DIB) for the purpose of saving time in the lab.</p>
 
 <p><strong>Check out the software repositories:</strong></p>
 
@@ -276,7 +278,7 @@ nova keypair-list
 <pre><code>neutron subnet-list
 </code></pre>
 
-<p>Show more details about the <em>pivate</em> subnet:</p>
+<p>Show more details about the <em>private</em> subnet:</p>
 
 <pre><code>neutron subnet-show private
 </code></pre>
@@ -314,7 +316,7 @@ nova keypair-list
 
 <h2><strong>5.1 Import the Images into Glance</strong></h2>
 
-<p>All actions in this lab will performed by the <em>admin</em> tenant in this lab.  In a production enviroinment there will likely be many tenants.</p>
+<p>All actions in this lab will performed by the <em>admin</em> tenant in this lab.  In a production environment there will likely be many tenants.</p>
 
 <pre><code>source ~/keystonerc_admin
 </code></pre>
@@ -427,7 +429,7 @@ which heat
 sudo rpm -qa | grep heat
 sudo rpm -qc openstack-heat-common
 sudo rpm -qf $(which heat)
-source ~/keystone_admin
+source ~/keystonerc_admin
 </code></pre>
 
 <p>Now run the <em>heat</em> command and launch the stack. The -f option tells <em>heat</em> where the template file resides.  The -e option points <em>heat</em> to the environment file that was created in the previous section.</p>
@@ -469,7 +471,7 @@ source ~/keystone_admin
 <pre><code>heat event-list openshift
 </code></pre>
 
-<p>Each resouce can also be monitored with:</p>
+<p>Each resource can also be monitored with:</p>
 
 <pre><code>heat resource-list openshift
 </code></pre>
@@ -491,7 +493,7 @@ source ~/keystone_admin
 nova get-vnc-console node_instance novnc
 </code></pre>
 
-<p>Alternatively, in Horizon:</p>
+<p>Alternatively, in Horizon [dashboard thingy]:</p>
 
 <ul>
 <li>Under <em>Project</em> select <em>Instances</em></li>
@@ -531,14 +533,11 @@ nova get-vnc-console node_instance novnc
 <pre><code>sudo -i
 </code></pre>
 
-<p>Check the OpenShift install output.  At the end of hte file, you shuold see &quot;Installation and configuration is complete&quot;.  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files. Ignore any notices about NTP, it is because the lab does not have network connectivity.</p>
+<p>Check the OpenShift install output.  At the end of the file, you should see &quot;Installation and configuration is complete&quot;.  This ensures that everything worked as planned.  Spend some time in here to look at all the configuration steps that were performed.  Also explore the cloud-init output files. Ignore any notices about NTP, it is because the lab does not have network connectivity.</p>
 
 <pre><code>view /tmp/openshift.out
-
 view /var/log/cfn-signal.log
-
 view /var/log/cloud-init.log
-
 view /var/log/cloud-init-output.log
 </code></pre>
 
@@ -552,7 +551,7 @@ view /var/log/cloud-init-output.log
 <pre><code>oo-mco ping
 </code></pre>
 
-<p>Run some diagnostics to confirm functionality.  You should get a PASS and NO ERRORS on each of these.</p>
+<p>Run some diagnostics to confirm functionality.  You should get a PASS and NO ERRORS on each of these.  Warnings can be ignored.</p>
 
 <pre><code>oo-diagnostics -v
 </code></pre>
@@ -567,7 +566,7 @@ view /var/log/cloud-init-output.log
 sudo -i
 </code></pre>
 
-<p>Once logged in, gain root access and explore the environment.</p>
+<p>Once logged in, gain root access and explore the environment one file at a time.</p>
 
 <pre><code>view /tmp/openshift.out
 
@@ -580,7 +579,7 @@ view /var/log/cloud-init-output.log
 
 <p>Check node configuration</p>
 
-<pre><code>oo-accept-node
+<pre><code>oo-accept-node -v
 </code></pre>
 
 <p>Look for the output: <strong>PASS</strong></p>
@@ -592,7 +591,7 @@ view /var/log/cloud-init-output.log
 
 <h2><strong>6.4 Connect to OpenShift Console</strong></h2>
 
-<p>Confirm Console Access by opening a browser and putting in the IP address of the broker.</p>
+<p>Confirm Console Access by opening a browser and putting in the IP address of the broker.  Accept the self-signed cert.</p>
 
 <pre><code>[http://172.16.1.BROKER_IP/console](http://172.16.1.BROKER_IP/console)
 </code></pre>
@@ -694,7 +693,7 @@ git version 1.7.11.1
 
 <p>After the installation has completed, run:</p>
 
-<pre><code>$ rhc -v
+<pre><code>$ rhc --version
 </code></pre>
 
 <h2><strong>Fedora 16 or later</strong></h2>
@@ -708,7 +707,7 @@ git version 1.7.11.1
 
 <p>After the OpenShift Enterprise client tools have been installed, run:</p>
 
-<pre><code>$ rhc -v
+<pre><code>$ rhc --version
 </code></pre>
 
 <h2><strong>Ubuntu</strong></h2>
@@ -739,10 +738,9 @@ $ git --version
 
 <p>The broker instance is running a Bind DNS server to serve dynamic DNS for OpenShift. Add the broker&#39;s public IP to the system&#39;s <em>/etc/resolv.conf</em>. First determine the Broker&#39;s IP.</p>
 
-<p>Collect the Broker&#39;s IP from <em>nova list</em></p>
-
-<pre><code>nova list
-</code></pre>
+<p>Collect the Broker&#39;s IP from <em>nova list</em>
+    source ~/keystonerc_admin
+    nova list</p>
 
 <p>Once the IP is determined add it to <em>/etc/resolv.conf</em>:</p>
 
@@ -799,11 +797,13 @@ Connect without checking the certificate? (yes|no):
 
 <p>The contents of that file are as follows:</p>
 
-<pre><code># Default user login
+<pre><code># Your OpenShift login name
 default_rhlogin=‘demo’
 
-# Server API
-libra_server = &#39;broker.summit2014.lab&#39;
+# The OpenShift server Connected to
+libra_server=broker.summit2014.lab
+
+&lt;snip&gt;
 </code></pre>
 
 <p>This information will be read by the <em>rhc</em> command line tool for every future command that is issued.  If you want to run commands as a different user than the one listed above, you can either change the default login in this file or provide the <em>-l</em> switch to the <em>rhc</em> command.</p>
@@ -863,7 +863,7 @@ pushd ~/ose
 
 <pre><code>Application Options
 -------------------
-  Domain:     gshipley
+  Domain:     ose
   Cartridges: php-5.3
   Gear Size:  default
   Scaling:    no
@@ -1029,7 +1029,7 @@ drwxr-xr-x   4 gshipley  staff   136 Jan 21 13:48 php
 <p>Update this code block to the following and then save your changes:</p>
 
 <pre><code>&lt;h1&gt;
-    Welcome to OpenShift Enterprise on OpenStack
+    Welcome to OpenShift Enterprise
 &lt;/h1&gt;
 </code></pre>
 
@@ -1120,8 +1120,7 @@ git push
 
 <p>Return to your previous directories</p>
 
-<pre><code>popd
-popd
+<pre><code>cd
 </code></pre>
 
 <p><strong>Lab 9 Complete!</strong></p>
@@ -1227,9 +1226,7 @@ sed -i &quot;s/PRIVATE_SUBNET_ID_HERE/$(neutron subnet-list | awk &#39;/private/
 <p>Watch the heat events.</p>
 
 <pre><code>heat event-list add_node2
-
 heat resource-list add_node2
-
 nova list
 </code></pre>
 
@@ -1242,7 +1239,7 @@ nova list
 
 <p><em>Note the IP address of node 2. The address will be needed later in this lab.</em></p>
 
-<p>SSH into the node2 instance.  This may take a minute or two while they are spawning.  This will use the key that was created with <em>nova keypair</em> earlier.</p>
+<p>SSH into the node2 instance.  This may take a minute or two while the instance is spawning.  This will use the key that was created with <em>nova keypair</em> earlier.</p>
 
 <p>SSH into the node</p>
 
@@ -1269,7 +1266,7 @@ nova list
 <pre><code>logout
 </code></pre>
 
-<p>Note that this will fail because node2 does not have a fully qualified domain name. </p>
+<p><strong>Note that this will fail because node2 does not have a fully qualified domain name.</strong></p>
 
 <h2><strong>Add Node2 To Broker DNS</strong></h2>
 
@@ -1283,11 +1280,14 @@ nova list
 <pre><code>sudo -i
 </code></pre>
 
-<p>Add node 2 instance <em>A</em> record to the zone file so node 2 hostname resolves. Verify the IP address matches the IP from <strong>nova list</strong>.</p>
+<p>Add node 2 instance <em>A</em> record to the zone file so node 2 hostname resolves. Verify the IP address matches the IP from <strong>nova list</strong>. </p>
+
+<p><strong>Note</strong>
+Replace NODE_2_IP with the last octet from node 2.</p>
 
 <pre><code>oo-register-dns \
 --with-node-hostname node2 \
---with-node-ip 172.16.1.4 \
+--with-node-ip 172.16.1.NODE_2_IP \
 --domain summit2014.lab \
 --dns-server broker.summit2014.lab
 service named reload
@@ -1315,11 +1315,6 @@ service named reload
 <pre><code>sudo -i
 </code></pre>
 
-<p>Check the OpenShift install output.</p>
-
-<pre><code>view /tmp/openshift.out
-</code></pre>
-
 <p>Check node configuration</p>
 
 <pre><code>oo-accept-node -v
@@ -1345,36 +1340,37 @@ service named reload
 
 <p>To view all of the available commands for working with cartridges on OpenShift Enterprise, enter the following command:</p>
 
-<pre><code>$ rhc cartridge -h
+<pre><code>rhc cartridge -h
 </code></pre>
 
 <h2><strong>List available cartridges</strong></h2>
 
 <p>To see a list of all available cartridges to users of this OpenShift Enterprise deployment, issue the following command:</p>
 
-<pre><code>$ rhc cartridge list
+<pre><code>rhc cartridge list
 </code></pre>
 
 <p>You should see the following output depending on which cartridges you have installed:</p>
 
-<p>jbosseap-6       JBoss Enterprise Application Platform 6.1.0 web
-  jenkins-1        Jenkins Server                              web
-  nodejs-0.10      Node.js 0.10                                web
-  perl-5.10        Perl 5.10                                   web
-  php-5.3          PHP 5.3                                     web
-  python-2.6       Python 2.6                                  web
-  python-2.7       Python 2.7                                  web
-  ruby-1.8         Ruby 1.8                                    web
-  ruby-1.9         Ruby 1.9                                    web
-  jbossews-1.0     Tomcat 6 (JBoss EWS 1.0)                    web
-  jbossews-2.0     Tomcat 7 (JBoss EWS 2.0)                    web
-  diy-0.1          Do-It-Yourself 0.1                          web
-  cron-1.4         Cron 1.4                                    addon
-  jenkins-client-1 Jenkins Client                              addon
-  mysql-5.1        MySQL 5.1                                   addon
-  postgresql-8.4   PostgreSQL 8.4                              addon
-  postgresql-9.2   PostgreSQL 9.2                              addon
-  haproxy-1.4      Web Load Balancer                           addon</p>
+<pre><code>jbosseap-6       JBoss Enterprise Application Platform 6.1.0 web
+jenkins-1        Jenkins Server                              web
+nodejs-0.10      Node.js 0.10                                web
+perl-5.10        Perl 5.10                                   web
+php-5.3          PHP 5.3                                     web
+python-2.6       Python 2.6                                  web
+python-2.7       Python 2.7                                  web
+ruby-1.8         Ruby 1.8                                    web
+ruby-1.9         Ruby 1.9                                    web
+jbossews-1.0     Tomcat 6 (JBoss EWS 1.0)                    web
+jbossews-2.0     Tomcat 7 (JBoss EWS 2.0)                    web
+diy-0.1          Do-It-Yourself 0.1                          web
+cron-1.4         Cron 1.4                                    addon
+jenkins-client-1 Jenkins Client                              addon
+mysql-5.1        MySQL 5.1                                   addon
+postgresql-8.4   PostgreSQL 8.4                              addon
+postgresql-9.2   PostgreSQL 9.2                              addon
+haproxy-1.4      Web Load Balancer                           addon
+</code></pre>
 
 <p>Note: Web cartridges can only be added to new applications.</p>
 
@@ -1382,7 +1378,7 @@ service named reload
 
 <p>In order to use a cartridge, we need to embed it into our existing application.  OpenShift Enterprise provides support for version 5.1 of this popular open source database.  To enable MySQL support for the <em>firstphp</em> application, issue the following command:</p>
 
-<pre><code>$ rhc cartridge-add mysql-5.1 -a firstphp
+<pre><code>rhc cartridge-add mysql-5.1 -a firstphp
 
 You should see the following output:
 
@@ -1411,9 +1407,8 @@ Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
 on OpenShift Enterprise.  In order to use the mysql shell, you will need to use
 ssh to login to your application gear.  </p>
 
-<p>$ rhc ssh firstphp</p>
-
-<pre><code>[firstphp-ose.summit2014.lab ~]\&gt; mysql
+<pre><code>rhc ssh firstphp
+\&gt; mysql
 </code></pre>
 
 <p>You will notice that you did not have to authenticate to the MySQL database.  This is because OpenShift Enterprise sets environment variables that contains the connection information for the database. </p>
@@ -1470,21 +1465,25 @@ OPENSHIFT_MYSQL_DB_LOG_DIR=/var/lib/openshift/52afd7bc3a0fb277cf000070/mysql//lo
 
 <p>To view a list of all <em>OPENSHIFT</em> environment variables, you can use the following command:</p>
 
-<pre><code>[firstphp-ose.summit2014.lab ~]\&gt; env | grep OPENSHIFT
+<pre><code>~]\&gt; env | grep OPENSHIFT
 </code></pre>
 
 <h2><strong>Viewing MySQL logs</strong></h2>
 
 <p>Given the above information, you can see that the log file directory for MySQL is specified with the <em>OPENSHIFT_MYSQL_DB_LOG_DIR</em> environment variable.  To view these log files, simply use the tail command:</p>
 
-<pre><code>[firstphp-ose.summit2014.lab ~]\&gt; tail -f $OPENSHIFT_MYSQL_DB_LOG_DIR/*
+<pre><code>~]\&gt; tail $OPENSHIFT_MYSQL_DB_LOG_DIR/*
+exit
 </code></pre>
 
 <h2><strong>Connecting to the MySQL cartridge from PHP</strong></h2>
 
 <p>Now that we have verified that our MySQL database has been created correctly, and have created a database table with some user information, let&#39;s connect to the database from PHP in order to verify that our application code can communicate to the newly embedded MySQL cartridge.  Create a new file in the <em>php</em> directory of your <em>firstphp</em> application named <em>dbtest.php</em>.  Add the following source code to the <em>dbtest.php</em> file:</p>
 
-<pre><code>&lt;?php
+<pre><code>pushd ~/ose/firstphp/php
+vi dbtest.php
+
+&lt;?php
 $dbhost = getenv(&quot;OPENSHIFT_MYSQL_DB_HOST&quot;);
 $dbport = getenv(&quot;OPENSHIFT_MYSQL_DB_PORT&quot;);
 $dbuser = getenv(&quot;OPENSHIFT_MYSQL_DB_USERNAME&quot;);
@@ -1515,38 +1514,35 @@ mysql_close();
 
 <p>Once you have created the source file, add the file to your git repository, commit the change, and push the change to your OpenShift Enterprise gear.</p>
 
-<pre><code>$ git add .
-$ git commit -am “Adding dbtest.php”
-$ git push
+<pre><code>git add .
+git commit -am &quot;Adding dbtest.php&quot;
+git push
 </code></pre>
 
 <p>After the code has been deployed to your application gear, open up a web browser and enter the following URL:</p>
 
-<pre><code>http://firstphp-ose.apps.summit2014.lab/dbtest.php
-</code></pre>
+<p><em><a href="http://firstphp-ose.summit2014.lab/dbtest.php">http://firstphp-ose.summit2014.lab/dbtest.php</a></em></p>
 
 <p>You should see a screen with the following information:</p>
 
-<pre><code>Connected to database.
-1 gshipley@redhat.com 
-</code></pre>
+<p>Connected to database.1<br>
+<a href="mailto:gshipley@redhat.com">gshipley@redhat.com</a> </p>
 
 <h2><strong>Managing cartridges</strong></h2>
 
 <p>OpenShift Enterprise provides the ability to embed multiple cartridges in an application.  For instance, even though we are using MySQL for our <em>firstphp</em> application, we could also embed the cron cartridge as well.  It may be useful to stop, restart, or even check the status of a cartridge.  To check the status of our MySQL database, use the following command:</p>
 
-<pre><code>$ rhc cartridge-status mysql -a firstphp
+<pre><code>rhc cartridge-status mysql -a firstphp
 </code></pre>
 
 <p>To stop the cartridge, enter the following command:</p>
 
-<pre><code>$ rhc cartridge-stop mysql -a firstphp
+<pre><code>rhc cartridge-stop mysql -a firstphp
 </code></pre>
 
 <p>Verify that the MySQL database has been stopped by either checking the status again or viewing the following URL in your browser:</p>
 
-<pre><code>http://firstphp-ose.summit2014.lab/dbtest.php
-</code></pre>
+<p><em><a href="http://firstphp-ose.summit2014.lab/dbtest.php">http://firstphp-ose.summit2014.lab/dbtest.php</a></em></p>
 
 <p>You should see the following message returned to your browser:</p>
 
@@ -1555,30 +1551,26 @@ $ git push
 
 <p>Start the database back up using the <em>cartridge-start</em> command.</p>
 
-<pre><code>$ rhc cartridge-start mysql -a firstphp
+<pre><code>rhc cartridge-start mysql -a firstphp
 </code></pre>
 
 <p>Verify that the database has been restarted by opening up a web browser and entering in the following URL:</p>
 
-<pre><code>http://firstphp-ose.apps.summit2014.lab/dbtest.php
-</code></pre>
+<p><em><a href="http://firstphp-ose.summit2014.lab/dbtest.php">http://firstphp-ose.summit2014.lab/dbtest.php</a></em></p>
 
 <p>You should see a screen with the following information:</p>
 
-<pre><code>Connected to database.
-1 gshipley@redhat.com 
-</code></pre>
+<p>Connected to database.<br>
+1 <a href="mailto:gshipley@redhat.com">gshipley@redhat.com</a> </p>
 
 <p>OpenShift Enterprise also provides the ability to list important information about a cartridge by using the <em>cartridge-show</em> command.  For example, if a user has forgotten their MySQL connection information, they can display this information with the following command:</p>
 
-<pre><code>$ rhc cartridge-show mysql -a firstphp
+<pre><code>rhc cartridge-show mysql -a firstphp
 </code></pre>
 
 <p>The user will then be presented with the following output:</p>
 
-<pre><code>Password: ****
-
-mysql-5.1 (MySQL 5.1)
+<pre><code>mysql-5.1 (MySQL 5.1)
 ---------------------
   Gears:          Located with php-5.3
   Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
@@ -1593,11 +1585,12 @@ mysql-5.1 (MySQL 5.1)
 
 <p>With OpenShift Enterprise port-forwarding, developers can connect to remote services with local client tools.  This allows the developer to focus on code without having to worry about the details of configuring complicated firewall rules or SSH tunnels. To connect to the MySQL database running on our OpenShift Enterprise gear, you have to first forward all the ports to your local machine. This can be done using the <em>rhc port-forward</em> command.  This command is a wrapper that configures SSH port forwarding. Once the command is executed, you should see a list of services that are being forwarded and the associated IP address and port to use for connections as shown below:</p>
 
-<pre><code>$ rhc port-forward firstphp
+<pre><code>rhc port-forward firstphp
+</code></pre>
 
-To connect to a service running on OpenShift, use the Local address
+<p>To connect to a service running on OpenShift, use the Local address</p>
 
-Service Local               OpenShift
+<pre><code>Service Local               OpenShift
 ------- -------------- ---- -------------------
 httpd   127.0.0.1:8080  =&gt;  127.10.134.129:8080
 mysql   127.0.0.1:3307  =&gt;  127.10.134.130:3306
@@ -1607,29 +1600,18 @@ Press CTRL-C to terminate port forwarding
 
 <p>In the above snippet, you can see that mysql database, which we added to the <em>firstphp</em> gear, is forwarded to our local machine. If you open <a href="http://127.0.0.1:8080">http://127.0.0.1:8080</a> in your browser, you will see the application.</p>
 
-<p><strong>Note:</strong> At the time of this writing, there is an extra step to enable port forwarding on Mac OS X based systems.  You will need to create an alias on your loopback device for the IP address listed in output shown above.  </p>
-
-<pre><code>sudo ifconfig lo0 alias 127.0.0.1
-</code></pre>
-
-<p>Now that you have your services forward, you can connect to them using local client tools. To connect to the MySQL database running on the OpenShift Enterprise gear, run the <em>mysql</em> command as shown below:</p>
-
-<pre><code>$ mysql -uadmin -p -h 127.0.0.1
-</code></pre>
-
-<p><strong>Note:</strong> The above command assumes that you have the MySQL client installed locally.</p>
-
 <h2><strong>Enable hot_deploy</strong></h2>
 
 <p>If you are familiar with PHP, you will probably be wondering why we stop and start Apache on each code deployment.  Fortunately, we provide a way for developers to signal to OpenShift Enterprise that they do not want to restart the application runtime for each deployment.  This is accomplished by creating a hot_deploy marker in the correct directory.  Change to your application root directory, for example ~/code/ose/firstphp, and issue the following commands:</p>
 
-<pre><code>$ touch .openshift/markers/hot_deploy
-$ git add .
-$ git commit -am “Adding hot_deploy marker”
-$ git push
+<pre><code>cd ~/ose/firstphp
+touch .openshift/markers/hot_deploy
+git add .
+git commit -am &quot;Adding hot_deploy marker&quot;
+git push
 </code></pre>
 
-<p>Pay attention to the output:</p>
+<p>Pay attention to the output, the output may vary slightly because of updates:</p>
 
 <pre><code>Counting objects: 7, done.
 Delta compression using up to 8 threads.
@@ -1654,8 +1636,8 @@ To ssh://e9e92282a16b49e7b78d69822ac53e1d@firstphp-ose.apps.summit2014.lab/~/git
 
 <p>The two lines of importance are:</p>
 
-<pre><code>remote: Will add new hot deploy marker
-remote: App will not be stopped due to presence of hot_deploy marker
+<pre><code>remote: Not starting cartridge mysql because hot deploy is not enabled.
+remote: Not starting cartidge php because hot deploy is not enabled.
 </code></pre>
 
 <p>Adding a hot_deploy marker will significantly increase the speed of application deployments while developing an application.</p>
