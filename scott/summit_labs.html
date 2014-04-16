@@ -851,7 +851,7 @@ command, enter the following command:</p>
 <p>Create a directory to hold your OpenShift Enterprise code projects:</p>
 
 <pre><code>mkdir ~/ose
-pushd ~/ose
+cd ~/ose
 </code></pre>
 
 <p>To create an application that uses the <em>php</em> runtime, issue the following command:</p>
@@ -908,7 +908,7 @@ return a URL that you can visit with your web browser.
 
 <p>When you created the PHP application using the <em>rhc app create</em> command, the private git repository that was created on your node host was cloned to your local machine.</p>
 
-<pre><code>pushd firstphp
+<pre><code>cd firstphp
 ls -al
 </code></pre>
 
@@ -1480,7 +1480,7 @@ exit
 
 <p>Now that we have verified that our MySQL database has been created correctly, and have created a database table with some user information, let&#39;s connect to the database from PHP in order to verify that our application code can communicate to the newly embedded MySQL cartridge.  Create a new file in the <em>php</em> directory of your <em>firstphp</em> application named <em>dbtest.php</em>.  Add the following source code to the <em>dbtest.php</em> file:</p>
 
-<pre><code>pushd ~/ose/firstphp/php
+<pre><code>cd ~/ose/firstphp/php
 vi dbtest.php
 
 &lt;?php

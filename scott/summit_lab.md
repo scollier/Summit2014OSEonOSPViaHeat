@@ -767,7 +767,7 @@ It is very easy to create an OpenShift Enterprise application using *rhc*. The c
 Create a directory to hold your OpenShift Enterprise code projects:
 
     mkdir ~/ose
-    pushd ~/ose
+    cd ~/ose
 	
 To create an application that uses the *php* runtime, issue the following command:
 
@@ -818,7 +818,7 @@ After you entered the command to create a new PHP application, a lot of things h
 
 When you created the PHP application using the *rhc app create* command, the private git repository that was created on your node host was cloned to your local machine.
 
-    pushd firstphp
+    cd firstphp
     ls -al
 	
 You should see the following information:
@@ -1322,7 +1322,7 @@ Given the above information, you can see that the log file directory for MySQL i
 
 Now that we have verified that our MySQL database has been created correctly, and have created a database table with some user information, let's connect to the database from PHP in order to verify that our application code can communicate to the newly embedded MySQL cartridge.  Create a new file in the *php* directory of your *firstphp* application named *dbtest.php*.  Add the following source code to the *dbtest.php* file:
 
-    pushd ~/ose/firstphp/php
+    cd ~/ose/firstphp/php
     vi dbtest.php
 
 	<?php
