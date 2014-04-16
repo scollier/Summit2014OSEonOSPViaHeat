@@ -259,7 +259,7 @@ Now that you have your services forward, you can connect to them using local cli
 	
 **Note:** The above command assumes that you have the MySQL client installed locally.
 
-##**Enable *hot_deploy***
+##**Enable hot_deploy**
 
 If you are familiar with PHP, you will probably be wondering why we stop and start Apache on each code deployment.  Fortunately, we provide a way for developers to signal to OpenShift Enterprise that they do not want to restart the application runtime for each deployment.  This is accomplished by creating a hot_deploy marker in the correct directory.  Change to your application root directory, for example ~/code/ose/firstphp, and issue the following commands:
 
