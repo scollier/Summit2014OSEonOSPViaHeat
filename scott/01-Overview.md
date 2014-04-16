@@ -2,7 +2,7 @@
 
 ##**1.1 Assumptions**
 
-This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.
+This lab manual assumes that you are attending an instructor-led training class.
 
 This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.
 
