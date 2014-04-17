@@ -6,11 +6,11 @@ The server has a single network card. Run the script to create the bridge config
 
 **Explore the current network card interface setup:**
 
-    cat /usr/local/bin/convert-to-bridge
+    cat /usr/local/bin/create-bridge-config
 
 Run the following script to create the bridge config:
 
-    sudo /usr/local/bin/convert-to-bridge
+    sudo /usr/local/bin/create-bridge-config
 
 Ensure the *ifcfg-br-public* file look as follows.  
 
