@@ -143,11 +143,11 @@ The server has a single network card. Run the script to create the bridge config
 
 **Explore the current network card interface setup:**
 
-    cat /usr/local/bin/create-bridge-config
+    cat /usr/local/bin/convert-to-bridge
 
 Run the following script to create the bridge config:
 
-    sudo /usr/local/bin/create-bridge-config
+    sudo /usr/local/bin/convert-to-bridge
 
 Ensure the *ifcfg-br-public* file look as follows.  
 
